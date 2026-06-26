@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Claude MasterClass — Synaptix</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg-base:#0e0e11;--bg-surface:#16161a;--bg-elevated:#1c1c21;--bg-section:#1a1a1f;
+  --border:rgba(255,255,255,0.07);--border-hi:rgba(255,255,255,0.12);
+  --orange:#f4762a;--salmon:#f08080;--cyan:#4ecdc4;--green:#4ade80;
+  --yellow:#f4d03f;--purple:#c084fc;--sky:#5db8f2;--amber:#f4b942;
+  --orange-dim:rgba(244,118,42,0.10);--orange-glow:rgba(244,118,42,0.05);
+  --cyan-dim:rgba(78,205,196,0.10);--salmon-dim:rgba(240,128,128,0.10);
+  --green-dim:rgba(74,222,128,0.10);--purple-dim:rgba(192,132,252,0.10);
+  --sky-dim:rgba(93,184,242,0.10);--amber-dim:rgba(244,185,66,0.08);
+  --text-primary:#e8e8ee;--text-secondary:#8b8b9a;--text-muted:#4a4a5a;
+  --mono:'JetBrains Mono',monospace;--sans:'Inter',system-ui,sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg-base);color:var(--text-primary);font-family:var(--sans);font-size:13px;line-height:1.7}
+a{color:inherit;text-decoration:none}
+
+/* ── Utility ── */
+.mono{font-family:var(--mono)}
+.wrap{max-width:860px;margin:0 auto;padding:0 24px}
+
+/* ── Badge ── */
+.badge{
+  font-family:var(--mono);font-size:10px;font-weight:500;
+  letter-spacing:0.07em;text-transform:uppercase;
+  padding:3px 8px;border-radius:4px;border:1px solid;display:inline-flex;align-items:center;gap:5px;
+}
+.b-orange{color:var(--orange);background:var(--orange-dim);border-color:rgba(244,118,42,0.25)}
+.b-sky   {color:var(--sky);   background:var(--sky-dim);   border-color:rgba(93,184,242,0.25)}
+.b-cyan  {color:var(--cyan);  background:var(--cyan-dim);  border-color:rgba(78,205,196,0.25)}
+.b-purple{color:var(--purple);background:var(--purple-dim);border-color:rgba(192,132,252,0.25)}
+.b-green {color:var(--green); background:var(--green-dim); border-color:rgba(74,222,128,0.25)}
+.b-amber {color:var(--amber); background:var(--amber-dim); border-color:rgba(244,185,66,0.2)}
+
+/* ── Section divider label ── */
+.sec-lbl{
+  font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--text-muted);display:flex;align-items:center;gap:10px;margin-bottom:18px;
+}
+.sec-lbl::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ══════════════════════════════
+   1. HERO
+══════════════════════════════ */
+.hero{
+  position:relative;overflow:hidden;
+  padding:72px 0 56px;
+  border-bottom:1px solid var(--border);
+}
+/* subtle radial glow — top centre */
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 700px 400px at 50% -60px, rgba(244,118,42,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 300px at 80% 100%, rgba(93,184,242,0.04) 0%, transparent 60%);
+  pointer-events:none;
+}
+/* ghost icon */
+.hero-ghost{
+  position:absolute;right:-20px;top:50%;transform:translateY(-50%);
+  font-size:280px;color:rgba(255,255,255,0.018);
+  pointer-events:none;user-select:none;line-height:1;
+}
+.hero-inner{position:relative;z-index:1}
+.hero-eyebrow{
+  font-family:var(--mono);font-size:10px;letter-spacing:0.16em;
+  text-transform:uppercase;color:var(--orange);margin-bottom:18px;
+  display:flex;align-items:center;gap:8px;
+}
+.hero-eyebrow::before{content:'';width:24px;height:1px;background:var(--orange);opacity:0.6}
+.hero-title{
+  font-size:clamp(28px,5vw,44px);font-weight:600;
+  letter-spacing:-0.03em;line-height:1.15;margin-bottom:14px;
+}
+.hero-title span{color:var(--orange)}
+.hero-sub{
+  font-size:14px;color:var(--text-secondary);
+  max-width:540px;line-height:1.75;margin-bottom:26px;
+}
+.hero-meta{
+  display:flex;flex-wrap:wrap;gap:8px;
+  padding-top:20px;border-top:1px solid var(--border);
+}
+
+/* ══════════════════════════════
+   2. OVERVIEW
+══════════════════════════════ */
+.overview-section{padding:48px 0;border-bottom:1px solid var(--border)}
+.overview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:600px){.overview-grid{grid-template-columns:1fr}}
+.ov-card{
+  background:var(--bg-section);border:1px solid var(--border);
+  border-radius:10px;padding:16px 18px;
+}
+.ov-card-icon{font-size:15px;margin-bottom:10px}
+.ov-card-title{font-size:12px;font-weight:600;margin-bottom:5px}
+.ov-card-body{font-size:12px;color:var(--text-secondary);line-height:1.6}
+
+/* ══════════════════════════════
+   3. ROADMAP
+══════════════════════════════ */
+.roadmap-section{padding:48px 0;border-bottom:1px solid var(--border)}
+.roadmap{display:flex;flex-direction:column;gap:0}
+.rm-row{display:grid;grid-template-columns:44px 1fr;align-items:stretch;gap:0}
+/* connector line */
+.rm-spine{display:flex;flex-direction:column;align-items:center;padding-top:4px}
+.rm-dot{
+  width:28px;height:28px;border-radius:50%;
+  border:1px solid;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:10px;font-weight:600;flex-shrink:0;z-index:1;
+}
+.rm-line{flex:1;width:1px;background:var(--border);margin:4px 0}
+.rm-row:last-child .rm-line{display:none}
+/* module card */
+.rm-card{
+  background:var(--bg-section);border:1px solid var(--border);
+  border-radius:10px;margin:0 0 10px 14px;overflow:hidden;
+  transition:border-color 0.15s;
+}
+.rm-card:hover{border-color:var(--border-hi)}
+.rm-card-hdr{
+  padding:13px 16px 10px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+  position:relative;overflow:hidden;
+}
+.rm-ghost{
+  position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  font-family:var(--mono);font-size:52px;font-weight:700;
+  color:rgba(255,255,255,0.022);pointer-events:none;user-select:none;line-height:1;
+}
+.rm-num{
+  font-family:var(--mono);font-size:10px;font-weight:600;
+  letter-spacing:0.1em;text-transform:uppercase;
+  margin-bottom:4px;
+}
+.rm-title{font-size:13px;font-weight:600;margin-bottom:3px}
+.rm-desc{font-size:12px;color:var(--text-secondary);line-height:1.5}
+.rm-meta{
+  display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;
+  padding-top:4px;
+}
+.rm-card-footer{
+  padding:10px 16px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;
+}
+.rm-info{display:flex;gap:14px;font-family:var(--mono);font-size:10px;color:var(--text-muted)}
+.rm-info span{display:flex;align-items:center;gap:4px}
+.rm-btns{display:flex;gap:6px}
+/* nav buttons */
+.rm-btn{
+  font-family:var(--mono);font-size:10px;font-weight:500;
+  padding:5px 12px;border-radius:6px;border:1px solid;
+  display:inline-flex;align-items:center;gap:5px;
+  transition:background 0.13s;cursor:pointer;
+}
+.rm-btn-rev {color:var(--orange);background:var(--orange-dim);border-color:rgba(244,118,42,0.25)}
+.rm-btn-rev:hover{background:rgba(244,118,42,0.18)}
+.rm-btn-quiz{color:var(--cyan);  background:var(--cyan-dim);  border-color:rgba(78,205,196,0.25)}
+.rm-btn-quiz:hover{background:rgba(78,205,196,0.15)}
+.rm-btn-rec {color:var(--salmon);background:var(--salmon-dim);border-color:rgba(240,128,128,0.25)}
+.rm-btn-rec:hover{background:rgba(240,128,128,0.15)}
+
+/* ══════════════════════════════
+   4. RESOURCES
+══════════════════════════════ */
+.resources-section{padding:48px 0;border-bottom:1px solid var(--border)}
+.res-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:640px){.res-grid{grid-template-columns:1fr 1fr}}
+.res-card{
+  background:var(--bg-section);border:1px solid var(--border);
+  border-radius:10px;padding:16px;
+  transition:border-color 0.15s;
+}
+.res-card:hover{border-color:var(--border-hi)}
+.res-icon{font-size:18px;margin-bottom:10px}
+.res-title{font-size:12px;font-weight:600;margin-bottom:4px}
+.res-sub{font-size:11px;color:var(--text-secondary)}
+.res-link{
+  display:inline-flex;align-items:center;gap:4px;
+  font-family:var(--mono);font-size:10px;color:var(--text-muted);
+  margin-top:10px;padding-top:10px;border-top:1px solid var(--border);
+  transition:color 0.13s;
+}
+.res-link:hover{color:var(--text-secondary)}
+
+/* ══════════════════════════════
+   5. FOOTER
+══════════════════════════════ */
+footer{
+  padding:20px 0;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+}
+.footer-left{font-family:var(--mono);font-size:11px;color:var(--text-muted)}
+.footer-right{font-family:var(--mono);font-size:10px;color:var(--text-muted)}
+
+/* section padding helper */
+section{padding-top:0}
+</style>
+</head>
+<body>
+
+<!-- ══ 1. HERO ══ -->
+<div class="hero">
+  <div class="hero-ghost"><i class="fa-solid fa-cloud"></i></div>
+  <div class="wrap hero-inner">
+    <div class="hero-eyebrow">Synaptix · Certification Track</div>
+
+    <h1 class="hero-title">
+      AWS Certified <span>AI Practitioner MasterClass</span>
+    </h1>
+
+    <p class="hero-sub">
+      A structured certification course covering the foundations of Artificial Intelligence, Machine Learning, Generative AI, Responsible AI, and AWS AI services. Designed to prepare learners for the AWS Certified AI Practitioner certification exam.
+    </p>
+
+    <div class="hero-meta">
+      <span class="badge b-orange">
+        <i class="fa-solid fa-layer-group"></i>
+        6 Modules
+      </span>
+
+      <span class="badge b-sky">
+        <i class="fa-solid fa-list"></i>
+        40+ Topics
+      </span>
+
+      <span class="badge b-cyan">
+        <i class="fa-regular fa-clock"></i>
+        ~8 Hours
+      </span>
+
+      <span class="badge b-purple">
+        <i class="fa-solid fa-graduation-cap"></i>
+        Certification Prep
+      </span>
+
+      <span class="badge b-amber">
+        <i class="fa-solid fa-circle-check"></i>
+        AIF-C01
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 2. OVERVIEW ══ -->
+<div class="overview-section">
+  <div class="wrap">
+
+    <div class="sec-lbl">
+      Course Overview
+    </div>
+
+    <div class="overview-grid">
+
+      <!-- Card 1 -->
+      <div class="ov-card">
+        <div class="ov-card-icon" style="color:var(--orange)">
+          <i class="fa-solid fa-brain"></i>
+        </div>
+
+        <div class="ov-card-title">
+          What you'll learn
+        </div>
+
+        <div class="ov-card-body">
+          Master the fundamentals of Artificial Intelligence, Machine Learning, Generative AI, Responsible AI, prompt engineering concepts, and the AWS services commonly used to build intelligent cloud applications.
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="ov-card">
+        <div class="ov-card-icon" style="color:var(--cyan)">
+          <i class="fa-solid fa-cloud"></i>
+        </div>
+
+        <div class="ov-card-title">
+          AWS Services Covered
+        </div>
+
+        <div class="ov-card-body">
+          Explore Amazon Bedrock, SageMaker AI, Rekognition, Comprehend, Textract, Transcribe, Translate, Lex, Polly, Kendra, Q, and other core AI and ML services relevant to the certification exam.
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="ov-card">
+        <div class="ov-card-icon" style="color:var(--purple)">
+          <i class="fa-solid fa-award"></i>
+        </div>
+
+        <div class="ov-card-title">
+          Certification Focus
+        </div>
+
+        <div class="ov-card-body">
+          Learn the concepts, terminology, AWS best practices, and exam-oriented knowledge required to confidently prepare for the AWS Certified AI Practitioner (AIF-C01) certification.
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ 3. ROADMAP ══ -->
+<div class="roadmap-section">
+  <div class="wrap">
+    <div class="sec-lbl">Learning Roadmap</div>
+    <div class="roadmap">
+
+      <!-- Module 01 -->
+      <div class="rm-row">
+        <div class="rm-spine">
+          <div class="rm-dot b-orange">01</div>
+          <div class="rm-line"></div>
+        </div>
+        <div class="rm-card">
+          <div class="rm-card-hdr">
+            <div>
+              <div class="rm-num" style="color:var(--orange)">Module 01</div>
+              <div class="rm-title">Fundamentals of Machine Learning and Artificial Intelligence</div>
+              <div class="rm-desc">Learn the core concepts behind modern AI and Machine Learning.</div>
+            </div>
+            <div class="rm-meta">
+              <span class="badge b-orange">Foundations</span>
+            </div>
+            <div class="rm-ghost">01</div>
+          </div>
+          <div class="rm-card-footer">
+            <div class="rm-info">
+              <span><i class="fa-regular fa-clock"></i> 60 min</span>
+              <span><i class="fa-solid fa-list"></i> 6 sections</span>
+            </div>
+            <div class="rm-btns">
+              <a class="rm-btn rm-btn-rev"  href="./modules/01_claude-masterclass-reviewer.html"><i class="fa-solid fa-book-open"></i>Reviewer</a>
+              <a class="rm-btn rm-btn-quiz" href="./quizzes/01_claude-masterclass-quiz.html">    <i class="fa-solid fa-circle-question"></i>Quiz</a>
+              <a class="rm-btn rm-btn-rec"  href="./recalls/01_claude-masterclass-recall.html">  <i class="fa-solid fa-layer-group"></i>Recall</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Module 02 -->
+      <div class="rm-row">
+        <div class="rm-spine">
+          <div class="rm-dot b-sky">02</div>
+          <div class="rm-line"></div>
+        </div>
+        <div class="rm-card">
+          <div class="rm-card-hdr">
+            <div>
+              <div class="rm-num" style="color:var(--orange)">Module 02</div>
+              <div class="rm-title">Exploring Artificial Intelligence Use Cases and Applications</div>
+              <div class="rm-desc">Discover how AI solves real-world problems across industries.</div>
+            </div>
+            <div class="rm-meta">
+              <span class="badge b-green">Applications</span>
+            </div>
+            <div class="rm-ghost">02</div>
+          </div>
+          <div class="rm-card-footer">
+            <div class="rm-info">
+              <span><i class="fa-regular fa-clock"></i> TBD</span>
+              <span><i class="fa-solid fa-list"></i> —</span>
+            </div>
+            <div class="rm-btns">
+              <a class="rm-btn rm-btn-rev"  href="#" style="opacity:0.35;pointer-events:none"><i class="fa-solid fa-book-open"></i>Reviewer</a>
+              <a class="rm-btn rm-btn-quiz" href="#" style="opacity:0.35;pointer-events:none"><i class="fa-solid fa-circle-question"></i>Quiz</a>
+              <a class="rm-btn rm-btn-rec"  href="#" style="opacity:0.35;pointer-events:none"><i class="fa-solid fa-layer-group"></i>Recall</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Module 03 -->
+      <div class="rm-row">
+        <div class="rm-spine">
+          <div class="rm-dot b-cyan">03</div>
+          <div class="rm-line"></div>
+        </div>
+        <div class="rm-card">
+          <div class="rm-card-hdr">
+            <div>
+              <div class="rm-num" style="color:var(--orange)">Module 03</div>
+              <div class="rm-title">Responsible Artificial Intelligence Practices</div>
+              <div class="rm-desc">Understand ethical, fair, transparent, and trustworthy AI development.</div>
+            </div>
+            <div class="rm-meta">
+              <span class="badge b-purple">Principles</span>
+            </div>
+            <div class="rm-ghost">03</div>
+          </div>
+          <div class="rm-card-footer">
+            <div class="rm-info">
+              <span><i class="fa-regular fa-clock"></i> TBD</span>
+              <span><i class="fa-solid fa-list"></i> —</span>
+            </div>
+            <div class="rm-btns">
+              <a class="rm-btn rm-btn-rev"  href="#" style="opacity:0.35;pointer-events:none"><i class="fa-solid fa-book-open"></i>Reviewer</a>
+              <a class="rm-btn rm-btn-quiz" href="#" style="opacity:0.35;pointer-events:none"><i class="fa-solid fa-circle-question"></i>Quiz</a>
+              <a class="rm-btn rm-btn-rec"  href="#" style="opacity:0.35;pointer-events:none"><i class="fa-solid fa-layer-group"></i>Recall</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Module 04 -->
+      <div class="rm-row">
+        <div class="rm-spine">
+          <div class="rm-dot b-purple">04</div>
+          <div class="rm-line"></div>
+        </div>
+        <div class="rm-card">
+          <div class="rm-card-hdr">
+            <div>
+              <div class="rm-num" style="color:var(--orange)">Module 04</div>
+              <div class="rm-title">Developing Machine Learning Solutions</div>
+              <div class="rm-desc">Build and deploy machine learning solutions from end to end.</div>
+            </div>
+            <div class="rm-meta">
+              <span class="badge b-cyan">Implementation</span>
+            </div>
+            <div class="rm-ghost">04</div>
+          </div>
+          <div class="rm-card-footer">
+            <div class="rm-info">
+              <span><i class="fa-regular fa-clock"></i> TBD</span>
+              <span><i class="fa-solid fa-list"></i> —</span>
+            </div>
+            <div class="rm-btns">
+              <a class="rm-btn rm-btn-rev"  href="#" style="opacity:0.35;pointer-events:none"><i class="fa-solid fa-book-open"></i>Reviewer</a>
+              <a class="rm-btn rm-btn-quiz" href="#" style="opacity:0.35;pointer-events:none"><i class="fa-solid fa-circle-question"></i>Quiz</a>
+              <a class="rm-btn rm-btn-rec"  href="#" style="opacity:0.35;pointer-events:none"><i class="fa-solid fa-layer-group"></i>Recall</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Module 05 -->
+      <div class="rm-row">
+        <div class="rm-spine">
+          <div class="rm-dot b-green">05</div>
+          <div class="rm-line"></div>
+        </div>
+        <div class="rm-card">
+          <div class="rm-card-hdr">
+            <div>
+              <div class="rm-num" style="color:var(--orange)">Module 05</div>
+              <div class="rm-title">Developing Generative AI Solutions</div>
+              <div class="rm-desc">Create Generative AI applications using modern development techniques.</div>
+            </div>
+            <div class="rm-meta">
+              <span class="badge b-cyan">Implementation</span>
+            </div>
+            <div class="rm-ghost">05</div>
+          </div>
+          <div class="rm-card-footer">
+            <div class="rm-info">
+              <span><i class="fa-regular fa-clock"></i> TBD</span>
+              <span><i class="fa-solid fa-list"></i> —</span>
+            </div>
+            <div class="rm-btns">
+              <a class="rm-btn rm-btn-rev"  href="#" style="opacity:0.35;pointer-events:none"><i class="fa-solid fa-book-open"></i>Reviewer</a>
+              <a class="rm-btn rm-btn-quiz" href="#" style="opacity:0.35;pointer-events:none"><i class="fa-solid fa-circle-question"></i>Quiz</a>
+              <a class="rm-btn rm-btn-rec"  href="#" style="opacity:0.35;pointer-events:none"><i class="fa-solid fa-layer-group"></i>Recall</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Module 06 -->
+      <div class="rm-row">
+        <div class="rm-spine">
+          <div class="rm-dot b-amber">06</div>
+          <div class="rm-line"></div>
+        </div>
+        <div class="rm-card">
+          <div class="rm-card-hdr">
+            <div>
+              <div class="rm-num" style="color:var(--orange)">Module 06</div>
+              <div class="rm-title">Optimizing Foundation Models</div>
+              <div class="rm-desc">Improve foundation models for better performance and efficiency.</div>
+            </div>
+            <div class="rm-meta">
+              <span class="badge b-amber">Optimization</span>
+            </div>
+            <div class="rm-ghost">06</div>
+          </div>
+          <div class="rm-card-footer">
+            <div class="rm-info">
+              <span><i class="fa-regular fa-clock"></i> TBD</span>
+              <span><i class="fa-solid fa-list"></i> —</span>
+            </div>
+            <div class="rm-btns">
+              <a class="rm-btn rm-btn-rev"  href="#" style="opacity:0.35;pointer-events:none"><i class="fa-solid fa-book-open"></i>Reviewer</a>
+              <a class="rm-btn rm-btn-quiz" href="#" style="opacity:0.35;pointer-events:none"><i class="fa-solid fa-circle-question"></i>Quiz</a>
+              <a class="rm-btn rm-btn-rec"  href="#" style="opacity:0.35;pointer-events:none"><i class="fa-solid fa-layer-group"></i>Recall</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Module 07 -->
+      <div class="rm-row">
+        <div class="rm-spine">
+          <div class="rm-dot b-orange">07</div>
+          <div class="rm-line"></div>
+        </div>
+        <div class="rm-card">
+        <div class="rm-card-hdr">
+          <div>
+            <div class="rm-num" style="color:var(--orange)">Module 07</div>
+            <div class="rm-title">Security, Compliance, and Governance for AI Solutions</div>
+            <div class="rm-desc">Apply security, governance, and compliance throughout the AI lifecycle.</div>
+          </div>
+          <div class="rm-meta">
+            <span class="badge b-salmon">Best Practices</span>
+          </div>
+          <div class="rm-ghost">07</div>
+        </div>
+          <div class="rm-card-footer">
+            <div class="rm-info">
+              <span><i class="fa-regular fa-clock"></i> 60 min</span>
+              <span><i class="fa-solid fa-list"></i> 6 sections</span>
+            </div>
+            <div class="rm-btns">
+              <a class="rm-btn rm-btn-rev"  href="./modules/01_claude-masterclass-reviewer.html"><i class="fa-solid fa-book-open"></i>Reviewer</a>
+              <a class="rm-btn rm-btn-quiz" href="./quizzes/01_claude-masterclass-quiz.html">    <i class="fa-solid fa-circle-question"></i>Quiz</a>
+              <a class="rm-btn rm-btn-rec"  href="./recalls/01_claude-masterclass-recall.html">  <i class="fa-solid fa-layer-group"></i>Recall</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Module 08 -->
+      <div class="rm-row">
+        <div class="rm-spine">
+          <div class="rm-dot b-sky">08</div>
+          <div class="rm-line"></div>
+        </div>
+        <div class="rm-card">
+          <div class="rm-card-hdr">
+            <div>
+              <div class="rm-num" style="color:var(--orange)">Module 08</div>
+              <div class="rm-title">Essentials of Prompt Engineering</div>
+              <div class="rm-desc">Write effective prompts for consistent and high-quality AI outputs.</div>
+            </div>
+            <div class="rm-meta">
+              <span class="badge b-purple">Mastery</span>
+            </div>
+            <div class="rm-ghost">08</div>
+          </div>
+          <div class="rm-card-footer">
+            <div class="rm-info">
+              <span><i class="fa-regular fa-clock"></i> TBD</span>
+              <span><i class="fa-solid fa-list"></i> —</span>
+            </div>
+            <div class="rm-btns">
+              <a class="rm-btn rm-btn-rev"  href="#" style="opacity:0.35;pointer-events:none"><i class="fa-solid fa-book-open"></i>Reviewer</a>
+              <a class="rm-btn rm-btn-quiz" href="#" style="opacity:0.35;pointer-events:none"><i class="fa-solid fa-circle-question"></i>Quiz</a>
+              <a class="rm-btn rm-btn-rec"  href="#" style="opacity:0.35;pointer-events:none"><i class="fa-solid fa-layer-group"></i>Recall</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Module 09 -->
+      <div class="rm-row">
+        <div class="rm-spine">
+          <div class="rm-dot b-cyan">09</div>
+          <div class="rm-line"></div>
+        </div>
+        <div class="rm-card">
+          <div class="rm-card-hdr">
+            <div>
+              <div class="rm-num" style="color:var(--orange)">Module 09</div>
+              <div class="rm-title">From Theory to Practice with PartyRock</div>
+              <div class="rm-desc">Build practical AI projects and reinforce your learning with PartyRock.</div>
+            </div>
+            <div class="rm-meta">
+              <span class="badge b-purple">Capstone</span>
+            </div>
+            <div class="rm-ghost">09</div>
+          </div>
+          <div class="rm-card-footer">
+            <div class="rm-info">
+              <span><i class="fa-regular fa-clock"></i> TBD</span>
+              <span><i class="fa-solid fa-list"></i> —</span>
+            </div>
+            <div class="rm-btns">
+              <a class="rm-btn rm-btn-rev"  href="#" style="opacity:0.35;pointer-events:none"><i class="fa-solid fa-book-open"></i>Reviewer</a>
+              <a class="rm-btn rm-btn-quiz" href="#" style="opacity:0.35;pointer-events:none"><i class="fa-solid fa-circle-question"></i>Quiz</a>
+              <a class="rm-btn rm-btn-rec"  href="#" style="opacity:0.35;pointer-events:none"><i class="fa-solid fa-layer-group"></i>Recall</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /roadmap -->
+  </div>
+</div>
+
+<!-- ══ 4. RESOURCES ══ -->
+<div class="resources-section">
+  <div class="wrap">
+    <div class="sec-lbl">Resource Collections</div>
+    <div class="res-grid">
+      <div class="res-card">
+        <div class="res-icon" style="color:var(--orange)"><i class="fa-solid fa-book-open"></i></div>
+        <div class="res-title">Reviewer Collection</div>
+        <div class="res-sub">All 6 comprehensive reviewers · Compact · Tree views</div>
+        <a class="res-link" href="modules/00_modules.html">Browse reviewers <i class="fa-solid fa-arrow-right" style="font-size:9px"></i></a>
+      </div>
+      <div class="res-card">
+        <div class="res-icon" style="color:var(--cyan)"><i class="fa-solid fa-circle-question"></i></div>
+        <div class="res-title">Quiz Collection</div>
+        <div class="res-sub">Practice assessments for all modules</div>
+        <a class="res-link" href="quizzes/00_quizzes.html">Browse quizzes <i class="fa-solid fa-arrow-right" style="font-size:9px"></i></a>
+      </div>
+      <div class="res-card">
+        <div class="res-icon" style="color:var(--salmon)"><i class="fa-solid fa-layer-group"></i></div>
+        <div class="res-title">Recall Collection</div>
+        <div class="res-sub">Flip-card sets for active retrieval practice</div>
+        <a class="res-link" href="recalls/00_recalls.html">Browse cards <i class="fa-solid fa-arrow-right" style="font-size:9px"></i></a>
+      </div>
+      <div class="res-card">
+        <div class="res-icon" style="color:var(--purple)"><i class="fa-solid fa-download"></i></div>
+        <div class="res-title">Downloads</div>
+        <div class="res-sub">Export-ready Markdown and PDF versions</div>
+        <a class="res-link" href="#" style="opacity:0.35;pointer-events:none">Browse downloads <i class="fa-solid fa-arrow-right" style="font-size:9px"></i></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 5. FOOTER ══ -->
+<div class="wrap">
+  <footer>
+    <span class="footer-left">Claude MasterClass · V1.0</span>
+    <span class="footer-right">Synaptix Runtime v1.0.0</span>
+  </footer>
+</div>
+
+</body>
+</html>
