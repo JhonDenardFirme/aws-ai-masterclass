@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Synaptix — Recall · M1 · 30 Cards · Hard</title>
+<style>
+/* synaptix-runtime v1.0 — do not edit inline — update via runtime-asset.md */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg-base:    #0e0e11;
+  --bg-surface: #16161a;
+  --bg-elevated:#1c1c21;
+  --bg-section: #1a1a1f;
+  --code-bg:    #0c0c0f;
+  --border:    rgba(255,255,255,0.07);
+  --border-hi: rgba(255,255,255,0.12);
+  --orange: #f4762a;
+  --salmon: #f08080;
+  --cyan:   #4ecdc4;
+  --green:  #4ade80;
+  --yellow: #f4d03f;
+  --purple: #c084fc;
+  --sky:    #5db8f2;
+  --amber:  #f4b942;
+  --red:    #f87171;
+  --orange-dim:  rgba(244,118,42,0.10);
+  --orange-glow: rgba(244,118,42,0.05);
+  --cyan-dim:    rgba(78,205,196,0.10);
+  --salmon-dim:  rgba(240,128,128,0.10);
+  --yellow-dim:  rgba(244,208,63,0.10);
+  --green-dim:   rgba(74,222,128,0.10);
+  --purple-dim:  rgba(192,132,252,0.10);
+  --sky-dim:     rgba(93,184,242,0.10);
+  --text-primary:   #e8e8ee;
+  --text-secondary: #8b8b9a;
+  --text-muted:     #4a4a5a;
+  --mono:'JetBrains Mono',monospace;
+  --sans:'Inter',system-ui,sans-serif;
+}
+
+body{background:var(--bg-base);color:var(--text-primary);font-family:var(--sans);font-size:13px;line-height:1.8;min-height:100vh;}
+
+/* ── Header ── */
+.rc-header{
+  background:var(--bg-surface);
+  border-bottom:1px solid var(--border);
+  padding:16px 22px 13px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+}
+.rc-header-left{}
+.badges{display:flex;gap:7px;margin-bottom:8px;flex-wrap:wrap}
+.badge{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:0.07em;text-transform:uppercase;padding:3px 8px;border-radius:4px;border:1px solid;}
+.badge-recall{color:var(--cyan);background:var(--cyan-dim);border-color:rgba(78,205,196,0.25)}
+.badge-mod{color:var(--sky);background:var(--sky-dim);border-color:rgba(93,184,242,0.25)}
+.badge-hard{color:var(--salmon);background:var(--salmon-dim);border-color:rgba(240,128,128,0.25)}
+.rc-title{font-size:15px;font-weight:600;letter-spacing:-0.01em}
+.rc-sub{font-size:11px;font-family:var(--mono);color:var(--text-muted);margin-top:3px}
+
+/* Progress bar */
+.rc-progress-wrap{width:200px}
+.rc-progress-label{font-family:var(--mono);font-size:10px;color:var(--text-muted);margin-bottom:5px;display:flex;justify-content:space-between;}
+.rc-progress-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.rc-progress-fill{height:100%;background:var(--cyan);border-radius:2px;transition:width 0.3s ease;width:3.33%}
+
+/* ── Main card area ── */
+.rc-wrap{max-width:560px;margin:32px auto;padding:0 20px}
+
+.fc-progress{
+  font-family:var(--mono);font-size:11px;color:var(--text-muted);
+  text-align:center;margin-bottom:14px;letter-spacing:0.05em;
+}
+
+/* Card type label */
+.card-type-label{
+  font-family:var(--mono);font-size:10px;font-weight:600;
+  text-transform:uppercase;letter-spacing:0.08em;
+  text-align:center;margin-bottom:8px;
+}
+.ctl-term{color:var(--orange)}
+.ctl-question{color:var(--purple)}
+
+/* Flip card */
+.fc-scene{perspective:1000px;height:260px;margin-bottom:16px}
+.fc-card{
+  width:100%;height:100%;position:relative;
+  transform-style:preserve-3d;transition:transform 0.35s ease;
+}
+.fc-card.flipped{transform:rotateY(180deg)}
+.fc-face{
+  position:absolute;inset:0;backface-visibility:hidden;
+  background:var(--bg-section);border:1px solid var(--border);
+  border-radius:12px;padding:28px 24px;
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;
+}
+.fc-face.fc-back-face{transform:rotateY(180deg);background:var(--bg-elevated);border-color:var(--border-hi)}
+.fc-front-text{font-size:14px;color:var(--text-primary);line-height:1.75;font-weight:500}
+.fc-back-text{font-size:14px;color:var(--text-primary);line-height:1.75;font-weight:600}
+.fc-back-sub{font-size:12px;color:var(--text-secondary);line-height:1.6;font-weight:400;margin-top:8px}
+.fc-ref{
+  font-family:var(--mono);font-size:10px;color:var(--text-muted);
+  margin-top:14px;letter-spacing:0.05em;
+}
+.fc-enrich{
+  font-family:var(--mono);font-size:9px;font-weight:600;
+  color:var(--green);background:var(--green-dim);
+  border:1px solid rgba(74,222,128,0.2);
+  padding:1px 4px;border-radius:3px;
+  margin-left:4px;vertical-align:middle;
+}
+
+/* Face label */
+.face-label{
+  font-family:var(--mono);font-size:9px;font-weight:600;
+  text-transform:uppercase;letter-spacing:0.1em;
+  position:absolute;top:12px;left:14px;color:var(--text-muted);
+}
+.face-label-back{color:var(--cyan)}
+
+/* Flip button */
+.fc-flip-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;height:46px;border-radius:10px;
+  background:var(--orange-dim);border:1px solid rgba(244,118,42,0.3);
+  color:var(--orange);font-family:var(--mono);font-size:12px;
+  font-weight:500;cursor:pointer;transition:background 0.15s;
+  margin-bottom:10px;
+}
+.fc-flip-btn:hover{background:rgba(244,118,42,0.18)}
+
+/* Got it / Missed it */
+.fc-actions{display:none;gap:10px;margin-bottom:10px}
+.fc-btn{
+  flex:1;height:46px;border-radius:10px;
+  font-family:var(--mono);font-size:12px;font-weight:500;
+  cursor:pointer;border:1px solid;transition:background 0.15s;
+}
+.fc-btn-got   {color:var(--green); background:var(--green-dim); border-color:rgba(74,222,128,0.3)}
+.fc-btn-missed{color:var(--salmon);background:var(--salmon-dim);border-color:rgba(240,128,128,0.3)}
+.fc-btn-got:hover   {background:rgba(74,222,128,0.18)}
+.fc-btn-missed:hover{background:rgba(240,128,128,0.18)}
+
+/* Nav */
+.fc-nav{display:flex;gap:8px;margin-top:4px}
+.fc-nav-btn{
+  flex:1;height:36px;border-radius:8px;
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  color:var(--text-secondary);font-family:var(--mono);font-size:11px;
+  cursor:pointer;transition:background 0.15s;
+}
+.fc-nav-btn:hover{background:rgba(255,255,255,0.08)}
+
+/* Score strip */
+.score-strip{
+  display:flex;justify-content:center;gap:20px;
+  margin-top:14px;padding:10px 16px;
+  background:var(--bg-surface);border:1px solid var(--border);
+  border-radius:8px;
+}
+.ss-item{text-align:center}
+.ss-val{font-family:var(--mono);font-size:16px;font-weight:600}
+.ss-lbl{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-top:2px}
+.ss-got{color:var(--green)}
+.ss-missed{color:var(--salmon)}
+.ss-remain{color:var(--text-secondary)}
+
+/* Section divider between term/question halves */
+.deck-divider{
+  display:flex;align-items:center;gap:10px;
+  margin:0 0 14px;
+}
+.dd-label{font-family:var(--mono);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);white-space:nowrap}
+.dd-line{flex:1;height:1px;background:var(--border)}
+
+/* Summary screen */
+.fc-summary{
+  background:var(--bg-section);border:1px solid var(--border);
+  border-radius:12px;padding:32px 24px;text-align:center;
+}
+.fc-sum-title{font-size:16px;font-weight:600;margin-bottom:18px;color:var(--text-primary)}
+.fc-sum-score{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--cyan);letter-spacing:-0.02em;margin-bottom:6px}
+.fc-sum-detail{font-size:13px;color:var(--text-secondary);margin-bottom:16px}
+.fc-sum-rows{display:flex;flex-direction:column;gap:6px;margin-bottom:20px}
+.fc-sum-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 12px;background:var(--bg-elevated);border:1px solid var(--border);
+  border-radius:7px;font-size:13px;
+}
+.fc-sum-row-lbl{color:var(--text-secondary)}
+.fc-sum-row-val{font-family:var(--mono);font-weight:600}
+.fc-sum-val-g{color:var(--green)}
+.fc-sum-val-m{color:var(--salmon)}
+.fc-sum-review{
+  background:rgba(244,208,63,0.05);border:1px solid rgba(244,208,63,0.15);
+  border-radius:7px;padding:10px 14px;font-size:12px;color:var(--yellow);
+  margin-bottom:16px;text-align:left;
+}
+.fc-sum-review-lbl{font-family:var(--mono);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:5px}
+.fc-sum-restart{
+  width:100%;height:46px;border-radius:10px;
+  background:var(--cyan-dim);border:1px solid rgba(78,205,196,0.3);
+  color:var(--cyan);font-family:var(--mono);font-size:12px;font-weight:500;
+  cursor:pointer;transition:background 0.15s;
+}
+.fc-sum-restart:hover{background:rgba(78,205,196,0.18)}
+
+/* Footer */
+.rc-footer{
+  padding:12px 26px;border-top:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;
+  background:var(--bg-surface);flex-wrap:wrap;gap:10px;
+  margin-top:24px;
+}
+.footer-left{font-size:11px;color:var(--text-muted);font-family:var(--mono)}
+.footer-btns{display:flex;gap:10px}
+.footer-btn{display:flex;align-items:center;justify-content:center;gap:7px;font-family:var(--mono);font-size:11px;font-weight:500;width:128px;height:64px;border-radius:20px;border:1px solid;background:transparent;cursor:pointer;letter-spacing:0.03em;transition:all 0.15s;}
+.footer-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.btn-export{color:var(--salmon);border-color:rgba(240,128,128,0.35);background:var(--salmon-dim)}
+.btn-export:hover{background:rgba(240,128,128,0.15)}
+.btn-quiz{color:var(--orange);border-color:rgba(244,118,42,0.35);background:var(--orange-dim)}
+.btn-quiz:hover{background:rgba(244,118,42,0.18)}
+
+@media(max-width:560px){
+  .rc-wrap{padding:0 14px;margin:20px auto}
+  .rc-header{padding:14px 16px 11px}
+  .rc-progress-wrap{width:100%}
+  .fc-scene{height:240px}
+  .rc-footer{padding:12px 16px}
+  .footer-btn{width:100px;height:52px;font-size:10px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<div class="rc-header">
+  <div class="rc-header-left">
+    <div class="badges">
+      <span class="badge badge-recall">Recall</span>
+      <span class="badge badge-mod">Module 1</span>
+      <span class="badge badge-hard">Hard</span>
+    </div>
+    <div class="rc-title">Fundamentals of ML &amp; AI</div>
+    <div class="rc-sub">Mixed · 30 cards · 15 term + 15 question · AWS-AI MasterClass</div>
+  </div>
+  <div class="rc-progress-wrap">
+    <div class="rc-progress-label">
+      <span id="prog-label">Card 1 of 30</span>
+      <span id="prog-pct">3%</span>
+    </div>
+    <div class="rc-progress-bar"><div class="rc-progress-fill" id="prog-fill"></div></div>
+  </div>
+</div>
+
+<!-- ── CARD AREA ── -->
+<div class="rc-wrap">
+  <div class="fc-progress" id="fc-progress">Card 1 of 30</div>
+
+  <div id="card-type-label" class="card-type-label ctl-term">Term</div>
+
+  <div class="fc-scene">
+    <div class="fc-card" id="fc-card">
+      <div class="fc-face" id="fc-front-face">
+        <span class="face-label">Prompt</span>
+        <div class="fc-front-text" id="fc-front"></div>
+      </div>
+      <div class="fc-face fc-back-face" id="fc-back-face">
+        <span class="face-label face-label-back">Answer</span>
+        <div class="fc-back-text" id="fc-back-main"></div>
+        <div class="fc-back-sub" id="fc-back-sub"></div>
+        <div class="fc-ref" id="fc-ref"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="score-strip">
+    <div class="ss-item"><div class="ss-val ss-got" id="ss-got">0</div><div class="ss-lbl">Got It</div></div>
+    <div class="ss-item"><div class="ss-val ss-remain" id="ss-remain">30</div><div class="ss-lbl">Remaining</div></div>
+    <div class="ss-item"><div class="ss-val ss-missed" id="ss-missed">0</div><div class="ss-lbl">Missed</div></div>
+  </div>
+
+  <div style="margin-top:12px">
+    <button class="fc-flip-btn" id="fc-flip-btn" onclick="_fc.flip()">Flip Card ›</button>
+    <div class="fc-actions" id="fc-actions">
+      <button class="fc-btn fc-btn-got" onclick="_fc.mark(true)">Got it</button>
+      <button class="fc-btn fc-btn-missed" onclick="_fc.mark(false)">Missed it</button>
+    </div>
+    <div class="fc-nav">
+      <button class="fc-nav-btn" onclick="_fc.prev()">← Prev</button>
+      <button class="fc-nav-btn" onclick="_fc.next()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<div class="rc-footer">
+  <div class="footer-left">/recall mixed(30) hard · Module 1 · Synaptix v2.2</div>
+  <div class="footer-btns">
+    <button class="footer-btn btn-quiz" onclick="sendPrompt('/quiz mc(10) hard')">
+      <div class="footer-dot" style="background:var(--orange)"></div>Quiz
+    </button>
+    <button class="footer-btn btn-export" onclick="sendPrompt('/export -md')">
+      <div class="footer-dot" style="background:var(--salmon)"></div>Export
+    </button>
+  </div>
+</div>
+
+<script>
+function sendPrompt(text){
+  if(window.parent&&window.parent.postMessage){
+    window.parent.postMessage({type:'user_message',message:text},'*');
+  }
+}
+function exportMd(){sendPrompt('/export -md');}
+
+/* ─────────────────────────────────────────────
+   CARD DATA — 30 cards · mixed · hard
+   15 TERM (T) + 15 QUESTION (Q)
+   Sections: A1–A2, B1–B4, C1–C2, D1–D3, E1–E5, F1–F3, G1–G3, H1, I1
+───────────────────────────────────────────── */
+var CARDS = [
+  // ── TERM CARDS (1–15) ──
+  {
+    type:'term',
+    front:'Broad field enabling machines to simulate human-like intelligence — umbrella for all AI subfields.',
+    back:'Artificial Intelligence (AI)',
+    sub:'',
+    section:'A1'
+  },
+  {
+    type:'term',
+    front:'Subset of AI — systems learn patterns directly from data without hand-coded rules.',
+    back:'Machine Learning (ML)',
+    sub:'',
+    section:'A1'
+  },
+  {
+    type:'term',
+    front:'Subset of ML — uses layered artificial neural networks inspired by brain structure.',
+    back:'Deep Learning (DL)',
+    sub:'',
+    section:'A1'
+  },
+  {
+    type:'term',
+    front:'Subset of DL — creates new content (text, images, audio, code) from learned patterns.',
+    back:'Generative AI',
+    sub:'Critical distinction: creates, not analyzes.',
+    section:'A1'
+  },
+  {
+    type:'term',
+    front:'Data with correct answers attached to each example — required for supervised learning.',
+    back:'Labeled Data',
+    sub:'Expensive to produce at scale.',
+    section:'B2'
+  },
+  {
+    type:'term',
+    front:'Making predictions on new data using a trained model — the production phase of ML.',
+    back:'Inference',
+    sub:'Training is the lab; inference is production.',
+    section:'B4'
+  },
+  {
+    type:'term',
+    front:'Processes large datasets all at once; not time-sensitive; lower cost per prediction.',
+    back:'Batch Inference',
+    sub:'vs. Real-Time: higher latency, lower cost.',
+    section:'B4'
+  },
+  {
+    type:'term',
+    front:'Large models pretrained on internet-scale unlabeled data — general-purpose, multi-task capable.',
+    back:'Foundation Models (FMs)',
+    sub:'Starting point for new AI projects. Amazon Bedrock provides access.',
+    section:'D2'
+  },
+  {
+    type:'term',
+    front:'Smallest processing unit in an LLM — words, subwords, punctuation, or spaces.',
+    back:'Token',
+    sub:'Standardizes input data across all text.',
+    section:'E1'
+  },
+  {
+    type:'term',
+    front:'Numerical vector representation of a token — semantically similar words produce vectors that are close together.',
+    back:'Embedding',
+    sub:'"cat," "feline," "kitten" → nearby in vector space.',
+    section:'E1'
+  },
+  {
+    type:'term',
+    front:'Retrieves external documents at inference time and injects them into the prompt — no weight modification.',
+    back:'RAG (Retrieval-Augmented Generation)',
+    sub:'Operates at inference time only. Does NOT change model weights.',
+    section:'F3'
+  },
+  {
+    type:'term',
+    front:'AWS managed service providing access to Foundation Models from Anthropic, Meta, Mistral, and Amazon via a single API.',
+    back:'Amazon Bedrock',
+    sub:'No infrastructure management required.',
+    section:'G3'
+  },
+  {
+    type:'term',
+    front:'AWS service for image and video analysis — object detection, facial analysis, content moderation.',
+    back:'Amazon Rekognition',
+    sub:'Core Computer Vision service on AWS.',
+    section:'G2'
+  },
+  {
+    type:'term',
+    front:'AWS service for chatbot and voice interfaces — uses ASR + NLU to understand commands and intent.',
+    back:'Amazon Lex',
+    sub:'Distinct from Transcribe: Lex understands intent, Transcribe only converts speech to text.',
+    section:'G2'
+  },
+  {
+    type:'term',
+    front:'AWS AI billing model — pay per input/output token consumed; scales directly with usage volume.',
+    back:'Token-based Pricing',
+    sub:'Default Bedrock FM billing. Alternative: Provisioned Throughput.',
+    section:'I1'
+  },
+
+  // ── QUESTION CARDS (16–30) ──
+  {
+    type:'question',
+    front:'What is the correct nesting order of AI, ML, Deep Learning, and Generative AI?',
+    back:'AI ⊃ ML ⊃ Deep Learning ⊃ Generative AI',
+    sub:'Each is a proper subset of the one above — not alternatives or competing approaches.',
+    section:'A2'
+  },
+  {
+    type:'question',
+    front:'What does "garbage in, garbage out" mean in the context of ML?',
+    back:'Model quality is bounded by data quality.',
+    sub:'A sophisticated algorithm applied to poor data still produces poor results.',
+    section:'B1'
+  },
+  {
+    type:'question',
+    front:'What are the five stages of the ML pipeline in order?',
+    back:'Data Collection → Data Preparation → Training → Evaluation → Iteration',
+    sub:'Iterative — poor evaluation results loop back to earlier stages.',
+    section:'B1'
+  },
+  {
+    type:'question',
+    front:'Which learning type uses reward and penalty signals from an environment — no labeled data required?',
+    back:'Reinforcement Learning',
+    sub:'Agent learns a policy that maximizes cumulative reward. AWS example: DeepRacer.',
+    section:'B3'
+  },
+  {
+    type:'question',
+    front:'What is the key difference between supervised and unsupervised learning?',
+    back:'Supervised uses labeled data to predict known outputs. Unsupervised finds hidden structure in unlabeled data.',
+    sub:'Supervised → classification/regression. Unsupervised → clustering/anomaly detection.',
+    section:'B3'
+  },
+  {
+    type:'question',
+    front:'What are the three layers of a neural network and the role of each?',
+    back:'Input layer (receives data) · Hidden layers (learn abstract representations) · Output layer (produces final result)',
+    sub:'"Deep" refers to the number of hidden layers, not conceptual depth.',
+    section:'C1'
+  },
+  {
+    type:'question',
+    front:'What learning method do Foundation Models use during pretraining — and why does it matter?',
+    back:'Self-supervised learning — the data\'s own structure generates the training signal, so no human labeling is needed.',
+    sub:'This is what makes internet-scale training feasible.',
+    section:'D3'
+  },
+  {
+    type:'question',
+    front:'What is Continuous Pre-Training in the FM lifecycle?',
+    back:'Continuing pretraining on additional domain data to expand the model\'s knowledge base beyond the original training set.',
+    sub:'Does not require labeled data — still self-supervised.',
+    section:'D3'
+  },
+  {
+    type:'question',
+    front:'How do Forward Diffusion and Reverse Diffusion differ in a diffusion model?',
+    back:'Forward Diffusion (training): gradually add noise to clean data until it becomes pure noise. Reverse Diffusion (inference): iteratively remove noise from randomness to generate a coherent output.',
+    sub:'Forward = destroy. Reverse = create.',
+    section:'E2'
+  },
+  {
+    type:'question',
+    front:'In a GAN, what are the roles of the Generator and Discriminator?',
+    back:'Generator creates synthetic/fake data. Discriminator classifies real vs. fake. Both improve through adversarial competition.',
+    sub:'Training converges when the Generator produces fakes indistinguishable from real data.',
+    section:'E4'
+  },
+  {
+    type:'question',
+    front:'What are the four components of a well-structured prompt in prompt engineering?',
+    back:'Instruction (define the task) · Context (background info) · Input Data (content to act on) · Output Indicator (format/constraints)',
+    sub:'No model weight changes — prompt engineering operates through inputs only.',
+    section:'F1'
+  },
+  {
+    type:'question',
+    front:'What is the critical difference between RAG and Fine-Tuning?',
+    back:'RAG does NOT modify model weights — it injects external context at inference time. Fine-Tuning modifies weights using a smaller domain-specific dataset.',
+    sub:'RAG = inputs change. Fine-Tuning = model changes.',
+    section:'F3'
+  },
+  {
+    type:'question',
+    front:'What are the three layers of the AWS AI/ML infrastructure stack?',
+    back:'ML Frameworks (SageMaker — build/train/deploy custom models) · AI/ML Services (pre-built task-specific APIs) · Generative AI (Bedrock, Amazon Q, JumpStart)',
+    sub:'Each targets a different level of abstraction and user type.',
+    section:'G1'
+  },
+  {
+    type:'question',
+    front:'What is the difference between Amazon Transcribe and Amazon Polly?',
+    back:'Transcribe converts speech to text (ASR). Polly converts text to speech (TTS).',
+    sub:'Opposite directions of the same audio-language problem.',
+    section:'G2'
+  },
+  {
+    type:'question',
+    front:'What is the trade-off between Token-based Pricing and Provisioned Throughput on AWS?',
+    back:'Token-based = pay-per-use, scales with volume, no commitment. Provisioned Throughput = reserved capacity upfront, higher fixed cost but lower per-request cost at high sustained volume.',
+    sub:'Choose Provisioned Throughput when workload is consistent and high-volume.',
+    section:'I1'
+  }
+];
+
+/* ─────────────────────────────────────────────
+   ENGINE
+───────────────────────────────────────────── */
+var _fc = {
+  idx: 0,
+  got: 0,
+  missed: 0,
+  results: {},
+
+  init: function(){
+    this.idx = 0; this.got = 0; this.missed = 0; this.results = {};
+    this.render();
+  },
+
+  render: function(){
+    var c = CARDS[this.idx];
+    if(!c){ this.summary(); return; }
+
+    // Progress
+    var n = this.idx + 1;
+    var total = CARDS.length;
+    document.getElementById('fc-progress').textContent = 'Card ' + n + ' of ' + total;
+    document.getElementById('prog-label').textContent = 'Card ' + n + ' of ' + total;
+    var pct = Math.round((n / total) * 100);
+    document.getElementById('prog-pct').textContent = pct + '%';
+    document.getElementById('prog-fill').style.width = pct + '%';
+
+    // Card type label
+    var lbl = document.getElementById('card-type-label');
+    lbl.textContent = c.type === 'term' ? 'Term' : 'Question';
+    lbl.className = 'card-type-label ' + (c.type === 'term' ? 'ctl-term' : 'ctl-question');
+
+    // Front / back
+    document.getElementById('fc-front').textContent = c.front;
+    document.getElementById('fc-back-main').textContent = c.back;
+    document.getElementById('fc-back-sub').textContent = c.sub || '';
+    document.getElementById('fc-back-sub').style.display = c.sub ? 'block' : 'none';
+    document.getElementById('fc-ref').textContent = c.section + ' · Module 1';
+
+    // Reset flip state
+    document.getElementById('fc-card').classList.remove('flipped');
+    document.getElementById('fc-flip-btn').style.display = 'flex';
+    document.getElementById('fc-actions').style.display = 'none';
+
+    // Scores
+    document.getElementById('ss-got').textContent = this.got;
+    document.getElementById('ss-missed').textContent = this.missed;
+    document.getElementById('ss-remain').textContent = total - this.got - this.missed;
+  },
+
+  flip: function(){
+    document.getElementById('fc-card').classList.add('flipped');
+    document.getElementById('fc-flip-btn').style.display = 'none';
+    document.getElementById('fc-actions').style.display = 'flex';
+  },
+
+  mark: function(correct){
+    this.results[this.idx] = correct;
+    if(correct) this.got++; else this.missed++;
+    this.idx++;
+    if(this.idx >= CARDS.length){ this.summary(); return; }
+    this.render();
+  },
+
+  next: function(){
+    if(this.idx < CARDS.length - 1){ this.idx++; this.render(); }
+  },
+
+  prev: function(){
+    if(this.idx > 0){ this.idx--; this.render(); }
+  },
+
+  summary: function(){
+    var total = CARDS.length;
+    var pct = total > 0 ? Math.round((this.got / total) * 100) : 0;
+
+    // Collect missed sections
+    var missedSections = [];
+    for(var i in this.results){
+      if(!this.results[i]){
+        var s = CARDS[i].section;
+        if(missedSections.indexOf(s) === -1) missedSections.push(s);
+      }
+    }
+    missedSections.sort();
+
+    var reviewHtml = '';
+    if(missedSections.length > 0){
+      reviewHtml = '<div class="fc-sum-review"><div class="fc-sum-review-lbl">Sections to Review</div>' + missedSections.join(' · ') + '</div>';
+    }
+
+    var wrapHtml = '<div class="fc-summary">' +
+      '<div class="fc-sum-title">Session Complete — ' + total + ' cards</div>' +
+      '<div class="fc-sum-score">' + pct + '%</div>' +
+      '<div class="fc-sum-detail">' + this.got + ' got it · ' + this.missed + ' missed</div>' +
+      '<div class="fc-sum-rows">' +
+        '<div class="fc-sum-row"><span class="fc-sum-row-lbl">Got it</span><span class="fc-sum-row-val fc-sum-val-g">' + this.got + ' / ' + total + '</span></div>' +
+        '<div class="fc-sum-row"><span class="fc-sum-row-lbl">Missed it</span><span class="fc-sum-row-val fc-sum-val-m">' + this.missed + ' / ' + total + '</span></div>' +
+      '</div>' +
+      reviewHtml +
+      '<button class="fc-sum-restart" onclick="_fc.restart()">Restart Session</button>' +
+    '</div>';
+
+    // Replace card area content
+    document.getElementById('fc-progress').style.display = 'none';
+    document.getElementById('card-type-label').style.display = 'none';
+    document.querySelector('.fc-scene').innerHTML = wrapHtml;
+    document.querySelector('.score-strip').style.display = 'none';
+    document.getElementById('fc-flip-btn').style.display = 'none';
+    document.getElementById('fc-actions').style.display = 'none';
+    document.querySelector('.fc-nav').style.display = 'none';
+
+    // Update header progress to 100%
+    document.getElementById('prog-label').textContent = 'Complete';
+    document.getElementById('prog-pct').textContent = '100%';
+    document.getElementById('prog-fill').style.width = '100%';
+  },
+
+  restart: function(){
+    // Rebuild scene
+    document.querySelector('.fc-scene').innerHTML =
+      '<div class="fc-card" id="fc-card">' +
+        '<div class="fc-face" id="fc-front-face">' +
+          '<span class="face-label">Prompt</span>' +
+          '<div class="fc-front-text" id="fc-front"></div>' +
+        '</div>' +
+        '<div class="fc-face fc-back-face" id="fc-back-face">' +
+          '<span class="face-label face-label-back">Answer</span>' +
+          '<div class="fc-back-text" id="fc-back-main"></div>' +
+          '<div class="fc-back-sub" id="fc-back-sub"></div>' +
+          '<div class="fc-ref" id="fc-ref"></div>' +
+        '</div>' +
+      '</div>';
+    document.getElementById('fc-progress').style.display = 'block';
+    document.getElementById('card-type-label').style.display = 'block';
+    document.querySelector('.score-strip').style.display = 'flex';
+    document.getElementById('fc-flip-btn').style.display = 'flex';
+    document.querySelector('.fc-nav').style.display = 'flex';
+    this.init();
+  }
+};
+
+// Boot
+_fc.init();
+</script>
+</body>
+</html>

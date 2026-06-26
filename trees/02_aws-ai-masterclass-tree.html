@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Synaptix — M2 Tree: AI Use Cases and Applications</title>
+<style>
+/* synaptix-runtime v1.0 — do not edit inline — update via runtime-asset.md */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg-base:#0e0e11;--bg-surface:#16161a;--bg-elevated:#1c1c21;--bg-section:#1a1a1f;
+  --border:rgba(255,255,255,0.07);--border-hi:rgba(255,255,255,0.12);
+  --orange:#f4762a;--salmon:#f08080;--cyan:#4ecdc4;--green:#4ade80;
+  --yellow:#f4d03f;--purple:#c084fc;--sky:#5db8f2;--amber:#f4b942;
+  --orange-dim:rgba(244,118,42,0.10);--orange-glow:rgba(244,118,42,0.05);
+  --cyan-dim:rgba(78,205,196,0.10);--salmon-dim:rgba(240,128,128,0.10);
+  --yellow-dim:rgba(244,208,63,0.10);--green-dim:rgba(74,222,128,0.10);
+  --purple-dim:rgba(192,132,252,0.10);--sky-dim:rgba(93,184,242,0.10);
+  --text-primary:#e8e8ee;--text-secondary:#8b8b9a;--text-muted:#4a4a5a;
+  --mono:'JetBrains Mono',monospace;--sans:'Inter',system-ui,sans-serif;
+}
+body{background:var(--bg-base);color:var(--text-primary);font-family:var(--sans);font-size:13px;line-height:1.8;}
+
+.doc-wrap{max-width:860px;margin:0 auto;display:flex;flex-direction:column;}
+
+.doc-header{padding:22px 26px 16px;border-bottom:1px solid var(--border);background:var(--bg-surface);}
+.badges{display:flex;gap:8px;margin-bottom:11px;flex-wrap:wrap}
+.badge{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:0.07em;text-transform:uppercase;padding:3px 8px;border-radius:4px;border:1px solid;}
+.badge-type{color:var(--orange);background:var(--orange-dim);border-color:rgba(244,118,42,0.25)}
+.badge-mod{color:var(--sky);background:var(--sky-dim);border-color:rgba(93,184,242,0.25)}
+.badge-tree{color:var(--purple);background:var(--purple-dim);border-color:rgba(192,132,252,0.25)}
+.doc-title{font-size:20px;font-weight:600;letter-spacing:-0.02em}
+.doc-subtitle{font-size:11px;font-family:var(--mono);color:var(--text-muted);margin-top:4px}
+.stat-row{display:flex;gap:20px;flex-wrap:wrap;margin-top:13px;padding-top:13px;border-top:1px solid var(--border);}
+.stat-val{font-family:var(--mono);font-size:15px;font-weight:600;color:var(--text-primary)}
+.stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-top:1px}
+
+.doc-body{padding:22px 26px;display:flex;flex-direction:column;gap:10px}
+.module-label{display:flex;align-items:center;gap:10px}
+.module-num{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--orange);letter-spacing:0.1em;text-transform:uppercase;}
+.module-rule{flex:1;height:1px;background:linear-gradient(to right,rgba(244,118,42,0.25),transparent);}
+.module-title{font-size:17px;font-weight:600;margin-bottom:10px}
+
+.legend{display:flex;gap:16px;flex-wrap:wrap;padding:10px 14px;background:var(--bg-surface);border:1px solid var(--border);border-radius:7px;margin-bottom:2px;}
+.leg-item{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--text-muted)}
+.leg-dot{width:8px;height:8px;border-radius:2px}
+
+.section-card{background:var(--bg-section);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color 0.15s;}
+.section-card:hover{border-color:var(--border-hi)}
+.section-hdr{padding:11px 17px 9px;border-bottom:1px solid var(--border);position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;}
+.section-letter{font-family:var(--mono);font-size:12px;font-weight:600;width:25px;height:25px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.section-title{font-size:13px;font-weight:500;flex:1}
+.ghost-glyph{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:58px;font-weight:700;color:rgba(255,255,255,0.025);pointer-events:none;user-select:none;line-height:1;}
+.section-body{padding:14px 16px;}
+
+.tree-block{background:var(--code-bg,#0c0c0f);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:16px 20px;font-family:var(--mono);font-size:12px;line-height:1.85;overflow-x:auto;white-space:pre;}
+.tm{color:var(--orange);font-weight:600}
+.ts{color:var(--sky);font-weight:500}
+.tl{color:var(--cyan)}
+.tg{color:var(--green)}
+.tp{color:var(--purple)}
+.ty{color:var(--yellow)}
+.tr{color:var(--salmon)}
+.tc{color:var(--text-muted)}
+
+.summary-block{background:var(--bg-surface);border:1px solid var(--border);border-bottom:2px solid var(--orange);border-radius:8px 8px 0 0;padding:14px 18px;}
+.summary-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--orange);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;}
+.summary-list{list-style:none;display:flex;flex-direction:column;gap:5px}
+.summary-list li{font-size:13px;color:var(--text-secondary);line-height:1.7;display:flex;gap:7px;}
+.summary-list li::before{content:'›';color:var(--orange);font-weight:700;font-size:14px;flex-shrink:0}
+
+.doc-footer{padding:12px 26px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--bg-surface);flex-wrap:wrap;gap:10px;}
+.footer-left{font-size:11px;color:var(--text-muted);font-family:var(--mono)}
+.footer-btns{display:flex;gap:10px}
+.footer-btn{display:flex;align-items:center;justify-content:center;gap:7px;font-family:var(--mono);font-size:11px;font-weight:500;width:128px;height:64px;border-radius:20px;border:1px solid;background:transparent;cursor:pointer;letter-spacing:0.03em;transition:all 0.15s;}
+.footer-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.btn-quiz{color:var(--orange);border-color:rgba(244,118,42,0.35);background:var(--orange-dim)}
+.btn-recall{color:var(--cyan);border-color:rgba(78,205,196,0.35);background:var(--cyan-dim)}
+.btn-export{color:var(--salmon);border-color:rgba(240,128,128,0.35);background:var(--salmon-dim)}
+.btn-quiz:hover{background:rgba(244,118,42,0.18)}
+.btn-recall:hover{background:rgba(78,205,196,0.15)}
+.btn-export:hover{background:rgba(240,128,128,0.15)}
+
+@media(max-width:600px){
+  .doc-header,.doc-body{padding-left:16px;padding-right:16px}
+  .doc-footer{padding:12px 16px}
+  .footer-btn{width:100px;height:52px;font-size:10px}
+  .tree-block{font-size:11px;padding:12px 14px}
+}
+</style>
+</head>
+<body>
+<div class="doc-wrap">
+
+<!-- ── HEADER ── -->
+<div class="doc-header">
+  <div class="badges">
+    <span class="badge badge-type">Tree</span>
+    <span class="badge badge-mod">Module 2</span>
+    <span class="badge badge-tree">Structure Only</span>
+  </div>
+  <div class="doc-title">Exploring AI Use Cases and Applications</div>
+  <div class="doc-subtitle">AWS-AI MasterClass · Synaptix v2.2 · Minimal Verbosity</div>
+  <div class="stat-row">
+    <div class="stat-item"><div class="stat-val">9</div><div class="stat-lbl">Sections</div></div>
+    <div class="stat-item"><div class="stat-val">A–I</div><div class="stat-lbl">Coverage</div></div>
+    <div class="stat-item"><div class="stat-val">Full</div><div class="stat-lbl">Expansion</div></div>
+    <div class="stat-item"><div class="stat-val">EN</div><div class="stat-lbl">Language</div></div>
+  </div>
+</div>
+
+<div class="doc-body">
+  <div class="module-label"><span class="module-num">Module 2</span><div class="module-rule"></div></div>
+  <div class="module-title">Exploring AI Use Cases and Applications</div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="leg-item"><div class="leg-dot" style="background:var(--orange)"></div>Section / Root</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--sky)"></div>Subsection</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--cyan)"></div>Concept / Term</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--green)"></div>Advantage / Use</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--yellow)"></div>Exception / Warning</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--salmon)"></div>Risk / Cost</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--purple)"></div>AWS Service / Note</div>
+  </div>
+
+
+  <!-- ══ A: AI FUNDAMENTALS RECAP ══ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--sky);background:var(--sky-dim);border:1px solid rgba(93,184,242,0.2)">A</div>
+      <div class="section-title">AI Fundamentals Recap</div>
+      <div class="ghost-glyph">A</div>
+    </div>
+    <div class="section-body">
+      <div class="tree-block"><span class="tm">A. AI Fundamentals Recap</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">A1. Hierarchy</span>
+<span class="tc">│   ├──</span> <span class="tl">AI ⊃ ML ⊃ DL ⊃ Generative AI</span>  <span class="tc">— nested, not competing</span>
+<span class="tc">│   ├──</span> <span class="ty">Generative AI creates · Traditional ML analyzes / predicts</span>
+<span class="tc">│   └──</span> <span class="tl">Distinction recurs across every industry use case in this module</span>
+<span class="tc">│</span>
+<span class="tc">└──</span> <span class="ts">A2. Generative AI Content Types</span>
+<span class="tc">    ├──</span> <span class="tl">Text</span>  <span class="tc">— conversations, summaries, articles, reports</span>
+<span class="tc">    ├──</span> <span class="tl">Visual</span>  <span class="tc">— images, video, illustrations, product renders</span>
+<span class="tc">    ├──</span> <span class="tl">Audio</span>  <span class="tc">— music, speech synthesis, voiceovers, sound effects</span>
+<span class="tc">    └──</span> <span class="tl">Code</span>  <span class="tc">— program generation, function writing, code review</span></div>
+    </div>
+  </div>
+
+
+  <!-- ══ B: INDUSTRY USE CASES ══ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--cyan);background:var(--cyan-dim);border:1px solid rgba(78,205,196,0.2)">B</div>
+      <div class="section-title">Real-World AI Use Cases Across Industries</div>
+      <div class="ghost-glyph">B</div>
+    </div>
+    <div class="section-body">
+      <div class="tree-block"><span class="tm">B. Real-World AI Use Cases Across Industries</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">B1. Business Value Mechanisms</span>
+<span class="tc">│   ├──</span> <span class="tg">Automation</span>  <span class="tc">— replace repetitive manual work</span>
+<span class="tc">│   ├──</span> <span class="tg">Optimization</span>  <span class="tc">— improve decisions beyond human capacity</span>
+<span class="tc">│   └──</span> <span class="tg">Personalization</span>  <span class="tc">— tailor experiences at scale</span>
+<span class="tc">│</span>
+<span class="tc">└──</span> <span class="ts">B2. Industry Breakdown</span>
+<span class="tc">    ├──</span> <span class="tl">Media &amp; Entertainment</span>
+<span class="tc">    │   ├──</span> <span class="tl">Content Generation</span>  <span class="tc">— scripts, stories, automation</span>
+<span class="tc">    │   ├──</span> <span class="tl">Virtual Reality</span>  <span class="tc">— immersive AI-generated environments</span>
+<span class="tc">    │   └──</span> <span class="tl">News Generation</span>  <span class="tc">— automatic article summaries</span>
+<span class="tc">    ├──</span> <span class="tl">Retail</span>
+<span class="tc">    │   ├──</span> <span class="tl">Review Summaries</span>  <span class="tc">— condensed product insights</span>
+<span class="tc">    │   ├──</span> <span class="tl">Pricing Optimization</span>  <span class="tc">— dynamic margin maximization</span>
+<span class="tc">    │   ├──</span> <span class="tl">Virtual Try-ons</span>  <span class="tc">— simulate fitting without physical contact</span>
+<span class="tc">    │   └──</span> <span class="tl">Store Layout Optimization</span>  <span class="tc">— improve shopping flow</span>
+<span class="tc">    ├──</span> <span class="tl">Healthcare</span>
+<span class="tc">    │   ├──</span> <span class="tl">Clinical Documentation</span>  <span class="tc">— auto-generate clinical notes</span>
+<span class="tc">    │   │   └──</span> <span class="tp">AWS HealthScribe — provider-patient conversation → structured notes</span>
+<span class="tc">    │   ├──</span> <span class="tl">Personalized Medicine</span>  <span class="tc">— tailor treatments to individual profiles</span>
+<span class="tc">    │   └──</span> <span class="tl">Medical Imaging Enhancement</span>  <span class="tc">— improve diagnostic accuracy</span>
+<span class="tc">    ├──</span> <span class="tl">Life Sciences</span>
+<span class="tc">    │   ├──</span> <span class="tl">Drug Discovery</span>  <span class="tc">— generate and evaluate molecular structures</span>
+<span class="tc">    │   ├──</span> <span class="tl">Protein Folding Prediction</span>  <span class="tc">— predict 3D protein structures</span>
+<span class="tc">    │   └──</span> <span class="tl">Synthetic Biology</span>  <span class="tc">— engineer biological systems computationally</span>
+<span class="tc">    ├──</span> <span class="tl">Financial Services</span>
+<span class="tc">    │   ├──</span> <span class="tl">Fraud Detection</span>  <span class="tc">— identify anomalous transactions in real time</span>
+<span class="tc">    │   ├──</span> <span class="tl">Portfolio Management</span>  <span class="tc">— simulate market scenarios for risk assessment</span>
+<span class="tc">    │   └──</span> <span class="tl">Debt Collection Optimization</span>  <span class="tc">— improve strategy and timing</span>
+<span class="tc">    └──</span> <span class="tl">Manufacturing</span>
+<span class="tc">        ├──</span> <span class="tl">Predictive Maintenance</span>  <span class="tc">— detect failure before it occurs</span>
+<span class="tc">        ├──</span> <span class="tl">Process Optimization</span>  <span class="tc">— improve throughput and efficiency</span>
+<span class="tc">        ├──</span> <span class="tl">Product Design Generation</span>  <span class="tc">— generate designs within constraints</span>
+<span class="tc">        └──</span> <span class="tl">Material Science</span>  <span class="tc">— discover new materials computationally</span></div>
+    </div>
+  </div>
+
+
+  <!-- ══ C: CORE AI APPLICATIONS ══ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--purple);background:var(--purple-dim);border:1px solid rgba(192,132,252,0.2)">C</div>
+      <div class="section-title">Core AI Application Domains</div>
+      <div class="ghost-glyph">C</div>
+    </div>
+    <div class="section-body">
+      <div class="tree-block"><span class="tm">C. Core AI Application Domains</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">C1. Computer Vision (CV)</span>
+<span class="tc">│   ├──</span> <span class="tl">Definition</span>  <span class="tc">— enable machines to interpret images and video</span>
+<span class="tc">│   ├──</span> <span class="tl">Tasks (in order of granularity)</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Image Classification</span>  <span class="tc">— assign a label to the whole image</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Object Detection</span>  <span class="tc">— locate + label multiple objects with bounding boxes</span>
+<span class="tc">│   │   └──</span> <span class="tl">Segmentation</span>  <span class="tc">— classify every pixel to its object (most granular)</span>
+<span class="tc">│   ├──</span> <span class="tl">Use Cases</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Autonomous Driving</span>  <span class="tc">— real-time lane, pedestrian, sign detection</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Healthcare Imaging</span>  <span class="tc">— radiology and pathology diagnosis accuracy</span>
+<span class="tc">│   │   └──</span> <span class="tl">Public Safety</span>  <span class="tc">— facial recognition, surveillance</span>
+<span class="tc">│   └──</span> <span class="tp">AWS: Amazon Rekognition</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">C2. Natural Language Processing (NLP)</span>
+<span class="tc">│   ├──</span> <span class="tl">Definition</span>  <span class="tc">— enable machines to understand and generate human language</span>
+<span class="tc">│   ├──</span> <span class="tl">Tasks</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Text Classification</span>  <span class="tc">— categorize documents by topic or intent</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Sentiment Analysis</span>  <span class="tc">— detect positive / negative / neutral tone</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Translation</span>  <span class="tc">— convert text between languages</span>
+<span class="tc">│   │   └──</span> <span class="tl">Text Generation</span>  <span class="tc">— produce coherent language continuations</span>
+<span class="tc">│   ├──</span> <span class="tl">Use Cases</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Insurance</span>  <span class="tc">— extract policy clauses and data</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Telecom</span>  <span class="tc">— personalized product recommendations</span>
+<span class="tc">│   │   └──</span> <span class="tl">Education</span>  <span class="tc">— chatbot Q&amp;A for student support</span>
+<span class="tc">│   └──</span> <span class="tp">AWS: Amazon Comprehend · Amazon Translate · Amazon Lex</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">C3. Intelligent Document Processing (IDP)</span>
+<span class="tc">│   ├──</span> <span class="tl">Definition</span>  <span class="tc">— AI extraction of insights from unstructured documents</span>
+<span class="tc">│   ├──</span> <span class="tl">IDP = superset workflow applying NLP + CV to document problems</span>
+<span class="tc">│   ├──</span> <span class="tl">Functions</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Data Extraction</span>  <span class="tc">— pull values from forms, tables, and text</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Classification</span>  <span class="tc">— route documents to correct workflow by type</span>
+<span class="tc">│   │   └──</span> <span class="tl">Summarization</span>  <span class="tc">— condense long documents to key points</span>
+<span class="tc">│   ├──</span> <span class="tl">Use Cases</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Finance</span>  <span class="tc">— loan application processing</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Legal</span>  <span class="tc">— contract review and clause extraction</span>
+<span class="tc">│   │   └──</span> <span class="tl">Healthcare</span>  <span class="tc">— insurance claims and patient records</span>
+<span class="tc">│   └──</span> <span class="tp">AWS: Amazon Textract (OCR + form extraction)</span>
+<span class="tc">│</span>
+<span class="tc">└──</span> <span class="ts">C4. Fraud Detection</span>
+<span class="tc">    ├──</span> <span class="tl">Definition</span>  <span class="tc">— identify anomalous / malicious patterns in data</span>
+<span class="tc">    ├──</span> <span class="tl">ML approach: learns what normal looks like → flags statistical deviations</span>
+<span class="tc">    ├──</span> <span class="tg">Catches novel fraud no rule anticipated — unlike rigid rule-based filters</span>
+<span class="tc">    └──</span> <span class="tl">Use Cases</span>
+<span class="tc">        ├──</span> <span class="tl">Finance</span>  <span class="tc">— AML, transaction anomaly, credit card fraud</span>
+<span class="tc">        ├──</span> <span class="tl">Retail</span>  <span class="tc">— account takeover, return fraud, fake reviews</span>
+<span class="tc">        └──</span> <span class="tl">Telecom</span>  <span class="tc">— SIM fraud, subscription abuse, network intrusion</span></div>
+    </div>
+  </div>
+
+
+  <!-- ══ D: WHEN TO USE ML ══ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--orange);background:var(--orange-dim);border:1px solid rgba(244,118,42,0.2)">D</div>
+      <div class="section-title">When to Use ML — and When Not To</div>
+      <div class="ghost-glyph">D</div>
+    </div>
+    <div class="section-body">
+      <div class="tree-block"><span class="tm">D. When to Use ML — and When Not To</span>
+<span class="tc">│</span>
+<span class="tc">└──</span> <span class="ts">D1. Decision Framework</span>
+<span class="tc">    ├──</span> <span class="tg">USE ML: Complex Rules</span>
+<span class="tc">    │   ├──</span> <span class="tl">Too many edge cases to define manually</span>
+<span class="tc">    │   └──</span> <span class="tl">Example: spam filtering</span>
+<span class="tc">    ├──</span> <span class="tg">USE ML: High Variability</span>
+<span class="tc">    │   ├──</span> <span class="tl">Many interacting factors, non-linear relationships</span>
+<span class="tc">    │   └──</span> <span class="tl">Example: credit risk scoring</span>
+<span class="tc">    ├──</span> <span class="tg">USE ML: Large Scale</span>
+<span class="tc">    │   ├──</span> <span class="tl">Massive datasets humans cannot manually process</span>
+<span class="tc">    │   └──</span> <span class="tl">Example: real-time recommendation systems</span>
+<span class="tc">    ├──</span> <span class="tr">SKIP ML: Simple Logic</span>
+<span class="tc">    │   ├──</span> <span class="tl">Deterministic rules already exist and cover all cases</span>
+<span class="tc">    │   └──</span> <span class="tl">Example: tax calculation</span>
+<span class="tc">    ├──</span> <span class="tr">SKIP ML: Low Complexity</span>
+<span class="tc">    │   ├──</span> <span class="tl">Predefined steps are sufficient</span>
+<span class="tc">    │   └──</span> <span class="tl">Example: unit conversion (°C → °F)</span>
+<span class="tc">    └──</span> <span class="ty">ML is not universally better — better only when rules cannot scale or be defined</span></div>
+    </div>
+  </div>
+
+
+  <!-- ══ E: ML TECHNIQUES ══ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--sky);background:var(--sky-dim);border:1px solid rgba(93,184,242,0.2)">E</div>
+      <div class="section-title">ML Techniques and Their Use Cases</div>
+      <div class="ghost-glyph">E</div>
+    </div>
+    <div class="section-body">
+      <div class="tree-block"><span class="tm">E. ML Techniques and Their Use Cases</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">E1. Supervised Learning</span>
+<span class="tc">│   ├──</span> <span class="tl">Input: labeled data (every example has a known correct output)</span>
+<span class="tc">│   ├──</span> <span class="tl">Goal: predict outputs for new, unseen inputs</span>
+<span class="tc">│   ├──</span> <span class="tl">Classification</span>  <span class="tc">— categorical output (one of a fixed set of classes)</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Fraud detection</span>  <span class="tc">— fraud / not fraud</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Image classification</span>  <span class="tc">— cat / dog / bird</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Customer churn prediction</span>  <span class="tc">— will / will not churn</span>
+<span class="tc">│   │   └──</span> <span class="tl">Medical diagnostics</span>  <span class="tc">— disease positive / negative</span>
+<span class="tc">│   └──</span> <span class="tl">Regression</span>  <span class="tc">— continuous output (numeric value on a scale)</span>
+<span class="tc">│       ├──</span> <span class="tl">Weather forecasting</span>  <span class="tc">— predict temperature</span>
+<span class="tc">│       ├──</span> <span class="tl">Market trend prediction</span>  <span class="tc">— predict stock price movement</span>
+<span class="tc">│       ├──</span> <span class="tl">Life expectancy estimation</span>
+<span class="tc">│       └──</span> <span class="tl">Population growth modeling</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">E2. Unsupervised Learning</span>
+<span class="tc">│   ├──</span> <span class="tl">Input: unlabeled data — no correct answers provided</span>
+<span class="tc">│   ├──</span> <span class="tl">Goal: discover hidden structure the model creates itself</span>
+<span class="tc">│   ├──</span> <span class="tl">Clustering</span>  <span class="tc">— group similar data without predefined categories</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Customer segmentation</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Targeted marketing</span>
+<span class="tc">│   │   └──</span> <span class="tl">Recommendation systems</span>
+<span class="tc">│   └──</span> <span class="tl">Dimensionality Reduction</span>  <span class="tc">— reduce features, preserve structure</span>
+<span class="tc">│       ├──</span> <span class="tl">Data visualization</span>  <span class="tc">— project to 2D / 3D</span>
+<span class="tc">│       ├──</span> <span class="tl">Compression</span>
+<span class="tc">│       └──</span> <span class="tl">Feature extraction</span>
+<span class="tc">│</span>
+<span class="tc">└──</span> <span class="ts">E3. Reinforcement Learning</span>
+<span class="tc">    ├──</span> <span class="tl">Agent</span>  <span class="tc">— decision-maker that takes actions</span>
+<span class="tc">    ├──</span> <span class="tl">Environment</span>  <span class="tc">— space the agent interacts with</span>
+<span class="tc">    ├──</span> <span class="tl">Reward</span>  <span class="tc">— positive feedback for correct actions</span>
+<span class="tc">    ├──</span> <span class="tl">Penalty</span>  <span class="tc">— negative feedback for incorrect actions</span>
+<span class="tc">    ├──</span> <span class="tl">Policy</span>  <span class="tc">— learned strategy that maximizes cumulative reward</span>
+<span class="tc">    ├──</span> <span class="tl">No labeled dataset — learns through trial and error</span>
+<span class="tc">    └──</span> <span class="tp">AWS: DeepRacer — autonomous 1/18th-scale race car via RL</span></div>
+    </div>
+  </div>
+
+
+  <!-- ══ F: GEN AI CAPABILITIES ══ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--cyan);background:var(--cyan-dim);border:1px solid rgba(78,205,196,0.2)">F</div>
+      <div class="section-title">Capabilities of Generative AI</div>
+      <div class="ghost-glyph">F</div>
+    </div>
+    <div class="section-body">
+      <div class="tree-block"><span class="tm">F. Capabilities of Generative AI</span>
+<span class="tc">│</span>
+<span class="tc">└──</span> <span class="ts">F1. The Seven Capabilities</span>
+<span class="tc">    ├──</span> <span class="tg">Adaptability</span>  <span class="tc">— single FM flexes across tasks and domains without rebuilding</span>
+<span class="tc">    ├──</span> <span class="tg">Responsiveness</span>  <span class="tc">— real-time output generation (conversational, live)</span>
+<span class="tc">    ├──</span> <span class="tg">Simplicity</span>  <span class="tc">— automates complex workflows without specialized skill</span>
+<span class="tc">    ├──</span> <span class="tg">Creativity</span>  <span class="tc">— produces genuinely novel outputs, not template recombinations</span>
+<span class="tc">    ├──</span> <span class="tg">Data Efficiency</span>  <span class="tc">— adapts to new tasks with limited additional data (pretrained base)</span>
+<span class="tc">    ├──</span> <span class="tg">Personalization</span>  <span class="tc">— tailors outputs per user at scale — impossible for rule-based systems</span>
+<span class="tc">    ├──</span> <span class="tg">Scalability</span>  <span class="tc">— produces content volume no human team can match</span>
+<span class="tc">    └──</span> <span class="ty">Core value: automation + creativity at scale — simultaneously</span></div>
+    </div>
+  </div>
+
+
+  <!-- ══ G: CHALLENGES ══ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--purple);background:var(--purple-dim);border:1px solid rgba(192,132,252,0.2)">G</div>
+      <div class="section-title">Challenges and Risks of Generative AI</div>
+      <div class="ghost-glyph">G</div>
+    </div>
+    <div class="section-body">
+      <div class="tree-block"><span class="tm">G. Challenges and Risks of Generative AI</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">G1. The Seven Risks</span>
+<span class="tc">│   ├──</span> <span class="tr">Hallucinations</span>  <span class="tc">— plausible but factually false outputs</span>
+<span class="tc">│   │   ├──</span> <span class="tr">Model predicts likely text, not correct text</span>
+<span class="tc">│   │   └──</span> <span class="ty">Primary exam-tested risk · Must always verify AI outputs</span>
+<span class="tc">│   ├──</span> <span class="tr">Toxicity</span>  <span class="tc">— offensive / harmful / discriminatory outputs</span>
+<span class="tc">│   ├──</span> <span class="tr">Privacy Concerns</span>  <span class="tc">— regeneration of personal data seen in training</span>
+<span class="tc">│   ├──</span> <span class="tr">Regulatory Violations</span>  <span class="tc">— expose PII / PHI or generate non-compliant content</span>
+<span class="tc">│   ├──</span> <span class="tr">Social Risks</span>  <span class="tc">— deepfakes, misinformation, brand reputation damage</span>
+<span class="tc">│   ├──</span> <span class="tr">Interpretability</span>  <span class="tc">— hard to explain why a specific output was produced</span>
+<span class="tc">│   └──</span> <span class="tr">Nondeterminism</span>  <span class="tc">— same input → different outputs across runs</span>
+<span class="tc">│</span>
+<span class="tc">└──</span> <span class="ts">G2. Mitigation Strategies</span>
+<span class="tc">    ├──</span> <span class="tg">Guardrails</span>  <span class="tc">— filter / block harmful output categories before delivery</span>
+<span class="tc">    ├──</span> <span class="tg">Verification / RAG</span>  <span class="tc">— ground outputs in retrieved facts (primary hallucination fix)</span>
+<span class="tc">    ├──</span> <span class="tg">Data Anonymization</span>  <span class="tc">— remove / mask PII before training or prompting</span>
+<span class="tc">    ├──</span> <span class="tg">Data Curation</span>  <span class="tc">— remove harmful / biased content from training data</span>
+<span class="tc">    ├──</span> <span class="tg">Model Testing</span>  <span class="tc">— evaluate for bias, toxicity, accuracy before deployment</span>
+<span class="tc">    ├──</span> <span class="tg">Monitoring</span>  <span class="tc">— continuously detect inconsistencies and drift in production</span>
+<span class="tc">    └──</span> <span class="tg">Security Measures</span>  <span class="tc">— encryption, firewalls, access controls</span></div>
+    </div>
+  </div>
+
+
+  <!-- ══ H: MODEL SELECTION ══ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--orange);background:var(--orange-dim);border:1px solid rgba(244,118,42,0.2)">H</div>
+      <div class="section-title">Model Selection Factors</div>
+      <div class="ghost-glyph">H</div>
+    </div>
+    <div class="section-body">
+      <div class="tree-block"><span class="tm">H. Model Selection Factors</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">H1. Five Core Factors</span>
+<span class="tc">│   ├──</span> <span class="tl">Model Type</span>  <span class="tc">— task-capability alignment (first gate)</span>
+<span class="tc">│   ├──</span> <span class="tl">Performance</span>  <span class="tc">— accuracy, reliability, benchmark scores</span>
+<span class="tc">│   ├──</span> <span class="tl">Constraints</span>  <span class="tc">— compute (GPU/CPU/memory), data, deployment environment</span>
+<span class="tc">│   ├──</span> <span class="tl">Compliance</span>  <span class="tc">— GDPR, HIPAA, ethics, org policies</span>
+<span class="tc">│   │   └──</span> <span class="ty">Hard gate — non-compliant models are disqualified regardless of accuracy</span>
+<span class="tc">│   └──</span> <span class="tl">Cost</span>  <span class="tc">— size vs. speed vs. quality trade-off</span>
+<span class="tc">│       ├──</span> <span class="tr">Large Models</span>  <span class="tc">— higher accuracy, higher cost per inference, slower</span>
+<span class="tc">│       └──</span> <span class="tg">Small Models</span>  <span class="tc">— lower cost, faster latency, lower accuracy on complex tasks</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">H2. Foundation Model Examples</span>
+<span class="tc">│   ├──</span> <span class="tl">AI21 Jurassic-2</span>  <span class="tc">— text generation, summarization, Q&amp;A</span>
+<span class="tc">│   ├──</span> <span class="tl">Amazon Titan</span>  <span class="tc">— embeddings, semantic search, Q&amp;A (AWS-native)</span>
+<span class="tc">│   ├──</span> <span class="tl">Anthropic Claude</span>  <span class="tc">— chat, reasoning, coding, long context</span>
+<span class="tc">│   ├──</span> <span class="tl">Stable Diffusion</span>  <span class="tc">— image generation from text prompts</span>
+<span class="tc">│   ├──</span> <span class="tl">Cohere Command</span>  <span class="tc">— NLP tasks (classification, summarization)</span>
+<span class="tc">│   └──</span> <span class="tl">Meta Llama</span>  <span class="tc">— general text processing, open-weight, fine-tuning base</span>
+<span class="tc">│</span>
+<span class="tc">└──</span> <span class="ts">H3. Selection Principle</span>
+<span class="tc">    └──</span> <span class="ty">Model selection = task + cost + performance balance · No universal winner</span></div>
+    </div>
+  </div>
+
+
+  <!-- ══ I: BUSINESS METRICS ══ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--sky);background:var(--sky-dim);border:1px solid rgba(93,184,242,0.2)">I</div>
+      <div class="section-title">Business Metrics for Generative AI</div>
+      <div class="ghost-glyph">I</div>
+    </div>
+    <div class="section-body">
+      <div class="tree-block"><span class="tm">I. Business Metrics for Generative AI</span>
+<span class="tc">│</span>
+<span class="tc">└──</span> <span class="ts">I1. Measuring Real-World Success</span>
+<span class="tc">    ├──</span> <span class="ty">Technical performance alone ≠ AI success</span>
+<span class="tc">    ├──</span> <span class="tl">Success = technical performance + business value (both required)</span>
+<span class="tc">    ├──</span> <span class="tl">User Satisfaction</span>  <span class="tc">— surveys / ratings: do users find output helpful and trustworthy?</span>
+<span class="tc">    ├──</span> <span class="tl">ARPU</span>  <span class="tc">— Average Revenue Per User: does AI personalization increase spend?</span>
+<span class="tc">    ├──</span> <span class="tl">Cross-Domain Performance</span>  <span class="tc">— FM versatility across multiple domains</span>
+<span class="tc">    ├──</span> <span class="tl">Conversion Rate</span>  <span class="tc">— % completing desired action (purchase, sign-up)</span>
+<span class="tc">    ├──</span> <span class="tl">Efficiency</span>  <span class="tc">— resource and time savings vs. baseline (operational ROI)</span>
+<span class="tc">    └──</span> <span class="ty">Metrics are use-case specific — no universal success metric</span></div>
+    </div>
+  </div>
+
+
+  <!-- SUMMARY -->
+  <div class="summary-block">
+    <div class="summary-label">Module Summary</div>
+    <ul class="summary-list">
+      <li>Generative AI creates (text, visual, audio, code); ML analyzes/predicts. AI adds business value through automation, optimization, and personalization across 6 industries (Media, Retail, Healthcare, Life Sciences, Finance, Manufacturing).</li>
+      <li>Four application domains: CV (classify → detect → segment) · NLP (classify, sentiment, translate, generate) · IDP (extract, classify, summarize) · Fraud Detection (learn normal, flag deviations). AWS services: Rekognition · Comprehend/Translate/Lex · Textract.</li>
+      <li>Use ML for complex rules, high variability, large scale. Skip for simple deterministic logic. ML subtypes: Supervised (Classification · Regression) · Unsupervised (Clustering · Dimensionality Reduction) · Reinforcement (Agent → Environment → Reward/Penalty → Policy · AWS: DeepRacer).</li>
+      <li>7 Gen AI capabilities: Adaptability · Responsiveness · Simplicity · Creativity · Data Efficiency · Personalization · Scalability. 7 risks: Hallucinations (plausible but false, primary exam risk) · Toxicity · Privacy · Regulatory · Social · Interpretability · Nondeterminism. Mitigate with: Guardrails · RAG · Curation · Testing · Monitoring.</li>
+      <li>Model selection: 5 factors (Type · Performance · Constraints · Compliance [hard gate] · Cost). 6 FMs: Jurassic-2 · Titan · Claude · Stable Diffusion · Cohere · Llama. Success = technical performance + business metrics (Satisfaction · ARPU · Conversion · Efficiency).</li>
+    </ul>
+  </div>
+
+</div><!-- /doc-body -->
+
+<!-- FOOTER -->
+<div class="doc-footer">
+  <div class="footer-left">Synaptix v2.2 · AWS-AI MasterClass · Module 2 · Tree · Structure Only</div>
+  <div class="footer-btns">
+    <button class="footer-btn btn-quiz" onclick="quizQuick()">
+      <div class="footer-dot" style="background:var(--orange)"></div>Quiz
+    </button>
+    <button class="footer-btn btn-recall" onclick="recallQuick()">
+      <div class="footer-dot" style="background:var(--cyan)"></div>Recall
+    </button>
+    <button class="footer-btn btn-export" onclick="exportMd()">
+      <div class="footer-dot" style="background:var(--salmon)"></div>Export
+    </button>
+  </div>
+</div>
+
+</div><!-- /doc-wrap -->
+<script>
+function sendPrompt(t){if(window.parent&&window.parent.postMessage)window.parent.postMessage({type:'user_message',message:t},'*');}
+function quizQuick(){sendPrompt('/quiz mc(10) hard');}
+function recallQuick(){sendPrompt('/recall term(10) hard');}
+function exportMd(){sendPrompt('/export -md');}
+</script>
+</body>
+</html>

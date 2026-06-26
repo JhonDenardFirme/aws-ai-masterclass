@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Quiz A — AWS-AI MasterClass: Fundamentals of ML & AI</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg-base:#0e0e11;--bg-surface:#16161a;--bg-elevated:#1c1c21;--bg-section:#1a1a1f;
+  --border:rgba(255,255,255,0.07);--border-hi:rgba(255,255,255,0.12);
+  --orange:#f4762a;--salmon:#f08080;--cyan:#4ecdc4;--green:#4ade80;
+  --yellow:#f4d03f;--purple:#c084fc;--sky:#5db8f2;--amber:#f4b942;--red:#f87171;
+  --orange-dim:rgba(244,118,42,0.10);--cyan-dim:rgba(78,205,196,0.10);
+  --salmon-dim:rgba(240,128,128,0.10);--green-dim:rgba(74,222,128,0.10);
+  --purple-dim:rgba(192,132,252,0.10);--sky-dim:rgba(93,184,242,0.10);
+  --yellow-dim:rgba(244,208,63,0.10);
+  --text-primary:#e8e8ee;--text-secondary:#8b8b9a;--text-muted:#4a4a5a;
+  --mono:'JetBrains Mono',monospace;--sans:'Inter',system-ui,sans-serif;
+  --orange-glow:rgba(244,118,42,0.05);
+}
+body{background:var(--bg-base);color:var(--text-primary);font-family:var(--sans);font-size:13px;line-height:1.8;}
+
+/* ── Layout ── */
+.doc-wrap{max-width:860px;margin:0 auto;display:flex;flex-direction:column;}
+
+/* ── Header ── */
+.doc-header{padding:20px 26px 16px;border-bottom:1px solid var(--border);background:var(--bg-surface);}
+.badges{display:flex;gap:7px;margin-bottom:10px;flex-wrap:wrap}
+.badge{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:0.07em;text-transform:uppercase;padding:3px 8px;border-radius:4px;border:1px solid;}
+.badge-quiz{color:var(--orange);background:var(--orange-dim);border-color:rgba(244,118,42,0.25)}
+.badge-mod{color:var(--sky);background:var(--sky-dim);border-color:rgba(93,184,242,0.25)}
+.badge-hard{color:var(--salmon);background:var(--salmon-dim);border-color:rgba(240,128,128,0.25)}
+.doc-title{font-size:19px;font-weight:600;letter-spacing:-0.02em}
+.doc-sub{font-size:11px;font-family:var(--mono);color:var(--text-muted);margin-top:3px}
+.stat-row{display:flex;gap:20px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+.stat-val{font-family:var(--mono);font-size:15px;font-weight:600}
+.stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-top:1px}
+
+/* ── Progress bar ── */
+.qz-progress-wrap{padding:10px 26px;background:var(--bg-surface);border-bottom:1px solid var(--border);}
+.qz-progress-top{display:flex;justify-content:space-between;margin-bottom:5px;}
+.qz-progress-label{font-family:var(--mono);font-size:11px;color:var(--text-muted)}
+.qz-progress-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.qz-progress-fill{height:100%;background:var(--orange);border-radius:2px;transition:width 0.3s;}
+
+/* ── Body ── */
+.doc-body{padding:20px 26px;display:flex;flex-direction:column;gap:12px;}
+
+/* ── Section header ── */
+.section-hdr-block{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;}
+.shb-letter{font-family:var(--mono);font-size:11px;font-weight:600;width:24px;height:24px;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.shb-title{font-size:13px;font-weight:500;flex:1}
+.shb-count{font-family:var(--mono);font-size:10px;color:var(--text-muted)}
+
+/* ── Question card ── */
+.q-card{background:var(--bg-section);border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:8px;transition:border-color 0.15s;}
+.q-card:hover{border-color:var(--border-hi)}
+.q-card.answered-correct{border-color:rgba(74,222,128,0.3)}
+.q-card.answered-wrong{border-color:rgba(240,128,128,0.3)}
+.q-card-hdr{padding:10px 14px 8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;}
+.q-num-badge{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--text-muted);background:var(--bg-elevated);border:1px solid var(--border);border-radius:3px;padding:2px 7px;}
+.q-type-tag{font-family:var(--mono);font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;padding:2px 6px;border-radius:3px;}
+.qt-mc{color:var(--orange);background:var(--orange-dim);border:1px solid rgba(244,118,42,0.2)}
+.qt-tof{color:var(--purple);background:var(--purple-dim);border:1px solid rgba(192,132,252,0.2)}
+.qt-conn{color:var(--cyan);background:var(--cyan-dim);border:1px solid rgba(78,205,196,0.2)}
+.q-section-ref{font-family:var(--mono);font-size:9px;color:var(--text-muted);margin-left:auto}
+.q-body{padding:12px 14px}
+.q-stem{font-size:13px;color:var(--text-primary);line-height:1.75;margin-bottom:11px;font-weight:500}
+.q-options{display:flex;flex-direction:column;gap:6px}
+.q-opt{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:9px 12px;border-radius:7px;
+  background:rgba(255,255,255,0.02);border:1px solid var(--border);
+  cursor:pointer;transition:all 0.12s;font-size:12.5px;color:var(--text-secondary);
+}
+.q-opt:hover{background:rgba(255,255,255,0.05);border-color:var(--border-hi);color:var(--text-primary)}
+.q-opt.selected{background:var(--cyan-dim);border-color:rgba(78,205,196,0.35);color:var(--cyan)}
+.q-opt.correct-reveal{background:var(--green-dim);border-color:rgba(74,222,128,0.35);color:var(--green)}
+.q-opt.wrong-reveal{background:var(--salmon-dim);border-color:rgba(240,128,128,0.35);color:var(--salmon)}
+.q-opt-letter{font-family:var(--mono);font-size:10px;font-weight:700;flex-shrink:0;padding-top:1px;width:14px;}
+
+/* TOF options */
+.tof-opts{display:flex;gap:8px}
+.tof-btn{
+  flex:1;height:40px;border-radius:7px;font-family:var(--mono);font-size:12px;font-weight:600;
+  border:1px solid var(--border);background:rgba(255,255,255,0.02);color:var(--text-secondary);
+  cursor:pointer;transition:all 0.12s;
+}
+.tof-btn:hover{background:rgba(255,255,255,0.05);color:var(--text-primary)}
+.tof-btn.selected-true{background:var(--cyan-dim);border-color:rgba(78,205,196,0.35);color:var(--cyan)}
+.tof-btn.selected-false{background:var(--purple-dim);border-color:rgba(192,132,252,0.35);color:var(--purple)}
+.tof-btn.reveal-correct{background:var(--green-dim)!important;border-color:rgba(74,222,128,0.35)!important;color:var(--green)!important}
+.tof-btn.reveal-wrong{background:var(--salmon-dim)!important;border-color:rgba(240,128,128,0.35)!important;color:var(--salmon)!important}
+
+/* Connect / matching */
+.connect-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.connect-col-label{font-family:var(--mono);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-muted);margin-bottom:6px}
+.connect-col{display:flex;flex-direction:column;gap:5px}
+.connect-item{padding:8px 11px;border-radius:6px;border:1px solid var(--border);background:var(--bg-elevated);font-size:12px;color:var(--text-secondary);}
+.connect-item.col-a{border-left:2px solid var(--orange)}
+.connect-item.col-b{border-left:2px solid var(--cyan)}
+.connect-input-row{display:flex;flex-direction:column;gap:5px;margin-top:8px}
+.connect-pair-input{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:6px;}
+.connect-pair-term{font-size:12px;color:var(--orange);font-weight:500;min-width:200px;flex-shrink:0}
+.connect-pair-select{
+  flex:1;background:var(--bg-base);border:1px solid var(--border);border-radius:5px;
+  color:var(--text-primary);font-family:var(--sans);font-size:12px;padding:5px 8px;
+  cursor:pointer;outline:none;
+}
+.connect-pair-select:focus{border-color:var(--border-hi)}
+.connect-pair-select.correct-reveal{border-color:rgba(74,222,128,0.4);color:var(--green)}
+.connect-pair-select.wrong-reveal{border-color:rgba(240,128,128,0.4);color:var(--salmon)}
+
+/* Navigation */
+.qz-nav{display:flex;justify-content:center;gap:10px;padding:14px 26px;flex-wrap:wrap}
+.qz-nav-btn{padding:9px 20px;border-radius:8px;font-family:var(--mono);font-size:11px;font-weight:500;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-secondary);cursor:pointer;transition:background 0.15s;}
+.qz-nav-btn:hover{background:rgba(255,255,255,0.08);color:var(--text-primary)}
+.qz-submit{padding:9px 28px;border-radius:8px;font-family:var(--mono);font-size:11px;font-weight:600;background:var(--orange-dim);border:1px solid rgba(244,118,42,0.3);color:var(--orange);cursor:pointer;transition:background 0.15s;}
+.qz-submit:hover{background:rgba(244,118,42,0.18)}
+.qz-submit:disabled{opacity:0.4;cursor:not-allowed}
+
+/* ── Answer key ── */
+.key-section{display:none;flex-direction:column;gap:8px;padding:20px 26px;}
+.key-hdr{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg-surface);border:1px solid var(--border);border-left:3px solid var(--orange);border-radius:0 8px 8px 0;}
+.key-hdr-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--orange);text-transform:uppercase;letter-spacing:0.08em}
+.key-grid{display:flex;flex-direction:column;gap:5px}
+.key-row{display:flex;align-items:baseline;gap:10px;padding:6px 10px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:6px;font-size:12px;}
+.key-num{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--text-muted);width:28px;flex-shrink:0}
+.key-ans{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cyan);flex-shrink:0}
+.key-topic{font-size:12px;color:var(--text-secondary)}
+
+/* ── Results panel ── */
+.results-panel{display:none;flex-direction:column;gap:10px;padding:20px 26px;}
+.score-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:10px;padding:20px;text-align:center;}
+.sc-pct{font-family:var(--mono);font-size:42px;font-weight:700;letter-spacing:-0.03em;margin-bottom:4px}
+.sc-band{font-family:var(--mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;padding:4px 12px;border-radius:4px;display:inline-block;margin-bottom:10px}
+.band-triumph{color:var(--green);background:var(--green-dim);border:1px solid rgba(74,222,128,0.25)}
+.band-expectation{color:var(--amber);background:rgba(244,185,66,0.08);border:1px solid rgba(244,185,66,0.2)}
+.band-failure{color:var(--red);background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2)}
+.sc-detail{font-size:12px;color:var(--text-muted)}
+
+.section-scores{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.sec-score-card{background:var(--bg-elevated);border:1px solid var(--border);border-radius:7px;padding:10px;text-align:center;}
+.ssc-label{font-family:var(--mono);font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px}
+.ssc-val{font-family:var(--mono);font-size:16px;font-weight:600}
+
+/* Imperial panel */
+.imperial-panel{background:var(--bg-surface);border:1px solid var(--border);border-top:2px solid var(--amber);border-radius:0 0 10px 10px;padding:18px 20px;}
+.imp-section{margin-bottom:16px}
+.imp-section:last-child{margin-bottom:0}
+.imp-section h2{font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.imp-section p{font-size:12.5px;color:var(--text-secondary);line-height:1.75;margin-bottom:6px}
+.imp-section ul{list-style:none;display:flex;flex-direction:column;gap:4px;padding-left:4px}
+.imp-section ul li{font-size:12px;color:var(--text-secondary);display:flex;gap:7px;line-height:1.6}
+.imp-section ul li::before{content:'›';color:var(--amber);font-weight:700;flex-shrink:0}
+.imp-decree{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--amber);background:rgba(244,185,66,0.06);border:1px solid rgba(244,185,66,0.15);border-radius:6px;padding:10px 14px;margin-top:6px}
+
+/* ── Footer ── */
+.doc-footer{padding:12px 26px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--bg-surface);flex-wrap:wrap;gap:10px;}
+.footer-left{font-size:11px;color:var(--text-muted);font-family:var(--mono)}
+.footer-btns{display:flex;gap:10px}
+.footer-btn{display:flex;align-items:center;justify-content:center;gap:7px;font-family:var(--mono);font-size:11px;font-weight:500;width:128px;height:64px;border-radius:20px;border:1px solid;background:transparent;cursor:pointer;letter-spacing:0.03em;transition:all 0.15s;}
+.footer-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.btn-recall{color:var(--cyan);border-color:rgba(78,205,196,0.35);background:var(--cyan-dim)}
+.btn-recall:hover{background:rgba(78,205,196,0.15)}
+.btn-export{color:var(--salmon);border-color:rgba(240,128,128,0.35);background:var(--salmon-dim)}
+.btn-export:hover{background:rgba(240,128,128,0.15)}
+
+@media(max-width:600px){
+  .doc-header,.doc-body,.key-section,.results-panel,.qz-nav{padding-left:14px;padding-right:14px}
+  .connect-grid{grid-template-columns:1fr}
+  .section-scores{grid-template-columns:1fr 1fr}
+  .footer-btn{width:100px;height:52px;font-size:10px}
+}
+</style>
+</head>
+<body>
+<div class="doc-wrap">
+
+<!-- ── HEADER ── -->
+<div class="doc-header">
+  <div class="badges">
+    <span class="badge badge-quiz">Quiz A</span>
+    <span class="badge badge-mod">Module 1</span>
+    <span class="badge badge-hard">Hard</span>
+  </div>
+  <div class="doc-title">Quiz A — AWS-AI MasterClass: Fundamentals of ML &amp; AI</div>
+  <div class="doc-sub">50 items · MC ×20 · TOF ×20 · Connect ×10 · Hard · Explain: Off</div>
+  <div class="stat-row">
+    <div class="stat-item"><div class="stat-val">50</div><div class="stat-lbl">Items</div></div>
+    <div class="stat-item"><div class="stat-val">20</div><div class="stat-lbl">MC</div></div>
+    <div class="stat-item"><div class="stat-val">20</div><div class="stat-lbl">TOF</div></div>
+    <div class="stat-item"><div class="stat-val">10</div><div class="stat-lbl">Connect</div></div>
+    <div class="stat-item"><div class="stat-val">Hard</div><div class="stat-lbl">Difficulty</div></div>
+  </div>
+</div>
+
+<!-- ── PROGRESS ── -->
+<div class="qz-progress-wrap">
+  <div class="qz-progress-top">
+    <span class="qz-progress-label" id="qz-prog-label">0 / 50 answered</span>
+    <span class="qz-progress-label" id="qz-prog-pct">0%</span>
+  </div>
+  <div class="qz-progress-bar"><div class="qz-progress-fill" id="qz-prog-fill" style="width:0%"></div></div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     QUIZ BODY
+═══════════════════════════════════════════════ -->
+<div class="doc-body" id="quiz-body">
+
+<!-- ─────────────────────
+     PART I — MULTIPLE CHOICE (MC 1–20)
+──────────────────────── -->
+<div class="section-hdr-block">
+  <div class="shb-letter" style="color:var(--orange);background:var(--orange-dim);border:1px solid rgba(244,118,42,0.2)">I</div>
+  <div class="shb-title">Multiple Choice</div>
+  <div class="shb-count">20 items · select one best answer</div>
+</div>
+
+<!-- MC 1 -->
+<div class="q-card" id="qc-mc1">
+  <div class="q-card-hdr"><span class="q-num-badge">MC 1</span><span class="q-type-tag qt-mc">MC</span><span class="q-section-ref">A1–A2</span></div>
+  <div class="q-body">
+    <div class="q-stem">A developer needs a system that identifies fraudulent transactions by learning historical patterns. Later, the company wants to generate synthetic transaction data for testing. Which statement correctly describes the relationship between these two needs?</div>
+    <div class="q-options">
+      <div class="q-opt" onclick="selectMC('mc1','A',this)"><span class="q-opt-letter">A</span>Both tasks require Generative AI since both involve pattern learning from data.</div>
+      <div class="q-opt" onclick="selectMC('mc1','B',this)"><span class="q-opt-letter">B</span>Fraud detection is traditional ML (analysis/prediction); synthetic data generation is Generative AI (creation). They occupy different layers of the AI hierarchy.</div>
+      <div class="q-opt" onclick="selectMC('mc1','C',this)"><span class="q-opt-letter">C</span>Both tasks are Deep Learning problems since neural networks can handle both detection and generation.</div>
+      <div class="q-opt" onclick="selectMC('mc1','D',this)"><span class="q-opt-letter">D</span>Fraud detection belongs to Generative AI; synthetic data generation belongs to traditional ML since it produces labeled datasets.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MC 2 -->
+<div class="q-card" id="qc-mc2">
+  <div class="q-card-hdr"><span class="q-num-badge">MC 2</span><span class="q-type-tag qt-mc">MC</span><span class="q-section-ref">B1</span></div>
+  <div class="q-body">
+    <div class="q-stem">A team collects 10 million customer records but skips data cleaning to save time. Their trained model scores 72% accuracy despite using a state-of-the-art algorithm. What is the most likely root cause?</div>
+    <div class="q-options">
+      <div class="q-opt" onclick="selectMC('mc2','A',this)"><span class="q-opt-letter">A</span>The algorithm was not complex enough to handle 10 million records efficiently.</div>
+      <div class="q-opt" onclick="selectMC('mc2','B',this)"><span class="q-opt-letter">B</span>The training set was too small for meaningful pattern learning at that scale.</div>
+      <div class="q-opt" onclick="selectMC('mc2','C',this)"><span class="q-opt-letter">C</span>Skipping data preparation introduces noise and inconsistencies that degrade model quality regardless of algorithm sophistication.</div>
+      <div class="q-opt" onclick="selectMC('mc2','D',this)"><span class="q-opt-letter">D</span>72% accuracy is within acceptable range for most supervised learning models at hard difficulty.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MC 3 -->
+<div class="q-card" id="qc-mc3">
+  <div class="q-card-hdr"><span class="q-num-badge">MC 3</span><span class="q-type-tag qt-mc">MC</span><span class="q-section-ref">B3</span></div>
+  <div class="q-body">
+    <div class="q-stem">A hospital wants to classify MRI scans as cancerous or not. They have 500 scans with radiologist annotations and 50,000 without. Which learning paradigm is best suited to leverage the full dataset?</div>
+    <div class="q-options">
+      <div class="q-opt" onclick="selectMC('mc3','A',this)"><span class="q-opt-letter">A</span>Supervised Learning only — annotations are required for all training samples in medical imaging.</div>
+      <div class="q-opt" onclick="selectMC('mc3','B',this)"><span class="q-opt-letter">B</span>Reinforcement Learning — the model learns correct diagnoses through reward feedback from radiologists.</div>
+      <div class="q-opt" onclick="selectMC('mc3','C',this)"><span class="q-opt-letter">C</span>Semi-Supervised Learning — the small labeled set guides pattern discovery on the large unlabeled set.</div>
+      <div class="q-opt" onclick="selectMC('mc3','D',this)"><span class="q-opt-letter">D</span>Unsupervised Learning — since most data is unlabeled, labels should not influence the model at all.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MC 4 -->
+<div class="q-card" id="qc-mc4">
+  <div class="q-card-hdr"><span class="q-num-badge">MC 4</span><span class="q-type-tag qt-mc">MC</span><span class="q-section-ref">B4</span></div>
+  <div class="q-body">
+    <div class="q-stem">An e-commerce company runs daily fraud detection on 50 million transactions. They also offer live product recommendations while users browse. Which inference strategy correctly maps to each workload?</div>
+    <div class="q-options">
+      <div class="q-opt" onclick="selectMC('mc4','A',this)"><span class="q-opt-letter">A</span>Both should use real-time inference to ensure consistency across all customer interactions.</div>
+      <div class="q-opt" onclick="selectMC('mc4','B',this)"><span class="q-opt-letter">B</span>Fraud detection → batch inference (high volume, not time-sensitive); recommendations → real-time inference (low latency required).</div>
+      <div class="q-opt" onclick="selectMC('mc4','C',this)"><span class="q-opt-letter">C</span>Fraud detection → real-time inference (urgent decisions); recommendations → batch inference (precomputed overnight).</div>
+      <div class="q-opt" onclick="selectMC('mc4','D',this)"><span class="q-opt-letter">D</span>Both should use batch inference to minimize compute costs on high-volume datasets.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MC 5 -->
+<div class="q-card" id="qc-mc5">
+  <div class="q-card-hdr"><span class="q-num-badge">MC 5</span><span class="q-type-tag qt-mc">MC</span><span class="q-section-ref">C1</span></div>
+  <div class="q-body">
+    <div class="q-stem">A neural network is performing poorly on the test set despite near-perfect training accuracy. A developer suggests adding more hidden layers. What is the correct assessment of this approach?</div>
+    <div class="q-options">
+      <div class="q-opt" onclick="selectMC('mc5','A',this)"><span class="q-opt-letter">A</span>More hidden layers always improve generalization by learning more abstract features from training data.</div>
+      <div class="q-opt" onclick="selectMC('mc5','B',this)"><span class="q-opt-letter">B</span>Adding hidden layers increases depth but the issue described — high train accuracy, poor test accuracy — is overfitting, which more layers typically worsen rather than resolve.</div>
+      <div class="q-opt" onclick="selectMC('mc5','C',this)"><span class="q-opt-letter">C</span>The output layer should be redesigned instead since it is responsible for final prediction quality.</div>
+      <div class="q-opt" onclick="selectMC('mc5','D',this)"><span class="q-opt-letter">D</span>Increasing depth is correct because deeper networks always outperform shallower ones on unseen data.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MC 6 -->
+<div class="q-card" id="qc-mc6">
+  <div class="q-card-hdr"><span class="q-num-badge">MC 6</span><span class="q-type-tag qt-mc">MC</span><span class="q-section-ref">D2–D3</span></div>
+  <div class="q-body">
+    <div class="q-stem">A startup wants to build a customer support chatbot. They have limited engineering resources and no proprietary training data. Which approach is most cost-effective given Foundation Model capabilities?</div>
+    <div class="q-options">
+      <div class="q-opt" onclick="selectMC('mc6','A',this)"><span class="q-opt-letter">A</span>Train a new language model from scratch using open-source frameworks to retain full control.</div>
+      <div class="q-opt" onclick="selectMC('mc6','B',this)"><span class="q-opt-letter">B</span>Use a Foundation Model via Amazon Bedrock as a starting point, then adapt it — avoiding the cost of pretraining from scratch.</div>
+      <div class="q-opt" onclick="selectMC('mc6','C',this)"><span class="q-opt-letter">C</span>Use only unsupervised learning on customer ticket data since FMs require proprietary data to function.</div>
+      <div class="q-opt" onclick="selectMC('mc6','D',this)"><span class="q-opt-letter">D</span>Deploy AWS DeepRacer's reinforcement learning system and adapt it for conversational tasks.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MC 7 -->
+<div class="q-card" id="qc-mc7">
+  <div class="q-card-hdr"><span class="q-num-badge">MC 7</span><span class="q-type-tag qt-mc">MC</span><span class="q-section-ref">D3</span></div>
+  <div class="q-body">
+    <div class="q-stem">What makes self-supervised learning the enabling factor for Foundation Model pretraining at internet scale?</div>
+    <div class="q-options">
+      <div class="q-opt" onclick="selectMC('mc7','A',this)"><span class="q-opt-letter">A</span>It requires a reinforcement reward signal that scales automatically with data volume.</div>
+      <div class="q-opt" onclick="selectMC('mc7','B',this)"><span class="q-opt-letter">B</span>It eliminates the need for human-annotated labels by generating training signals from the structure of the data itself.</div>
+      <div class="q-opt" onclick="selectMC('mc7','C',this)"><span class="q-opt-letter">C</span>It uses semi-supervised techniques that require only 1% labeled data to guide the full training run.</div>
+      <div class="q-opt" onclick="selectMC('mc7','D',this)"><span class="q-opt-letter">D</span>It applies supervised classification on structured datasets already available from open-source repositories.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MC 8 -->
+<div class="q-card" id="qc-mc8">
+  <div class="q-card-hdr"><span class="q-num-badge">MC 8</span><span class="q-type-tag qt-mc">MC</span><span class="q-section-ref">E1</span></div>
+  <div class="q-body">
+    <div class="q-stem">An LLM is asked "What is a feline?" and correctly relates the answer to cats and kittens even though neither word appeared in the question. Which LLM mechanism most directly enables this behavior?</div>
+    <div class="q-options">
+      <div class="q-opt" onclick="selectMC('mc8','A',this)"><span class="q-opt-letter">A</span>Tokenization — the model splits "feline" into subword tokens that share roots with "cat" and "kitten."</div>
+      <div class="q-opt" onclick="selectMC('mc8','B',this)"><span class="q-opt-letter">B</span>Embeddings and vector representations — semantically related words have embeddings close together in vector space, allowing the model to infer relationships.</div>
+      <div class="q-opt" onclick="selectMC('mc8','C',this)"><span class="q-opt-letter">C</span>Output indicators — the model is programmed to recognize synonym mappings defined during fine-tuning.</div>
+      <div class="q-opt" onclick="selectMC('mc8','D',this)"><span class="q-opt-letter">D</span>Forward diffusion — the model adds structured noise to ambiguous inputs to clarify meaning before responding.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MC 9 -->
+<div class="q-card" id="qc-mc9">
+  <div class="q-card-hdr"><span class="q-num-badge">MC 9</span><span class="q-type-tag qt-mc">MC</span><span class="q-section-ref">E2</span></div>
+  <div class="q-body">
+    <div class="q-stem">During the inference phase of a diffusion model, the process begins with pure random noise. What determines the content of the final generated output?</div>
+    <div class="q-options">
+      <div class="q-opt" onclick="selectMC('mc9','A',this)"><span class="q-opt-letter">A</span>The amount of noise added during the forward diffusion training phase determines output resolution.</div>
+      <div class="q-opt" onclick="selectMC('mc9','B',this)"><span class="q-opt-letter">B</span>The discriminator network that evaluates each noise removal step guides the final output direction.</div>
+      <div class="q-opt" onclick="selectMC('mc9','C',this)"><span class="q-opt-letter">C</span>The conditioning signal — such as a text prompt — guides the reverse denoising process toward a specific coherent output.</div>
+      <div class="q-opt" onclick="selectMC('mc9','D',this)"><span class="q-opt-letter">D</span>The Gaussian distribution of the VAE latent space determines the category of generated output.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MC 10 -->
+<div class="q-card" id="qc-mc10">
+  <div class="q-card-hdr"><span class="q-num-badge">MC 10</span><span class="q-type-tag qt-mc">MC</span><span class="q-section-ref">E4</span></div>
+  <div class="q-body">
+    <div class="q-stem">In GAN training, a well-trained Generator has achieved its goal. What does this state look like, and what happens to the Discriminator at this point?</div>
+    <div class="q-options">
+      <div class="q-opt" onclick="selectMC('mc10','A',this)"><span class="q-opt-letter">A</span>The Generator produces data identical to training samples; the Discriminator can now perfectly identify all fakes.</div>
+      <div class="q-opt" onclick="selectMC('mc10','B',this)"><span class="q-opt-letter">B</span>The Generator produces data indistinguishable from real data; the Discriminator performs at near-random chance (≈50%) because it can no longer reliably distinguish real from fake.</div>
+      <div class="q-opt" onclick="selectMC('mc10','C',this)"><span class="q-opt-letter">C</span>The Generator stops improving once the Discriminator accuracy drops below 70%, and training is manually halted.</div>
+      <div class="q-opt" onclick="selectMC('mc10','D',this)"><span class="q-opt-letter">D</span>The Discriminator is removed from the network and only the Generator is deployed for inference.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MC 11 -->
+<div class="q-card" id="qc-mc11">
+  <div class="q-card-hdr"><span class="q-num-badge">MC 11</span><span class="q-type-tag qt-mc">MC</span><span class="q-section-ref">E5</span></div>
+  <div class="q-body">
+    <div class="q-stem">A developer uses a VAE to generate new product images. Why does sampling different points from the VAE's latent space consistently produce realistic-looking outputs rather than random noise?</div>
+    <div class="q-options">
+      <div class="q-opt" onclick="selectMC('mc11','A',this)"><span class="q-opt-letter">A</span>The Discriminator network filters out unrealistic outputs before the Decoder receives the latent sample.</div>
+      <div class="q-opt" onclick="selectMC('mc11','B',this)"><span class="q-opt-letter">C</span>The Encoder forces the latent space to follow a known probability distribution (Gaussian), so any sampled point maps to a meaningful region the Decoder can reconstruct into a realistic image.</div>
+      <div class="q-opt" onclick="selectMC('mc11','C',this)"><span class="q-opt-letter">C</span>VAEs memorize specific training samples in the latent space, retrieving the closest stored image for each new query.</div>
+      <div class="q-opt" onclick="selectMC('mc11','D',this)"><span class="q-opt-letter">D</span>The forward diffusion process pre-processes latent vectors to remove noise before decoding begins.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MC 12 -->
+<div class="q-card" id="qc-mc12">
+  <div class="q-card-hdr"><span class="q-num-badge">MC 12</span><span class="q-type-tag qt-mc">MC</span><span class="q-section-ref">F1</span></div>
+  <div class="q-body">
+    <div class="q-stem">A product manager gives this instruction to a Foundation Model: "You are a senior AWS architect. Here is our current infrastructure diagram. Identify the top three cost optimization opportunities and respond in a numbered list." Which prompt components are present?</div>
+    <div class="q-options">
+      <div class="q-opt" onclick="selectMC('mc12','A',this)"><span class="q-opt-letter">A</span>Instruction and Input Data only — context and output indicators are absent.</div>
+      <div class="q-opt" onclick="selectMC('mc12','B',this)"><span class="q-opt-letter">B</span>Context ("senior AWS architect"), Instruction ("identify top three cost optimizations"), Input Data (infrastructure diagram), and Output Indicator ("numbered list") — all four components present.</div>
+      <div class="q-opt" onclick="selectMC('mc12','C',this)"><span class="q-opt-letter">C</span>Context and Output Indicator only — the diagram is supplemental and the instruction is too vague to qualify.</div>
+      <div class="q-opt" onclick="selectMC('mc12','D',this)"><span class="q-opt-letter">D</span>This is RLHF, not prompt engineering, because human expertise is embedded in the instruction.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MC 13 -->
+<div class="q-card" id="qc-mc13">
+  <div class="q-card-hdr"><span class="q-num-badge">MC 13</span><span class="q-type-tag qt-mc">MC</span><span class="q-section-ref">F2–F3</span></div>
+  <div class="q-body">
+    <div class="q-stem">A legal firm wants their AI assistant to answer questions using their confidential case files — documents the FM was never trained on — without retraining the model. What is the appropriate technique?</div>
+    <div class="q-options">
+      <div class="q-opt" onclick="selectMC('mc13','A',this)"><span class="q-opt-letter">A</span>Fine-tuning with RLHF — human lawyers rate model responses to confidential queries to align outputs.</div>
+      <div class="q-opt" onclick="selectMC('mc13','B',this)"><span class="q-opt-letter">B</span>Continuous Pre-Training — feed confidential documents to the FM during a second pretraining run.</div>
+      <div class="q-opt" onclick="selectMC('mc13','C',this)"><span class="q-opt-letter">C</span>RAG — retrieve relevant case files at inference time and inject them into the prompt context, without modifying model weights.</div>
+      <div class="q-opt" onclick="selectMC('mc13','D',this)"><span class="q-opt-letter">D</span>Prompt engineering only — structure detailed instructions that guide the FM to infer answers from legal principles.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MC 14 -->
+<div class="q-card" id="qc-mc14">
+  <div class="q-card-hdr"><span class="q-num-badge">MC 14</span><span class="q-type-tag qt-mc">MC</span><span class="q-section-ref">F2</span></div>
+  <div class="q-body">
+    <div class="q-stem">RLHF is applied to a Foundation Model. What specifically does the "reinforcement" component do in this process?</div>
+    <div class="q-options">
+      <div class="q-opt" onclick="selectMC('mc14','A',this)"><span class="q-opt-letter">A</span>It trains the model on unlabeled data using reward signals derived from the data's own structure.</div>
+      <div class="q-opt" onclick="selectMC('mc14','B',this)"><span class="q-opt-letter">B</span>It uses human preference ratings to train a reward model, then fine-tunes the FM to maximize that reward — aligning outputs with human expectations.</div>
+      <div class="q-opt" onclick="selectMC('mc14','C',this)"><span class="q-opt-letter">C</span>It retrieves external documents to reinforce the FM's responses with grounding data at inference time.</div>
+      <div class="q-opt" onclick="selectMC('mc14','D',this)"><span class="q-opt-letter">D</span>It reinforces tokenization quality by verifying that embeddings are aligned with validated vocabulary datasets.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MC 15 -->
+<div class="q-card" id="qc-mc15">
+  <div class="q-card-hdr"><span class="q-num-badge">MC 15</span><span class="q-type-tag qt-mc">MC</span><span class="q-section-ref">G2</span></div>
+  <div class="q-body">
+    <div class="q-stem">A company builds a voice assistant that must understand user commands like "schedule a meeting" and trigger calendar actions. Which AWS service is most appropriate, and why is Amazon Transcribe insufficient for this task alone?</div>
+    <div class="q-options">
+      <div class="q-opt" onclick="selectMC('mc15','A',this)"><span class="q-opt-letter">A</span>Amazon Polly — it converts text to speech, enabling the assistant to speak back responses. Transcribe handles intent detection.</div>
+      <div class="q-opt" onclick="selectMC('mc15','B',this)"><span class="q-opt-letter">B</span>Amazon Lex — it combines ASR (speech-to-text) with NLU (understanding intent and extracting actions). Transcribe converts audio to text but does not understand what the user intends to do.</div>
+      <div class="q-opt" onclick="selectMC('mc15','C',this)"><span class="q-opt-letter">C</span>Amazon Comprehend — it provides NLP insights including intent classification from transcribed audio streams.</div>
+      <div class="q-opt" onclick="selectMC('mc15','D',this)"><span class="q-opt-letter">D</span>Amazon Kendra — it retrieves the correct calendar entry in response to the user's natural language query.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MC 16 -->
+<div class="q-card" id="qc-mc16">
+  <div class="q-card-hdr"><span class="q-num-badge">MC 16</span><span class="q-type-tag qt-mc">MC</span><span class="q-section-ref">G2</span></div>
+  <div class="q-body">
+    <div class="q-stem">A logistics company receives thousands of handwritten delivery forms daily and needs to extract addresses and package weights automatically. Which AWS AI service directly addresses this?</div>
+    <div class="q-options">
+      <div class="q-opt" onclick="selectMC('mc16','A',this)"><span class="q-opt-letter">A</span>Amazon Comprehend — it performs entity recognition to extract names and addresses from text input.</div>
+      <div class="q-opt" onclick="selectMC('mc16','B',this)"><span class="q-opt-letter">B</span>Amazon Rekognition — it analyzes document images for text patterns using computer vision.</div>
+      <div class="q-opt" onclick="selectMC('mc16','C',this)"><span class="q-opt-letter">C</span>Amazon Textract — it extracts text, tables, and form fields from scanned documents using OCR.</div>
+      <div class="q-opt" onclick="selectMC('mc16','D',this)"><span class="q-opt-letter">D</span>Amazon Transcribe — it converts spoken content in audio files accompanying the forms into text.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MC 17 -->
+<div class="q-card" id="qc-mc17">
+  <div class="q-card-hdr"><span class="q-num-badge">MC 17</span><span class="q-type-tag qt-mc">MC</span><span class="q-section-ref">G3</span></div>
+  <div class="q-body">
+    <div class="q-stem">A team of software engineers wants AI assistance for code review, bug detection, and inline code suggestions directly in their development workflow. Which AWS Generative AI service is purpose-built for this?</div>
+    <div class="q-options">
+      <div class="q-opt" onclick="selectMC('mc17','A',this)"><span class="q-opt-letter">A</span>Amazon Q — it connects to internal business data and answers enterprise questions from organizational knowledge bases.</div>
+      <div class="q-opt" onclick="selectMC('mc17','B',this)"><span class="q-opt-letter">B</span>Amazon Q Developer — it provides AI-powered code generation, review, and debugging assistance for developers.</div>
+      <div class="q-opt" onclick="selectMC('mc17','C',this)"><span class="q-opt-letter">C</span>SageMaker JumpStart — it offers prebuilt ML solutions and one-click deployable models for code analysis pipelines.</div>
+      <div class="q-opt" onclick="selectMC('mc17','D',this)"><span class="q-opt-letter">D</span>Amazon Bedrock — it provides direct FM access and can be prompted for code review through API calls.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MC 18 -->
+<div class="q-card" id="qc-mc18">
+  <div class="q-card-hdr"><span class="q-num-badge">MC 18</span><span class="q-type-tag qt-mc">MC</span><span class="q-section-ref">H1</span></div>
+  <div class="q-body">
+    <div class="q-stem">A CTO asks why her company should build AI features on AWS rather than hosting their own GPU cluster with open-source models. Which AWS advantage is most directly relevant to her concern about time-to-market?</div>
+    <div class="q-options">
+      <div class="q-opt" onclick="selectMC('mc18','A',this)"><span class="q-opt-letter">A</span>Security — AWS provides enterprise-grade encryption that a self-hosted cluster cannot match.</div>
+      <div class="q-opt" onclick="selectMC('mc18','B',this)"><span class="q-opt-letter">B</span>Faster development — prebuilt APIs and managed services allow teams to ship AI features in days rather than months, without infrastructure setup.</div>
+      <div class="q-opt" onclick="selectMC('mc18','C',this)"><span class="q-opt-letter">C</span>Flexibility — AWS provides access to more Foundation Models than are available in the open-source ecosystem.</div>
+      <div class="q-opt" onclick="selectMC('mc18','D',this)"><span class="q-opt-letter">D</span>Redundancy — AWS maintains automatic failover that eliminates any concern about GPU cluster downtime.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MC 19 -->
+<div class="q-card" id="qc-mc19">
+  <div class="q-card-hdr"><span class="q-num-badge">MC 19</span><span class="q-type-tag qt-mc">MC</span><span class="q-section-ref">I1</span></div>
+  <div class="q-body">
+    <div class="q-stem">A company runs a customer-facing chatbot that receives a consistent 2 million API calls per day to Amazon Bedrock. Their current token-based pricing bill is high. What pricing model should they consider switching to?</div>
+    <div class="q-options">
+      <div class="q-opt" onclick="selectMC('mc19','A',this)"><span class="q-opt-letter">A</span>Custom Model pricing — training a proprietary model reduces per-token costs for high-volume applications.</div>
+      <div class="q-opt" onclick="selectMC('mc19','B',this)"><span class="q-opt-letter">B</span>Provisioned Throughput — reserving dedicated model capacity upfront reduces per-request cost at sustained high volume.</div>
+      <div class="q-opt" onclick="selectMC('mc19','C',this)"><span class="q-opt-letter">C</span>Batch Inference — switching all chatbot requests to batch processing reduces latency costs.</div>
+      <div class="q-opt" onclick="selectMC('mc19','D',this)"><span class="q-opt-letter">D</span>Real-Time Inference — upgrading to real-time endpoints on SageMaker eliminates token-based overhead.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MC 20 -->
+<div class="q-card" id="qc-mc20">
+  <div class="q-card-hdr"><span class="q-num-badge">MC 20</span><span class="q-type-tag qt-mc">MC</span><span class="q-section-ref">F1–F3</span></div>
+  <div class="q-body">
+    <div class="q-stem">Ranking from least to most expensive in terms of compute and implementation cost, which ordering of optimization techniques is correct?</div>
+    <div class="q-options">
+      <div class="q-opt" onclick="selectMC('mc20','A',this)"><span class="q-opt-letter">A</span>Fine-Tuning → RAG → Prompt Engineering</div>
+      <div class="q-opt" onclick="selectMC('mc20','B',this)"><span class="q-opt-letter">B</span>RAG → Prompt Engineering → Fine-Tuning</div>
+      <div class="q-opt" onclick="selectMC('mc20','C',this)"><span class="q-opt-letter">C</span>Prompt Engineering → RAG → Fine-Tuning</div>
+      <div class="q-opt" onclick="selectMC('mc20','D',this)"><span class="q-opt-letter">D</span>Prompt Engineering → Fine-Tuning → RAG</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────
+     PART II — TRUE OR FALSE (TOF 1–20)
+──────────────────────── -->
+<div class="section-hdr-block" style="margin-top:8px">
+  <div class="shb-letter" style="color:var(--purple);background:var(--purple-dim);border:1px solid rgba(192,132,252,0.2)">II</div>
+  <div class="shb-title">True or False</div>
+  <div class="shb-count">20 items · mark True or False</div>
+</div>
+
+<!-- TOF items -->
+<div id="tof-items"></div>
+
+
+<!-- ─────────────────────
+     PART III — CONNECT (1–10)
+──────────────────────── -->
+<div class="section-hdr-block" style="margin-top:8px">
+  <div class="shb-letter" style="color:var(--cyan);background:var(--cyan-dim);border:1px solid rgba(78,205,196,0.2)">III</div>
+  <div class="shb-title">Connect</div>
+  <div class="shb-count">10 pairs · match Column A to Column B</div>
+</div>
+
+<div class="q-card" id="qc-conn">
+  <div class="q-card-hdr"><span class="q-num-badge">Connect</span><span class="q-type-tag qt-conn">MATCH</span><span class="q-section-ref">A–I</span></div>
+  <div class="q-body">
+    <div class="q-stem">Match each term or concept in Column A to its correct description or category in Column B.</div>
+    <div class="connect-grid">
+      <div>
+        <div class="connect-col-label">Column A — Terms</div>
+        <div class="connect-col" id="conn-col-a"></div>
+      </div>
+      <div>
+        <div class="connect-col-label">Column B — Descriptions</div>
+        <div class="connect-col" id="conn-col-b"></div>
+      </div>
+    </div>
+    <div style="margin-top:12px">
+      <div class="connect-col-label">Your Matches</div>
+      <div class="connect-input-row" id="conn-inputs"></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /doc-body -->
+
+<!-- ── NAV & SUBMIT ── -->
+<div class="qz-nav">
+  <button class="qz-nav-btn" onclick="scrollToSection('mc')">↑ MC Section</button>
+  <button class="qz-nav-btn" onclick="scrollToSection('tof')">TOF Section</button>
+  <button class="qz-nav-btn" onclick="scrollToSection('conn')">Connect Section</button>
+  <button class="qz-submit" id="submit-btn" onclick="submitQuiz()">Submit Quiz →</button>
+</div>
+
+<!-- ── RESULTS (hidden until submit) ── -->
+<div class="results-panel" id="results-panel">
+  <div class="score-card">
+    <div class="sc-pct" id="res-pct">—</div>
+    <div class="sc-band" id="res-band">—</div>
+    <div class="sc-detail" id="res-detail">—</div>
+  </div>
+  <div class="section-scores" id="sec-scores"></div>
+  <div class="imperial-panel" id="imperial-panel"></div>
+</div>
+
+<!-- ── ANSWER KEY (hidden until submit) ── -->
+<div class="key-section" id="key-section">
+
+  <div class="key-hdr"><span class="key-hdr-label">Answer Key — Part I: Multiple Choice</span></div>
+  <div class="key-grid" id="key-mc"></div>
+
+  <div class="key-hdr" style="margin-top:10px"><span class="key-hdr-label">Answer Key — Part II: True or False</span></div>
+  <div class="key-grid" id="key-tof"></div>
+
+  <div class="key-hdr" style="margin-top:10px"><span class="key-hdr-label">Answer Key — Part III: Connect</span></div>
+  <div class="key-grid" id="key-conn"></div>
+
+</div>
+
+<!-- ── FOOTER ── -->
+<div class="doc-footer">
+  <div class="footer-left">Quiz A · AWS-AI MasterClass · Module 1 · Hard · Synaptix v2.2</div>
+  <div class="footer-btns">
+    <button class="footer-btn btn-recall" onclick="sendPrompt('/recall mixed(15) hard')">
+      <div class="footer-dot" style="background:var(--cyan)"></div>Recall
+    </button>
+    <button class="footer-btn btn-export" onclick="sendPrompt('/export -md')">
+      <div class="footer-dot" style="background:var(--salmon)"></div>Export
+    </button>
+  </div>
+</div>
+
+</div><!-- /doc-wrap -->
+
+<script>
+function sendPrompt(t){if(window.parent&&window.parent.postMessage)window.parent.postMessage({type:'user_message',message:t},'*');}
+function scrollToSection(s){
+  var m={mc:'qc-mc1',tof:'tof-items',conn:'qc-conn'};
+  var el=document.getElementById(m[s]);
+  if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ── Answer tracking ── */
+var answers = {};
+var totalItems = 50;
+
+function updateProgress(){
+  var n = Object.keys(answers).length;
+  var pct = Math.round(n/totalItems*100);
+  document.getElementById('qz-prog-label').textContent = n + ' / ' + totalItems + ' answered';
+  document.getElementById('qz-prog-pct').textContent = pct + '%';
+  document.getElementById('qz-prog-fill').style.width = pct + '%';
+}
+
+/* ── MC ── */
+function selectMC(qid, val, el){
+  var opts = el.parentElement.querySelectorAll('.q-opt');
+  opts.forEach(function(o){o.classList.remove('selected');});
+  el.classList.add('selected');
+  answers[qid] = val;
+  updateProgress();
+}
+
+/* ── CORRECT ANSWERS ── */
+var MC_KEY = {
+  mc1:'B', mc2:'C', mc3:'C', mc4:'B', mc5:'B',
+  mc6:'B', mc7:'B', mc8:'B', mc9:'C', mc10:'B',
+  mc11:'B', mc12:'B', mc13:'C', mc14:'B', mc15:'B',
+  mc16:'C', mc17:'B', mc18:'B', mc19:'B', mc20:'C'
+};
+
+var TOF_DATA = [
+  {id:'tof1', stem:'Deep Learning is a subset of Machine Learning, which is itself a subset of Artificial Intelligence.', ans:true, section:'A2'},
+  {id:'tof2', stem:'Generative AI and traditional Machine Learning are competing approaches at the same level of the AI hierarchy — neither is a subset of the other.', ans:false, section:'A2'},
+  {id:'tof3', stem:'The "garbage in, garbage out" principle states that even poor-quality data can produce strong models if the algorithm is sufficiently advanced.', ans:false, section:'B1'},
+  {id:'tof4', stem:'Reinforcement Learning agents learn by receiving reward and penalty signals from environmental interaction, without requiring labeled training data.', ans:true, section:'B3'},
+  {id:'tof5', stem:'Real-time inference always costs less per prediction than batch inference due to lower processing volume per request.', ans:false, section:'B4'},
+  {id:'tof6', stem:'In a neural network, "deep" refers to the number of hidden layers — not the conceptual depth or complexity of the domain being learned.', ans:true, section:'C1'},
+  {id:'tof7', stem:'Foundation Models require human-annotated labels during the pretraining phase because they learn from labeled internet-scale datasets.', ans:false, section:'D3'},
+  {id:'tof8', stem:'Continuous Pre-Training is a technique that expands an FM\'s knowledge to new domains by continuing the pretraining process on additional data.', ans:true, section:'D3'},
+  {id:'tof9', stem:'In an LLM, the words "cat," "feline," and "kitten" would produce embedding vectors that are mathematically far apart in vector space due to their different surface forms.', ans:false, section:'E1'},
+  {id:'tof10', stem:'Forward Diffusion is the training phase of a diffusion model, during which noise is progressively added to clean data until it becomes pure noise.', ans:true, section:'E2'},
+  {id:'tof11', stem:'The Generator in a GAN is trained to correctly classify which images are real and which are synthetic.', ans:false, section:'E4'},
+  {id:'tof12', stem:'VAEs use a probabilistic latent space following a Gaussian distribution, which enables predictable and controllable data generation.', ans:true, section:'E5'},
+  {id:'tof13', stem:'RAG modifies the weights of the Foundation Model by incorporating retrieved documents into the model\'s parameters during a fine-tuning pass.', ans:false, section:'F3'},
+  {id:'tof14', stem:'Prompt engineering is the cheapest and fastest optimization technique because it requires no compute cost or model weight modification.', ans:true, section:'F1'},
+  {id:'tof15', stem:'Amazon Lex and Amazon Transcribe perform identical functions — both convert spoken audio into structured text output.', ans:false, section:'G2'},
+  {id:'tof16', stem:'Amazon Bedrock allows developers to access Foundation Models from multiple providers through a single managed API without managing underlying infrastructure.', ans:true, section:'G3'},
+  {id:'tof17', stem:'Amazon Rekognition is the correct AWS service to use when a company needs to extract text and form fields from scanned PDF documents.', ans:false, section:'G2'},
+  {id:'tof18', stem:'Provisioned Throughput on AWS Bedrock requires upfront capacity commitment and is best suited for consistent, high-volume workloads where per-request costs must be minimized.', ans:true, section:'I1'},
+  {id:'tof19', stem:'Under AWS pay-as-you-go pricing, companies pay for GPU infrastructure upfront and are billed monthly regardless of actual usage.', ans:false, section:'H1'},
+  {id:'tof20', stem:'RLHF uses human preference ratings to train a reward model, which is then used to fine-tune the FM — making it a weight-modifying optimization technique.', ans:true, section:'F2'}
+];
+
+var tofAnswers = {};
+
+/* ── Build TOF ── */
+function buildTOF(){
+  var container = document.getElementById('tof-items');
+  TOF_DATA.forEach(function(item, i){
+    var div = document.createElement('div');
+    div.className = 'q-card';
+    div.id = 'qc-'+item.id;
+    div.innerHTML =
+      '<div class="q-card-hdr"><span class="q-num-badge">TOF '+(i+1)+'</span><span class="q-type-tag qt-tof">T/F</span><span class="q-section-ref">'+item.section+'</span></div>'+
+      '<div class="q-body">'+
+        '<div class="q-stem">'+item.stem+'</div>'+
+        '<div class="tof-opts">'+
+          '<button class="tof-btn" id="'+item.id+'-true" onclick="selectTOF(\''+item.id+'\',true,this)">True</button>'+
+          '<button class="tof-btn" id="'+item.id+'-false" onclick="selectTOF(\''+item.id+'\',false,this)">False</button>'+
+        '</div>'+
+      '</div>';
+    container.appendChild(div);
+  });
+}
+
+function selectTOF(qid, val, el){
+  var trueBtn = document.getElementById(qid+'-true');
+  var falseBtn = document.getElementById(qid+'-false');
+  trueBtn.classList.remove('selected-true');
+  falseBtn.classList.remove('selected-false');
+  if(val){el.classList.add('selected-true');}
+  else{el.classList.add('selected-false');}
+  tofAnswers[qid] = val;
+  answers[qid] = val;
+  updateProgress();
+}
+
+/* ── CONNECT DATA ── */
+var CONN_PAIRS = [
+  {term:'Amazon Comprehend',    desc:'Extracts NLP insights: entities, sentiment, key phrases, topics'},
+  {term:'Amazon Polly',         desc:'Converts written text into natural-sounding audio (TTS)'},
+  {term:'Reverse Diffusion',    desc:'Inference phase — iteratively removes noise to generate output'},
+  {term:'Embeddings',           desc:'Numerical vector representations that place similar words near each other'},
+  {term:'RLHF',                 desc:'Uses human preference ratings to align FM output via reinforcement learning'},
+  {term:'Amazon Kendra',        desc:'Intelligent enterprise search powered by ML for natural language queries'},
+  {term:'VAE Encoder',          desc:'Compresses input data into a probability distribution (mean + variance)'},
+  {term:'Semi-Supervised',      desc:'Combines small labeled set with large unlabeled set for training'},
+  {term:'SageMaker JumpStart',  desc:'Provides prebuilt ML solutions and one-click deployable models'},
+  {term:'Forward Diffusion',    desc:'Training phase — progressively adds noise to clean data'}
+];
+
+var CONN_KEY = [0,1,2,3,4,5,6,7,8,9]; // desc indices matching term indices
+var connAnswers = {};
+
+function buildConnect(){
+  var colA = document.getElementById('conn-col-a');
+  var colB = document.getElementById('conn-col-b');
+  var inputRow = document.getElementById('conn-inputs');
+
+  // Build shuffled descriptions
+  var shuffledDescs = CONN_PAIRS.map(function(p,i){return {desc:p.desc, origIdx:i};});
+  shuffledDescs.sort(function(){return Math.random()-0.5;});
+
+  // Column A (terms in order)
+  CONN_PAIRS.forEach(function(p, i){
+    var el = document.createElement('div');
+    el.className = 'connect-item col-a';
+    el.textContent = (i+1)+'. '+p.term;
+    colA.appendChild(el);
+  });
+
+  // Column B (shuffled)
+  var letters = ['A','B','C','D','E','F','G','H','I','J'];
+  shuffledDescs.forEach(function(item, i){
+    var el = document.createElement('div');
+    el.className = 'connect-item col-b';
+    el.id = 'desc-'+i;
+    el.setAttribute('data-orig', item.origIdx);
+    el.textContent = letters[i]+'. '+item.desc;
+    colB.appendChild(el);
+  });
+
+  // Input selectors
+  CONN_PAIRS.forEach(function(p, i){
+    var row = document.createElement('div');
+    row.className = 'connect-pair-input';
+    var termLabel = document.createElement('div');
+    termLabel.className = 'connect-pair-term';
+    termLabel.textContent = (i+1)+'. '+p.term;
+    var sel = document.createElement('select');
+    sel.className = 'connect-pair-select';
+    sel.id = 'conn-sel-'+i;
+    var defOpt = document.createElement('option');
+    defOpt.value = '';
+    defOpt.textContent = '— Select —';
+    sel.appendChild(defOpt);
+    shuffledDescs.forEach(function(item, j){
+      var opt = document.createElement('option');
+      opt.value = item.origIdx;
+      opt.textContent = letters[j]+'. '+item.desc.substring(0,55)+'…';
+      sel.appendChild(opt);
+    });
+    sel.addEventListener('change', function(){
+      connAnswers[i] = parseInt(this.value);
+      answers['conn'+i] = parseInt(this.value);
+      updateProgress();
+    });
+    row.appendChild(termLabel);
+    row.appendChild(sel);
+    inputRow.appendChild(row);
+  });
+}
+
+/* ── SUBMIT ── */
+function submitQuiz(){
+  var btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Grading…';
+
+  // Score MC
+  var mcCorrect = 0;
+  var mcSections = {};
+  Object.keys(MC_KEY).forEach(function(qid){
+    var correct = MC_KEY[qid];
+    var given = answers[qid];
+    var isRight = given === correct;
+    if(isRight) mcCorrect++;
+    // reveal
+    var card = document.getElementById('qc-'+qid);
+    if(card){
+      var opts = card.querySelectorAll('.q-opt');
+      opts.forEach(function(o, idx){
+        var letter = ['A','B','C','D'][idx];
+        o.classList.remove('selected');
+        if(letter === correct) o.classList.add('correct-reveal');
+        else if(letter === given && given !== correct) o.classList.add('wrong-reveal');
+      });
+      card.classList.add(isRight ? 'answered-correct' : 'answered-wrong');
+    }
+  });
+
+  // Score TOF
+  var tofCorrect = 0;
+  TOF_DATA.forEach(function(item){
+    var given = tofAnswers[item.id];
+    var correct = item.ans;
+    var isRight = given === correct;
+    if(isRight) tofCorrect++;
+    var trueBtn = document.getElementById(item.id+'-true');
+    var falseBtn = document.getElementById(item.id+'-false');
+    if(trueBtn && falseBtn){
+      trueBtn.classList.remove('selected-true','selected-false');
+      falseBtn.classList.remove('selected-true','selected-false');
+      if(correct === true) trueBtn.classList.add('reveal-correct');
+      else falseBtn.classList.add('reveal-correct');
+      if(given !== undefined && given !== correct){
+        if(given === true) trueBtn.classList.add('reveal-wrong');
+        else falseBtn.classList.add('reveal-wrong');
+      }
+    }
+    var card = document.getElementById('qc-'+item.id);
+    if(card) card.classList.add(isRight ? 'answered-correct' : 'answered-wrong');
+  });
+
+  // Score Connect
+  var connCorrect = 0;
+  CONN_PAIRS.forEach(function(p, i){
+    var given = connAnswers[i];
+    var correct = i; // term i matches desc index i
+    var isRight = given === correct;
+    if(isRight) connCorrect++;
+    var sel = document.getElementById('conn-sel-'+i);
+    if(sel){
+      sel.classList.remove('correct-reveal','wrong-reveal');
+      sel.classList.add(isRight ? 'correct-reveal' : 'wrong-reveal');
+    }
+  });
+
+  var totalCorrect = mcCorrect + tofCorrect + connCorrect;
+  var pct = Math.round(totalCorrect / totalItems * 100);
+
+  // Section breakdown (A-I mapped by question)
+  var secMap = {
+    A: [mcCorrect>=1?1:0, tofCorrect>=2?1:0], // rough section proxy
+  };
+
+  // Simple section score approximation
+  var secScores = {
+    'A (AI Ecosystem)':    pct,
+    'B (ML Fundamentals)': pct,
+    'C (Deep Learning)':   pct,
+    'D (Gen AI & FMs)':    pct,
+    'E (Architectures)':   pct,
+    'F (Optimization)':    pct,
+    'G (AWS Stack)':       pct,
+    'H–I (Advantages/Cost)': pct
+  };
+
+  // Show results
+  var pctEl = document.getElementById('res-pct');
+  var bandEl = document.getElementById('res-band');
+  var detailEl = document.getElementById('res-detail');
+  pctEl.textContent = pct + '%';
+  pctEl.style.color = pct >= 90 ? 'var(--green)' : pct >= 75 ? 'var(--amber)' : 'var(--red)';
+
+  var band, bandClass, imperialHTML;
+  if(pct >= 90){
+    band = 'IMPERIAL TRIUMPH';
+    bandClass = 'band-triumph';
+    imperialHTML = buildImperial('triumph', pct, totalCorrect, mcCorrect, tofCorrect, connCorrect);
+  } else if(pct >= 75){
+    band = 'FAILURE OF EXPECTATION';
+    bandClass = 'band-expectation';
+    imperialHTML = buildImperial('expectation', pct, totalCorrect, mcCorrect, tofCorrect, connCorrect);
+  } else {
+    band = 'CATASTROPHIC FAILURE';
+    bandClass = 'band-failure';
+    imperialHTML = buildImperial('failure', pct, totalCorrect, mcCorrect, tofCorrect, connCorrect);
+  }
+  bandEl.textContent = band;
+  bandEl.className = 'sc-band ' + bandClass;
+  detailEl.textContent = totalCorrect + ' / ' + totalItems + ' correct · MC: ' + mcCorrect + '/20 · TOF: ' + tofCorrect + '/20 · Connect: ' + connCorrect + '/10';
+
+  // Section score cards
+  var secEl = document.getElementById('sec-scores');
+  secEl.innerHTML =
+    '<div class="sec-score-card"><div class="ssc-label">MC</div><div class="ssc-val" style="color:'+scoreColor(mcCorrect,20)+'">'+Math.round(mcCorrect/20*100)+'%</div></div>'+
+    '<div class="sec-score-card"><div class="ssc-label">TOF</div><div class="ssc-val" style="color:'+scoreColor(tofCorrect,20)+'">'+Math.round(tofCorrect/20*100)+'%</div></div>'+
+    '<div class="sec-score-card"><div class="ssc-label">Connect</div><div class="ssc-val" style="color:'+scoreColor(connCorrect,10)+'">'+Math.round(connCorrect/10*100)+'%</div></div>';
+
+  document.getElementById('imperial-panel').innerHTML = imperialHTML;
+
+  document.getElementById('results-panel').style.display = 'flex';
+
+  // Build answer key
+  buildAnswerKey(mcCorrect, tofCorrect, connCorrect);
+  document.getElementById('key-section').style.display = 'flex';
+
+  document.getElementById('results-panel').scrollIntoView({behavior:'smooth',block:'start'});
+  btn.textContent = 'Submitted';
+}
+
+function scoreColor(correct, total){
+  var p = correct/total;
+  if(p >= 0.9) return 'var(--green)';
+  if(p >= 0.75) return 'var(--amber)';
+  return 'var(--red)';
+}
+
+function buildImperial(band, pct, total, mc, tof, conn){
+  if(band === 'triumph'){
+    return '<div class="imp-section"><h2>🏆 Campaign Chronicle</h2>'+
+      '<p>The banners of the Empire fly unchallenged over the Frontier of Machine Learning. Lord High Commander Denard has demonstrated the kind of operational mastery that Supreme Allied Headquarters records in the Hall of Victories — not as a footnote, but as the lead entry.</p>'+
+      '<p>A score of <strong>'+pct+'%</strong> across 50 hard-difficulty items spanning nine sections of this theater is not merely satisfactory. It is the standard by which future commanders will be measured and found wanting.</p></div>'+
+      '<div class="imp-section"><h2>🗺️ Allied Intelligence Report</h2>'+
+      '<p><strong>Secured Territories:</strong> All nine sections of Module 1 — AI Ecosystem, ML Fundamentals, Deep Learning, Generative AI, Model Architectures, Optimization Techniques, AWS Infrastructure, Advantages, and Cost Considerations — have been brought under Imperial control.</p>'+
+      '<p><strong>Contested Territories:</strong> Intelligence suggests minor resistance in sections where any errors occurred. Review those specific items in the answer key below.</p>'+
+      '<p><strong>Enemy-Controlled Territories:</strong> None confirmed. The frontier is stable.</p></div>'+
+      '<div class="imp-section"><h2>⚔️ Recommended Operations</h2><ul>'+
+      '<li>Advance immediately to the next module — this territory is secured.</li>'+
+      '<li>Review any missed items in the answer key as a formality, not a remediation.</li>'+
+      '<li>Consider running <strong>/quiz pro</strong> on this module if you wish to stress-test the frontier.</li></ul></div>'+
+      '<div class="imp-section"><h2>📜 War Council Decree</h2>'+
+      '<div class="imp-decree">By Imperial Decree, Lord High Commander Denard is hereby elevated to the rank of <strong>High Strategist of Artificial Intelligence</strong>. The Campaign Chronicle entry for Module 1 has been marked VICTORIOUS. Supreme Allied Headquarters extends its formal commendation. The Empire expands.</div></div>';
+  }
+  if(band === 'expectation'){
+    return '<div class="imp-section"><h2>🏆 Campaign Chronicle</h2>'+
+      '<p>The campaign has technically concluded in the Empire\'s favor. Lord High Commander Denard captured enough territory to file a victory report. Supreme Allied Headquarters has reviewed that report. The enthusiasm surrounding it remains measured.</p>'+
+      '<p>A score of <strong>'+pct+'%</strong> on a hard-difficulty assessment of this scope represents a functional result. "Functional" is not a word that appears in the Imperial Hall of Victories. It appears in administrative correspondence.</p></div>'+
+      '<div class="imp-section"><h2>🗺️ Allied Intelligence Report</h2>'+
+      '<p><strong>Secured Territories:</strong> The majority of Module 1 content has been retained. Core concepts in AI hierarchy, ML pipeline, neural networks, and AWS service mapping show adequate command.</p>'+
+      '<p><strong>Contested Territories:</strong> Sections where errors clustered indicate incomplete control. Review flagged answer key items — particularly in optimization techniques and model architectures.</p>'+
+      '<p><strong>Enemy-Controlled Territories:</strong> Minor pockets of resistance remain. The frontier is stable but not pacified.</p></div>'+
+      '<div class="imp-section"><h2>⚔️ Recommended Operations</h2><ul>'+
+      '<li>Review all incorrect items in the answer key immediately — do not proceed to the next module with unresolved gaps.</li>'+
+      '<li>Run <strong>/recall mixed(20) hard</strong> targeting the sections where errors occurred.</li>'+
+      '<li>Re-attempt this quiz after review. A score of '+pct+'% is not the final record of this campaign.</li></ul></div>'+
+      '<div class="imp-section"><h2>📜 War Council Decree</h2>'+
+      '<div class="imp-decree">The War Council acknowledges the result. The War Council expected more. Promotion proceedings have been postponed. The commander\'s file has been annotated: <strong>Capable — not yet distinguished.</strong> The Empire awaits improvement with cautious optimism.</div></div>';
+  }
+  // failure
+  return '<div class="imp-section"><h2>🏆 Campaign Chronicle</h2>'+
+    '<p>Supreme Allied Headquarters has completed its initial assessment of the Module 1 campaign. The Court-Martial Board has been notified. The results are being prepared for historical documentation — specifically, as a case study in what not to do.</p>'+
+    '<p>A score of <strong>'+pct+'%</strong> on a hard-difficulty assessment is not a setback. It is not a learning moment. It is a civilizational event. The frontiers have collapsed. The citadels have fallen. The enemy now studies the campaign for tactical lessons.</p></div>'+
+    '<div class="imp-section"><h2>🗺️ Allied Intelligence Report</h2>'+
+    '<p><strong>Secured Territories:</strong> Intelligence suggests isolated pockets of correct answers exist. Their strategic significance is limited given the overall outcome.</p>'+
+    '<p><strong>Contested Territories:</strong> The majority of Module 1 content remains under dispute. The ML pipeline, optimization techniques, model architectures, and AWS service distinctions all require immediate remediation.</p>'+
+    '<p><strong>Enemy-Controlled Territories:</strong> Significant. The enemy controls more intellectual territory in this module than the commander does. This is the official assessment.</p></div>'+
+    '<div class="imp-section"><h2>⚔️ Recommended Operations</h2><ul>'+
+    '<li>Return to the Comprehensive reviewer immediately. Read it completely.</li>'+
+    '<li>Complete the full 30-card recall set before re-attempting any assessment.</li>'+
+    '<li>Run <strong>/review compact</strong> as a targeted review sweep.</li>'+
+    '<li>Do not attempt the next module. This one must be secured first.</li></ul></div>'+
+    '<div class="imp-section"><h2>📜 War Council Decree</h2>'+
+    '<div class="imp-decree">The Court-Martial Board has reached a verdict. Lord High Commander Denard is hereby reassigned to the rank of <strong>Probationary Officer of Remedial Education</strong> pending evidence of recovery. The campaign record has been sealed with the notation: <strong>CATASTROPHIC FAILURE — DO NOT REFERENCE AS A POSITIVE EXAMPLE.</strong> The Empire will be watching the remediation effort. The Empire is not optimistic.</div></div>';
+}
+
+function buildAnswerKey(mcC, tofC, connC){
+  // MC key
+  var mcKeyEl = document.getElementById('key-mc');
+  var mcKeys = [
+    {n:1,a:'B',t:'AI Hierarchy: Generative AI creates; traditional ML analyzes. (A2)'},
+    {n:2,a:'C',t:'Data quality governs model quality — "garbage in, garbage out." (B1)'},
+    {n:3,a:'C',t:'Semi-Supervised uses small labeled + large unlabeled dataset. (B3)'},
+    {n:4,a:'B',t:'Batch = high volume, latency-tolerant; Real-time = low latency. (B4)'},
+    {n:5,a:'B',t:'High train / low test accuracy = overfitting; more layers worsen it. (C1)'},
+    {n:6,a:'B',t:'FMs via Bedrock are the cost-effective starting point for limited teams. (D2)'},
+    {n:7,a:'B',t:'Self-supervised generates labels from data structure — no human annotation. (D3)'},
+    {n:8,a:'B',t:'Embeddings place semantically related words close together in vector space. (E1)'},
+    {n:9,a:'C',t:'The conditioning signal (text prompt) guides reverse diffusion output. (E2)'},
+    {n:10,a:'B',t:'Well-trained Generator → Discriminator at ≈50% accuracy (can\'t distinguish). (E4)'},
+    {n:11,a:'B',t:'Gaussian latent space ensures any sampled point decodes to a realistic output. (E5)'},
+    {n:12,a:'B',t:'All four prompt components present: context, instruction, input data, output indicator. (F1)'},
+    {n:13,a:'C',t:'RAG injects private documents at inference time without weight modification. (F3)'},
+    {n:14,a:'B',t:'RLHF trains reward model from human ratings, then fine-tunes FM to maximize reward. (F2)'},
+    {n:15,a:'B',t:'Lex = ASR + NLU (understands intent). Transcribe = ASR only (no intent). (G2)'},
+    {n:16,a:'C',t:'Textract extracts text, tables, and forms from scanned documents (OCR). (G2)'},
+    {n:17,a:'B',t:'Amazon Q Developer is purpose-built for code generation, review, and debugging. (G3)'},
+    {n:18,a:'B',t:'Faster development via prebuilt APIs directly addresses time-to-market. (H1)'},
+    {n:19,a:'B',t:'Provisioned Throughput reduces per-request cost for sustained high-volume workloads. (I1)'},
+    {n:20,a:'C',t:'Prompt Engineering (cheapest) → RAG → Fine-Tuning (most expensive). (F1–F3)'}
+  ];
+  mcKeys.forEach(function(k){
+    var row = document.createElement('div');
+    row.className = 'key-row';
+    row.innerHTML = '<span class="key-num">MC '+k.n+'</span><span class="key-ans">'+k.a+'</span><span class="key-topic">'+k.t+'</span>';
+    mcKeyEl.appendChild(row);
+  });
+
+  // TOF key
+  var tofKeyEl = document.getElementById('key-tof');
+  TOF_DATA.forEach(function(item, i){
+    var row = document.createElement('div');
+    row.className = 'key-row';
+    row.innerHTML = '<span class="key-num">TOF '+(i+1)+'</span><span class="key-ans">'+(item.ans?'TRUE':'FALSE')+'</span><span class="key-topic">'+item.section+'</span>';
+    tofKeyEl.appendChild(row);
+  });
+
+  // Connect key
+  var connKeyEl = document.getElementById('key-conn');
+  CONN_PAIRS.forEach(function(p, i){
+    var row = document.createElement('div');
+    row.className = 'key-row';
+    row.innerHTML = '<span class="key-num">'+(i+1)+'</span><span class="key-ans">✓</span><span class="key-topic">'+p.term+' → '+p.desc+'</span>';
+    connKeyEl.appendChild(row);
+  });
+}
+
+/* ── Boot ── */
+buildTOF();
+buildConnect();
+updateProgress();
+</script>
+</body>
+</html>

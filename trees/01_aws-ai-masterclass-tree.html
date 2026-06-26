@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Synaptix — M1 Tree: Fundamentals of ML & AI</title>
+<style>
+/* synaptix-runtime v1.0 — do not edit inline — update via runtime-asset.md */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg-base:    #0e0e11;
+  --bg-surface: #16161a;
+  --bg-elevated:#1c1c21;
+  --bg-section: #1a1a1f;
+  --code-bg:    #0c0c0f;
+  --border:    rgba(255,255,255,0.07);
+  --border-hi: rgba(255,255,255,0.12);
+  --orange: #f4762a;
+  --salmon: #f08080;
+  --cyan:   #4ecdc4;
+  --green:  #4ade80;
+  --yellow: #f4d03f;
+  --purple: #c084fc;
+  --sky:    #5db8f2;
+  --amber:  #f4b942;
+  --red:    #f87171;
+  --orange-dim:  rgba(244,118,42,0.10);
+  --orange-glow: rgba(244,118,42,0.05);
+  --cyan-dim:    rgba(78,205,196,0.10);
+  --salmon-dim:  rgba(240,128,128,0.10);
+  --yellow-dim:  rgba(244,208,63,0.10);
+  --green-dim:   rgba(74,222,128,0.10);
+  --purple-dim:  rgba(192,132,252,0.10);
+  --sky-dim:     rgba(93,184,242,0.10);
+  --text-primary:   #e8e8ee;
+  --text-secondary: #8b8b9a;
+  --text-muted:     #4a4a5a;
+  --mono:'JetBrains Mono',monospace;
+  --sans:'Inter',system-ui,sans-serif;
+}
+
+body{background:var(--bg-base);color:var(--text-primary);font-family:var(--sans);font-size:13px;line-height:1.8;}
+
+.doc-wrap{max-width:860px;margin:0 auto;display:flex;flex-direction:column;}
+
+/* ── Header ── */
+.doc-header{padding:22px 26px 16px;border-bottom:1px solid var(--border);background:var(--bg-surface);}
+.badges{display:flex;gap:8px;margin-bottom:11px;flex-wrap:wrap}
+.badge{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:0.07em;text-transform:uppercase;padding:3px 8px;border-radius:4px;border:1px solid;}
+.badge-type{color:var(--orange);background:var(--orange-dim);border-color:rgba(244,118,42,0.25)}
+.badge-mod{color:var(--sky);background:var(--sky-dim);border-color:rgba(93,184,242,0.25)}
+.badge-tree{color:var(--purple);background:var(--purple-dim);border-color:rgba(192,132,252,0.25)}
+.doc-title{font-size:20px;font-weight:600;letter-spacing:-0.02em}
+.doc-subtitle{font-size:11px;font-family:var(--mono);color:var(--text-muted);margin-top:4px}
+.stat-row{display:flex;gap:20px;flex-wrap:wrap;margin-top:13px;padding-top:13px;border-top:1px solid var(--border);}
+.stat-val{font-family:var(--mono);font-size:15px;font-weight:600;color:var(--text-primary)}
+.stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-top:1px}
+
+/* ── Body ── */
+.doc-body{padding:22px 26px;display:flex;flex-direction:column;gap:10px}
+
+.module-label{display:flex;align-items:center;gap:10px}
+.module-num{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--orange);letter-spacing:0.1em;text-transform:uppercase;}
+.module-rule{flex:1;height:1px;background:linear-gradient(to right,rgba(244,118,42,0.25),transparent);}
+.module-title{font-size:17px;font-weight:600;margin-bottom:10px}
+
+/* ── Legend ── */
+.legend{display:flex;gap:16px;flex-wrap:wrap;padding:10px 14px;background:var(--bg-surface);border:1px solid var(--border);border-radius:7px;margin-bottom:2px;}
+.leg-item{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--text-muted)}
+.leg-dot{width:8px;height:8px;border-radius:2px}
+
+/* ── Tree section card ── */
+.section-card{background:var(--bg-section);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color 0.15s;}
+.section-card:hover{border-color:var(--border-hi)}
+.section-hdr{padding:11px 17px 9px;border-bottom:1px solid var(--border);position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;}
+.section-letter{font-family:var(--mono);font-size:12px;font-weight:600;width:25px;height:25px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.section-title{font-size:13px;font-weight:500;flex:1}
+.ghost-glyph{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:58px;font-weight:700;color:rgba(255,255,255,0.025);pointer-events:none;user-select:none;line-height:1;}
+.section-body{padding:14px 16px;}
+
+/* ── Tree block ── */
+.tree-block{
+  background:var(--code-bg);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:8px;padding:16px 20px;
+  font-family:var(--mono);font-size:12px;
+  line-height:1.85;overflow-x:auto;white-space:pre;
+}
+/* Tree color classes */
+.tm{color:var(--orange);font-weight:600}    /* module / section root */
+.ts{color:var(--sky);font-weight:500}       /* section label */
+.tb{color:var(--text-secondary)}            /* subsection */
+.tl{color:var(--cyan)}                      /* leaf concept */
+.tg{color:var(--green)}                     /* green leaf — advantage/positive */
+.tp{color:var(--purple)}                    /* purple leaf — special/note */
+.ty{color:var(--yellow)}                    /* yellow leaf — warning/exception */
+.tr{color:var(--salmon)}                    /* salmon leaf — cost/risk */
+.tc{color:var(--text-muted)}               /* connector lines */
+
+/* ── Summary ── */
+.summary-block{background:var(--bg-surface);border:1px solid var(--border);border-bottom:2px solid var(--orange);border-radius:8px 8px 0 0;padding:14px 18px;}
+.summary-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--orange);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;}
+.summary-list{list-style:none;display:flex;flex-direction:column;gap:5px}
+.summary-list li{font-size:13px;color:var(--text-secondary);line-height:1.7;display:flex;gap:7px;}
+.summary-list li::before{content:'›';color:var(--orange);font-weight:700;font-size:14px;flex-shrink:0}
+
+/* ── Footer ── */
+.doc-footer{padding:12px 26px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--bg-surface);flex-wrap:wrap;gap:10px;}
+.footer-left{font-size:11px;color:var(--text-muted);font-family:var(--mono)}
+.footer-btns{display:flex;gap:10px}
+.footer-btn{display:flex;align-items:center;justify-content:center;gap:7px;font-family:var(--mono);font-size:11px;font-weight:500;width:128px;height:64px;border-radius:20px;border:1px solid;background:transparent;cursor:pointer;letter-spacing:0.03em;transition:all 0.15s;}
+.footer-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.btn-quiz  {color:var(--orange);border-color:rgba(244,118,42,0.35);background:var(--orange-dim)}
+.btn-recall{color:var(--cyan);  border-color:rgba(78,205,196,0.35);background:var(--cyan-dim)}
+.btn-export{color:var(--salmon);border-color:rgba(240,128,128,0.35);background:var(--salmon-dim)}
+.btn-quiz:hover  {background:rgba(244,118,42,0.18)}
+.btn-recall:hover{background:rgba(78,205,196,0.15)}
+.btn-export:hover{background:rgba(240,128,128,0.15)}
+
+@media(max-width:600px){
+  .doc-header,.doc-body{padding-left:16px;padding-right:16px}
+  .doc-footer{padding:12px 16px}
+  .footer-btn{width:100px;height:52px;font-size:10px}
+  .tree-block{font-size:11px;padding:12px 14px}
+}
+</style>
+</head>
+<body>
+<div class="doc-wrap">
+
+<!-- ── HEADER ── -->
+<div class="doc-header">
+  <div class="badges">
+    <span class="badge badge-type">Tree</span>
+    <span class="badge badge-mod">Module 1</span>
+    <span class="badge badge-tree">Structure Only</span>
+  </div>
+  <div class="doc-title">Fundamentals of Machine Learning and Artificial Intelligence</div>
+  <div class="doc-subtitle">AWS-AI MasterClass · Synaptix v2.2 · Minimal Verbosity</div>
+  <div class="stat-row">
+    <div class="stat-item"><div class="stat-val">9</div><div class="stat-lbl">Sections</div></div>
+    <div class="stat-item"><div class="stat-val">A–I</div><div class="stat-lbl">Coverage</div></div>
+    <div class="stat-item"><div class="stat-val">Full</div><div class="stat-lbl">Expansion</div></div>
+    <div class="stat-item"><div class="stat-val">EN</div><div class="stat-lbl">Language</div></div>
+  </div>
+</div>
+
+<div class="doc-body">
+
+  <div class="module-label">
+    <span class="module-num">Module 1</span>
+    <div class="module-rule"></div>
+  </div>
+  <div class="module-title">Fundamentals of Machine Learning and Artificial Intelligence</div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="leg-item"><div class="leg-dot" style="background:var(--orange)"></div>Section / Root</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--sky)"></div>Subsection</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--cyan)"></div>Concept / Term</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--green)"></div>Advantage / Positive</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--yellow)"></div>Exception / Warning</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--salmon)"></div>Cost / Risk</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--purple)"></div>Special Note</div>
+  </div>
+
+
+  <!-- ══════════ A: AI ECOSYSTEM ══════════ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--sky);background:var(--sky-dim);border:1px solid rgba(93,184,242,0.2)">A</div>
+      <div class="section-title">The AI Ecosystem</div>
+      <div class="ghost-glyph">A</div>
+    </div>
+    <div class="section-body">
+      <div class="tree-block"><span class="tm">A. The AI Ecosystem</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">A1. The Four Terms</span>
+<span class="tc">│   ├──</span> <span class="tl">Artificial Intelligence (AI)</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Umbrella field</span>
+<span class="tc">│   │   └──</span> <span class="tl">Enables human-like intelligence in machines</span>
+<span class="tc">│   ├──</span> <span class="tl">Machine Learning (ML)</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Subset of AI</span>
+<span class="tc">│   │   └──</span> <span class="tl">Learns patterns from data — no explicit rules</span>
+<span class="tc">│   ├──</span> <span class="tl">Deep Learning (DL)</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Subset of ML</span>
+<span class="tc">│   │   └──</span> <span class="tl">Layered neural networks — brain-inspired structure</span>
+<span class="tc">│   └──</span> <span class="tl">Generative AI</span>
+<span class="tc">│       ├──</span> <span class="tl">Subset of DL</span>
+<span class="tc">│       └──</span> <span class="tl">Creates new content — text, images, audio, code</span>
+<span class="tc">│</span>
+<span class="tc">└──</span> <span class="ts">A2. Hierarchy</span>
+<span class="tc">    ├──</span> <span class="tl">AI ⊃ ML ⊃ DL ⊃ Generative AI</span>
+<span class="tc">    ├──</span> <span class="tl">Nested layers — not alternatives</span>
+<span class="tc">    └──</span> <span class="ty">Generative AI creates · Traditional ML analyzes/predicts</span></div>
+    </div>
+  </div>
+
+
+  <!-- ══════════ B: ML FUNDAMENTALS ══════════ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--cyan);background:var(--cyan-dim);border:1px solid rgba(78,205,196,0.2)">B</div>
+      <div class="section-title">Machine Learning Fundamentals</div>
+      <div class="ghost-glyph">B</div>
+    </div>
+    <div class="section-body">
+      <div class="tree-block"><span class="tm">B. Machine Learning Fundamentals</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">B1. ML Pipeline</span>
+<span class="tc">│   ├──</span> <span class="tl">01 · Data Collection</span>  <span class="tc">— gather raw data</span>
+<span class="tc">│   ├──</span> <span class="tl">02 · Data Preparation</span>  <span class="tc">— clean, preprocess, split</span>
+<span class="tc">│   ├──</span> <span class="tl">03 · Training</span>  <span class="tc">— learn patterns, adjust parameters</span>
+<span class="tc">│   ├──</span> <span class="tl">04 · Evaluation</span>  <span class="tc">— measure performance on held-out data</span>
+<span class="tc">│   ├──</span> <span class="tl">05 · Iteration</span>  <span class="tc">— improve and repeat</span>
+<span class="tc">│   └──</span> <span class="ty">Model quality = Data quality · "Garbage in, garbage out"</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">B2. Data Types</span>
+<span class="tc">│   ├──</span> <span class="tl">Labeled Data</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Correct answers attached to each data point</span>
+<span class="tc">│   │   └──</span> <span class="tl">Required for supervised learning · Expensive at scale</span>
+<span class="tc">│   ├──</span> <span class="tl">Unlabeled Data</span>
+<span class="tc">│   │   ├──</span> <span class="tl">No annotations — raw data only</span>
+<span class="tc">│   │   └──</span> <span class="tg">Abundant and cheap · Used in unsupervised / self-supervised</span>
+<span class="tc">│   ├──</span> <span class="tl">Structured Data</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Tabular</span>  <span class="tc">— rows and columns (customer records, financials)</span>
+<span class="tc">│   │   └──</span> <span class="tl">Time-series</span>  <span class="tc">— sequential data over time (stock prices, sensors)</span>
+<span class="tc">│   └──</span> <span class="tl">Unstructured Data</span>
+<span class="tc">│       ├──</span> <span class="tl">Text</span>  <span class="tc">— documents, emails, posts, code</span>
+<span class="tc">│       └──</span> <span class="tl">Image / Video</span>  <span class="tc">— photos, surveillance, video streams</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">B3. Learning Types</span>
+<span class="tc">│   ├──</span> <span class="tl">Supervised Learning</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Input: labeled data</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Tasks: classification, regression</span>
+<span class="tc">│   │   └──</span> <span class="tl">Most widely used in production ML</span>
+<span class="tc">│   ├──</span> <span class="tl">Unsupervised Learning</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Input: unlabeled data</span>
+<span class="tc">│   │   └──</span> <span class="tl">Tasks: clustering, anomaly detection, dimensionality reduction</span>
+<span class="tc">│   ├──</span> <span class="tl">Reinforcement Learning</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Agent learns via reward / penalty signals</span>
+<span class="tc">│   │   ├──</span> <span class="tl">No labeled data — learns through interaction</span>
+<span class="tc">│   │   └──</span> <span class="tl">AWS: DeepRacer (autonomous RL race car)</span>
+<span class="tc">│   └──</span> <span class="tl">Semi-Supervised Learning</span>
+<span class="tc">│       ├──</span> <span class="tl">Small labeled set + large unlabeled set</span>
+<span class="tc">│       └──</span> <span class="tg">Practical when full labeling is cost-prohibitive</span>
+<span class="tc">│</span>
+<span class="tc">└──</span> <span class="ts">B4. Inference</span>
+<span class="tc">    ├──</span> <span class="tl">Definition</span>  <span class="tc">— using a trained model to make predictions in production</span>
+<span class="tc">    ├──</span> <span class="tl">Batch Inference</span>
+<span class="tc">    │   ├──</span> <span class="tl">Large dataset processed at once</span>
+<span class="tc">    │   ├──</span> <span class="tg">Lower cost per prediction</span>
+<span class="tc">    │   └──</span> <span class="tr">Higher latency — not real-time</span>
+<span class="tc">    └──</span> <span class="tl">Real-Time Inference</span>
+<span class="tc">        ├──</span> <span class="tl">Per-request, instant predictions</span>
+<span class="tc">        ├──</span> <span class="tg">Low latency</span>
+<span class="tc">        └──</span> <span class="tr">Higher cost per prediction</span></div>
+    </div>
+  </div>
+
+
+  <!-- ══════════ C: DEEP LEARNING ══════════ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--purple);background:var(--purple-dim);border:1px solid rgba(192,132,252,0.2)">C</div>
+      <div class="section-title">Deep Learning and Neural Networks</div>
+      <div class="ghost-glyph">C</div>
+    </div>
+    <div class="section-body">
+      <div class="tree-block"><span class="tm">C. Deep Learning and Neural Networks</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">C1. Neural Network Architecture</span>
+<span class="tc">│   ├──</span> <span class="tl">Nodes (Neurons)</span>  <span class="tc">— processing units</span>
+<span class="tc">│   ├──</span> <span class="tl">Connections</span>  <span class="tc">— weighted links between nodes</span>
+<span class="tc">│   ├──</span> <span class="tl">Input Layer</span>  <span class="tc">— receives raw data (one node per feature)</span>
+<span class="tc">│   ├──</span> <span class="tl">Hidden Layers</span>  <span class="tc">— learn abstract representations</span>
+<span class="tc">│   │   └──</span> <span class="tl">"Deep" = many hidden layers</span>
+<span class="tc">│   ├──</span> <span class="tl">Output Layer</span>  <span class="tc">— produces final result</span>
+<span class="tc">│   └──</span> <span class="tl">Learning Process</span>
+<span class="tc">│       ├──</span> <span class="tl">Make prediction → compute error</span>
+<span class="tc">│       ├──</span> <span class="tl">Backpropagation</span>  <span class="tc">— adjust weights throughout network</span>
+<span class="tc">│       └──</span> <span class="tl">Repeat over thousands/millions of iterations</span>
+<span class="tc">│</span>
+<span class="tc">└──</span> <span class="ts">C2. Application Domains</span>
+<span class="tc">    ├──</span> <span class="tl">Computer Vision (CV)</span>
+<span class="tc">    │   ├──</span> <span class="tl">Image Classification</span>  <span class="tc">— what is in this image?</span>
+<span class="tc">    │   ├──</span> <span class="tl">Object Detection</span>  <span class="tc">— where are objects, what are they?</span>
+<span class="tc">    │   ├──</span> <span class="tl">Segmentation</span>  <span class="tc">— which pixels belong to which object?</span>
+<span class="tc">    │   └──</span> <span class="tp">AWS: Amazon Rekognition</span>
+<span class="tc">    └──</span> <span class="tl">Natural Language Processing (NLP)</span>
+<span class="tc">        ├──</span> <span class="tl">Text Classification</span>
+<span class="tc">        ├──</span> <span class="tl">Sentiment Analysis</span>
+<span class="tc">        ├──</span> <span class="tl">Machine Translation</span>
+<span class="tc">        ├──</span> <span class="tl">Text Generation</span>
+<span class="tc">        └──</span> <span class="tp">AWS: Comprehend · Translate · Lex</span></div>
+    </div>
+  </div>
+
+
+  <!-- ══════════ D: GENERATIVE AI & FMs ══════════ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--orange);background:var(--orange-dim);border:1px solid rgba(244,118,42,0.2)">D</div>
+      <div class="section-title">Generative AI and Foundation Models</div>
+      <div class="ghost-glyph">D</div>
+    </div>
+    <div class="section-body">
+      <div class="tree-block"><span class="tm">D. Generative AI and Foundation Models</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">D1. Generative AI Outputs</span>
+<span class="tc">│   ├──</span> <span class="tl">Text · Images · Audio · Video · Code</span>
+<span class="tc">│   └──</span> <span class="tl">Key enablers: compute power + large diverse datasets</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">D2. Foundation Models (FMs)</span>
+<span class="tc">│   ├──</span> <span class="tl">Pretrained on internet-scale, unlabeled data</span>
+<span class="tc">│   ├──</span> <span class="tl">General-purpose</span>  <span class="tc">— one model, many tasks</span>
+<span class="tc">│   ├──</span> <span class="tl">Multi-task capability</span>  <span class="tc">— write, summarize, translate, code</span>
+<span class="tc">│   ├──</span> <span class="tg">Starting point for new projects — no training from scratch</span>
+<span class="tc">│   └──</span> <span class="tp">Amazon Bedrock — managed FM access (Anthropic, Meta, Mistral, Amazon)</span>
+<span class="tc">│</span>
+<span class="tc">└──</span> <span class="ts">D3. FM Lifecycle (6 stages)</span>
+<span class="tc">    ├──</span> <span class="tl">01 · Data Selection</span>  <span class="tc">— large unlabeled datasets</span>
+<span class="tc">    ├──</span> <span class="tl">02 · Pre-training</span>  <span class="tc">— self-supervised learning (no labels)</span>
+<span class="tc">    │   └──</span> <span class="tl">Continuous Pre-Training</span>  <span class="tc">— expand knowledge to new domains</span>
+<span class="tc">    ├──</span> <span class="tl">03 · Optimization</span>  <span class="tc">— fine-tuning, RLHF</span>
+<span class="tc">    ├──</span> <span class="tl">04 · Evaluation</span>  <span class="tc">— benchmarks and metrics</span>
+<span class="tc">    ├──</span> <span class="tl">05 · Deployment</span>  <span class="tc">— production integration</span>
+<span class="tc">    ├──</span> <span class="tl">06 · Feedback Loop</span>  <span class="tc">— continuous improvement</span>
+<span class="tc">    └──</span> <span class="ty">Self-supervised = no human labels required for pretraining</span></div>
+    </div>
+  </div>
+
+
+  <!-- ══════════ E: MODEL ARCHITECTURES ══════════ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--sky);background:var(--sky-dim);border:1px solid rgba(93,184,242,0.2)">E</div>
+      <div class="section-title">Generative Model Architectures</div>
+      <div class="ghost-glyph">E</div>
+    </div>
+    <div class="section-body">
+      <div class="tree-block"><span class="tm">E. Generative Model Architectures</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">E1. Large Language Models (LLMs)</span>
+<span class="tc">│   ├──</span> <span class="tl">Architecture: Transformer</span>  <span class="tc">— dominant design for text generation</span>
+<span class="tc">│   ├──</span> <span class="tl">Trained on vast text data</span>  <span class="tc">— internet, books, open sources</span>
+<span class="tc">│   ├──</span> <span class="tl">Tokens</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Smallest processing unit — words, subwords, punctuation, spaces</span>
+<span class="tc">│   │   └──</span> <span class="tl">Standardizes input data</span>
+<span class="tc">│   ├──</span> <span class="tl">Embeddings</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Numerical vector representations of tokens</span>
+<span class="tc">│   │   └──</span> <span class="tl">Semantically similar words → vectors close together</span>
+<span class="tc">│   │       └──</span> <span class="tc">e.g. "cat" · "feline" · "kitten" → nearby in vector space</span>
+<span class="tc">│   └──</span> <span class="tl">Vectors</span>
+<span class="tc">│       ├──</span> <span class="tl">Mathematical objects capturing semantic relationships</span>
+<span class="tc">│       └──</span> <span class="tl">Flow: Text → Tokens → Embeddings → Transformer layers → Output token</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">E2. Diffusion Models</span>
+<span class="tc">│   ├──</span> <span class="tl">Core idea: learn to reverse a noise-adding process</span>
+<span class="tc">│   ├──</span> <span class="tl">Forward Diffusion</span>  <span class="tc">(training)</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Start with clean data</span>
+<span class="tc">│   │   └──</span> <span class="tl">Gradually add noise → pure noise</span>
+<span class="tc">│   ├──</span> <span class="tl">Reverse Diffusion</span>  <span class="tc">(inference)</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Start with pure random noise</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Iteratively remove noise (guided by prompt/condition)</span>
+<span class="tc">│   │   └──</span> <span class="tg">Produces coherent generated image or audio</span>
+<span class="tc">│   └──</span> <span class="tl">Leading architecture for image/audio generation</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">E3. Multimodal Models</span>
+<span class="tc">│   ├──</span> <span class="tl">Process multiple data types simultaneously</span>
+<span class="tc">│   ├──</span> <span class="tl">Combinations: Text + Image · Image + Audio · Text → Image</span>
+<span class="tc">│   └──</span> <span class="tl">Use cases: VQA · video captioning · image generation from text</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">E4. GANs (Generative Adversarial Networks)</span>
+<span class="tc">│   ├──</span> <span class="tl">Two competing neural networks</span>
+<span class="tc">│   ├──</span> <span class="tl">Generator</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Creates synthetic / fake data from noise</span>
+<span class="tc">│   │   └──</span> <span class="tl">Goal: produce fakes indistinguishable from real data</span>
+<span class="tc">│   ├──</span> <span class="tl">Discriminator</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Receives real data + Generator's fakes</span>
+<span class="tc">│   │   └──</span> <span class="tl">Goal: correctly classify real vs. fake</span>
+<span class="tc">│   ├──</span> <span class="tl">Training: adversarial competition improves both networks</span>
+<span class="tc">│   └──</span> <span class="tr">Largely superseded by Diffusion models (training instability)</span>
+<span class="tc">│</span>
+<span class="tc">└──</span> <span class="ts">E5. VAEs (Variational Autoencoders)</span>
+<span class="tc">    ├──</span> <span class="tl">Encoder</span>
+<span class="tc">    │   ├──</span> <span class="tl">Compresses input to lower-dimensional space</span>
+<span class="tc">    │   └──</span> <span class="tl">Outputs distribution parameters (mean + variance)</span>
+<span class="tc">    ├──</span> <span class="tl">Decoder</span>
+<span class="tc">    │   ├──</span> <span class="tl">Samples from the distribution</span>
+<span class="tc">    │   └──</span> <span class="tl">Reconstructs / generates data from sample</span>
+<span class="tc">    ├──</span> <span class="tl">Latent space follows Gaussian (Normal) distribution</span>
+<span class="tc">    └──</span> <span class="tg">Predictable, controllable generation — known probability space</span></div>
+    </div>
+  </div>
+
+
+  <!-- ══════════ F: OPTIMIZATION ══════════ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--cyan);background:var(--cyan-dim);border:1px solid rgba(78,205,196,0.2)">F</div>
+      <div class="section-title">Model Optimization Techniques</div>
+      <div class="ghost-glyph">F</div>
+    </div>
+    <div class="section-body">
+      <div class="tree-block"><span class="tm">F. Model Optimization Techniques</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">F1. Prompt Engineering</span>
+<span class="tc">│   ├──</span> <span class="tl">Design better model inputs — no model changes</span>
+<span class="tc">│   ├──</span> <span class="tl">Instruction</span>  <span class="tc">— define the task</span>
+<span class="tc">│   ├──</span> <span class="tl">Context</span>  <span class="tc">— background info to guide interpretation</span>
+<span class="tc">│   ├──</span> <span class="tl">Input Data</span>  <span class="tc">— raw content to act on</span>
+<span class="tc">│   ├──</span> <span class="tl">Output Indicator</span>  <span class="tc">— specify format or constraints</span>
+<span class="tc">│   ├──</span> <span class="tg">Fastest and cheapest optimization — zero compute cost</span>
+<span class="tc">│   └──</span> <span class="ty">No weight modification</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">F2. Fine-Tuning</span>
+<span class="tc">│   ├──</span> <span class="tl">Continue training a pretrained FM on smaller domain-specific data</span>
+<span class="tc">│   ├──</span> <span class="tl">Modifies model weights</span>
+<span class="tc">│   ├──</span> <span class="tl">Instruction Tuning</span>
+<span class="tc">│   │   └──</span> <span class="tl">Train on (prompt → ideal response) pairs</span>
+<span class="tc">│   └──</span> <span class="tl">RLHF (Reinforcement Learning from Human Feedback)</span>
+<span class="tc">│       ├──</span> <span class="tl">Humans rate / compare model responses</span>
+<span class="tc">│       ├──</span> <span class="tl">Reward model trained on human preferences</span>
+<span class="tc">│       └──</span> <span class="tl">FM fine-tuned to maximize reward score</span>
+<span class="tc">│</span>
+<span class="tc">└──</span> <span class="ts">F3. RAG (Retrieval-Augmented Generation)</span>
+<span class="tc">    ├──</span> <span class="tl">Retrieve external documents at inference time</span>
+<span class="tc">    ├──</span> <span class="tl">Inject retrieved context into the prompt</span>
+<span class="tc">    ├──</span> <span class="tl">Model generates response grounded in retrieved knowledge</span>
+<span class="tc">    ├──</span> <span class="tg">No weight modification — operates at inference time only</span>
+<span class="tc">    ├──</span> <span class="tg">Access to private, current, or domain-specific data</span>
+<span class="tc">    ├──</span> <span class="ty">RAG ≠ Fine-Tuning — RAG changes inputs, not weights</span>
+<span class="tc">    └──</span> <span class="tl">Cost hierarchy</span>
+<span class="tc">        ├──</span> <span class="tg">Prompt Engineering — cheapest / fastest</span>
+<span class="tc">        ├──</span> <span class="tl">RAG — moderate</span>
+<span class="tc">        └──</span> <span class="tr">Fine-Tuning — most expensive / deepest change</span></div>
+    </div>
+  </div>
+
+
+  <!-- ══════════ G: AWS INFRASTRUCTURE ══════════ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--purple);background:var(--purple-dim);border:1px solid rgba(192,132,252,0.2)">G</div>
+      <div class="section-title">AWS AI/ML Infrastructure</div>
+      <div class="ghost-glyph">G</div>
+    </div>
+    <div class="section-body">
+      <div class="tree-block"><span class="tm">G. AWS AI/ML Infrastructure</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">G1. ML Framework Layer</span>
+<span class="tc">│   └──</span> <span class="tl">Amazon SageMaker</span>
+<span class="tc">│       ├──</span> <span class="tl">Build</span>  <span class="tc">— notebooks, data prep, feature store</span>
+<span class="tc">│       ├──</span> <span class="tl">Train</span>  <span class="tc">— distributed training on managed compute</span>
+<span class="tc">│       └──</span> <span class="tl">Deploy</span>  <span class="tc">— real-time endpoints, batch transform, serverless</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">G2. AI/ML Services Layer</span>
+<span class="tc">│   ├──</span> <span class="tl">Amazon Comprehend</span>  <span class="tc">— NLP: entities, sentiment, key phrases, topics</span>
+<span class="tc">│   ├──</span> <span class="tl">Amazon Translate</span>  <span class="tc">— neural machine translation, 75+ language pairs</span>
+<span class="tc">│   ├──</span> <span class="tl">Amazon Textract</span>  <span class="tc">— OCR: extract text, tables, forms from documents</span>
+<span class="tc">│   ├──</span> <span class="tl">Amazon Lex</span>  <span class="tc">— chatbots/voice (ASR + NLU · understands intent)</span>
+<span class="tc">│   ├──</span> <span class="tl">Amazon Polly</span>  <span class="tc">— text-to-speech (TTS · voiceovers, accessibility)</span>
+<span class="tc">│   ├──</span> <span class="tl">Amazon Transcribe</span>  <span class="tc">— speech-to-text only (ASR)</span>
+<span class="tc">│   ├──</span> <span class="tl">Amazon Rekognition</span>  <span class="tc">— image/video: objects, faces, content moderation</span>
+<span class="tc">│   ├──</span> <span class="tl">Amazon Kendra</span>  <span class="tc">— intelligent enterprise search (NL queries)</span>
+<span class="tc">│   ├──</span> <span class="tl">Amazon Personalize</span>  <span class="tc">— real-time personalized recommendations</span>
+<span class="tc">│   └──</span> <span class="tl">AWS DeepRacer</span>  <span class="tc">— reinforcement learning experimentation platform</span>
+<span class="tc">│</span>
+<span class="tc">└──</span> <span class="ts">G3. Generative AI Layer</span>
+<span class="tc">    ├──</span> <span class="tl">Amazon Bedrock</span>  <span class="tc">— managed FM access (Anthropic · Meta · Mistral · Amazon)</span>
+<span class="tc">    ├──</span> <span class="tl">SageMaker JumpStart</span>  <span class="tc">— prebuilt ML solutions · one-click deployable models</span>
+<span class="tc">    ├──</span> <span class="tl">Amazon Q</span>  <span class="tc">— AI business assistant · answers from internal data</span>
+<span class="tc">    └──</span> <span class="tl">Amazon Q Developer</span>  <span class="tc">— AI code generation, review, debugging</span></div>
+    </div>
+  </div>
+
+
+  <!-- ══════════ H: AWS ADVANTAGES ══════════ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--orange);background:var(--orange-dim);border:1px solid rgba(244,118,42,0.2)">H</div>
+      <div class="section-title">Advantages of AWS AI Solutions</div>
+      <div class="ghost-glyph">H</div>
+    </div>
+    <div class="section-body">
+      <div class="tree-block"><span class="tm">H. Advantages of AWS AI Solutions</span>
+<span class="tc">│</span>
+<span class="tc">└──</span> <span class="ts">H1. Why Build AI on AWS</span>
+<span class="tc">    ├──</span> <span class="tg">Faster Development</span>  <span class="tc">— prebuilt APIs · ship in days, not months</span>
+<span class="tc">    ├──</span> <span class="tg">Scalability</span>  <span class="tc">— global infrastructure · auto-scale inference</span>
+<span class="tc">    ├──</span> <span class="tg">Cost Efficiency</span>  <span class="tc">— pay-as-you-go · no upfront GPU investment</span>
+<span class="tc">    ├──</span> <span class="tg">Flexibility</span>  <span class="tc">— open-source + proprietary FMs via Bedrock and SageMaker</span>
+<span class="tc">    ├──</span> <span class="tg">Integration</span>  <span class="tc">— native S3 · Lambda · API Gateway · DynamoDB connectivity</span>
+<span class="tc">    ├──</span> <span class="tg">Security</span>  <span class="tc">— IAM · VPC isolation · encryption · compliance certs</span>
+<span class="tc">    └──</span> <span class="ty">Key exam framing: AWS = rapid AI deployment without heavy infrastructure</span></div>
+    </div>
+  </div>
+
+
+  <!-- ══════════ I: COST CONSIDERATIONS ══════════ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--sky);background:var(--sky-dim);border:1px solid rgba(93,184,242,0.2)">I</div>
+      <div class="section-title">Cost Considerations</div>
+      <div class="ghost-glyph">I</div>
+    </div>
+    <div class="section-body">
+      <div class="tree-block"><span class="tm">I. Cost Considerations in AWS AI</span>
+<span class="tc">│</span>
+<span class="tc">└──</span> <span class="ts">I1. Cost-Performance Trade-offs</span>
+<span class="tc">    ├──</span> <span class="tl">Responsiveness</span>
+<span class="tc">    │   └──</span> <span class="tr">Lower latency → higher compute cost</span>
+<span class="tc">    ├──</span> <span class="tl">Availability</span>
+<span class="tc">    │   └──</span> <span class="tr">Higher uptime → more redundancy cost</span>
+<span class="tc">    ├──</span> <span class="tl">Redundancy</span>
+<span class="tc">    │   └──</span> <span class="tr">Backup systems prevent outages → add cost</span>
+<span class="tc">    ├──</span> <span class="tl">Performance</span>
+<span class="tc">    │   └──</span> <span class="tr">Larger models → higher cost per inference</span>
+<span class="tc">    ├──</span> <span class="tl">Pricing Models</span>
+<span class="tc">    │   ├──</span> <span class="tl">Token-based Pricing</span>
+<span class="tc">    │   │   ├──</span> <span class="tl">Pay per input/output token consumed</span>
+<span class="tc">    │   │   └──</span> <span class="tg">Default Bedrock billing · scales with usage</span>
+<span class="tc">    │   ├──</span> <span class="tl">Provisioned Throughput</span>
+<span class="tc">    │   │   ├──</span> <span class="tl">Reserve dedicated model capacity upfront</span>
+<span class="tc">    │   │   ├──</span> <span class="tr">Higher fixed cost</span>
+<span class="tc">    │   │   └──</span> <span class="tg">Lower per-request cost at high volume</span>
+<span class="tc">    │   └──</span> <span class="tl">Custom Models</span>
+<span class="tc">    │       ├──</span> <span class="tr">Training compute cost</span>
+<span class="tc">    │       └──</span> <span class="tr">Dedicated hosting cost — highest tier</span>
+<span class="tc">    └──</span> <span class="ty">Balance cost, performance, and scalability — no single-dimension optimization</span></div>
+    </div>
+  </div>
+
+
+  <!-- ── SUMMARY ── -->
+  <div class="summary-block">
+    <div class="summary-label">Module Summary</div>
+    <ul class="summary-list">
+      <li>AI ⊃ ML ⊃ DL ⊃ Generative AI — strict nesting. Generative AI creates; traditional ML analyzes or predicts.</li>
+      <li>ML pipeline: Collect → Prepare → Train → Evaluate → Iterate. Quality is data quality. Inference = prediction in production (batch vs. real-time).</li>
+      <li>Neural networks: input → hidden → output layers. FMs pretrain via self-supervised learning on internet-scale unlabeled data across 6 lifecycle stages.</li>
+      <li>Five architectures: LLMs (Transformer + tokens/embeddings/vectors) · Diffusion (forward/reverse noise) · Multimodal · GANs (Generator vs. Discriminator) · VAEs (Encoder → Gaussian distribution → Decoder).</li>
+      <li>Optimization: Prompt Engineering (no weight change) → RAG (external knowledge, no weights) → Fine-Tuning (modifies weights). AWS stack: SageMaker · 10 managed AI APIs · Bedrock / Q / JumpStart.</li>
+    </ul>
+  </div>
+
+</div><!-- /doc-body -->
+
+<!-- ── FOOTER ── -->
+<div class="doc-footer">
+  <div class="footer-left">Synaptix v2.2 · AWS-AI MasterClass · Module 1 · Tree · Structure Only</div>
+  <div class="footer-btns">
+    <button class="footer-btn btn-quiz" onclick="quizQuick()">
+      <div class="footer-dot" style="background:var(--orange)"></div>Quiz
+    </button>
+    <button class="footer-btn btn-recall" onclick="recallQuick()">
+      <div class="footer-dot" style="background:var(--cyan)"></div>Recall
+    </button>
+    <button class="footer-btn btn-export" onclick="exportMd()">
+      <div class="footer-dot" style="background:var(--salmon)"></div>Export
+    </button>
+  </div>
+</div>
+
+</div><!-- /doc-wrap -->
+<script>
+/* synaptix-runtime v1.0 — shared interaction layer */
+function sendPrompt(text){
+  if(window.parent && window.parent.postMessage){
+    window.parent.postMessage({type:'user_message',message:text},'*');
+  }
+}
+function quizQuick()  { sendPrompt('/quiz mc(10) hard'); }
+function recallQuick(){ sendPrompt('/recall term(10) hard'); }
+function exportMd()   { sendPrompt('/export -md'); }
+</script>
+</body>
+</html>

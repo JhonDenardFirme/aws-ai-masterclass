@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Synaptix — M1 Compact: Fundamentals of ML & AI</title>
+<style>
+/* synaptix-runtime v1.0 — do not edit inline — update via runtime-asset.md */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg-base:    #0e0e11;
+  --bg-surface: #16161a;
+  --bg-elevated:#1c1c21;
+  --bg-section: #1a1a1f;
+  --code-bg:    #0c0c0f;
+  --border:    rgba(255,255,255,0.07);
+  --border-hi: rgba(255,255,255,0.12);
+  --orange: #f4762a;
+  --salmon: #f08080;
+  --cyan:   #4ecdc4;
+  --green:  #4ade80;
+  --yellow: #f4d03f;
+  --purple: #c084fc;
+  --sky:    #5db8f2;
+  --amber:  #f4b942;
+  --red:    #f87171;
+  --orange-dim:  rgba(244,118,42,0.10);
+  --orange-glow: rgba(244,118,42,0.05);
+  --cyan-dim:    rgba(78,205,196,0.10);
+  --salmon-dim:  rgba(240,128,128,0.10);
+  --yellow-dim:  rgba(244,208,63,0.10);
+  --green-dim:   rgba(74,222,128,0.10);
+  --purple-dim:  rgba(192,132,252,0.10);
+  --sky-dim:     rgba(93,184,242,0.10);
+  --text-primary:   #e8e8ee;
+  --text-secondary: #8b8b9a;
+  --text-muted:     #4a4a5a;
+  --mono:'JetBrains Mono',monospace;
+  --sans:'Inter',system-ui,sans-serif;
+}
+
+body{background:var(--bg-base);color:var(--text-primary);font-family:var(--sans);font-size:13px;line-height:1.8;}
+
+.b-orange{color:var(--orange);font-weight:600}
+.b-salmon{color:var(--salmon);font-weight:600}
+.b-cyan  {color:var(--cyan);  font-weight:600}
+.b-green {color:var(--green); font-weight:600}
+.b-yellow{color:var(--yellow);font-weight:600}
+
+.kw-orange{font-family:var(--mono);font-size:12px;color:var(--orange);background:var(--orange-dim);border:1px solid rgba(244,118,42,0.2);border-radius:3px;padding:1px 5px;}
+.kw-cyan{font-family:var(--mono);font-size:12px;color:var(--cyan);background:var(--cyan-dim);border:1px solid rgba(78,205,196,0.2);border-radius:3px;padding:1px 5px;}
+.box-salmon{font-size:13px;color:var(--salmon);background:var(--salmon-dim);border:1px solid rgba(240,128,128,0.2);border-radius:3px;padding:1px 6px;}
+.box-yellow{font-size:13px;color:var(--yellow);background:var(--yellow-dim);border:1px solid rgba(244,208,63,0.2);border-radius:3px;padding:1px 6px;}
+.box-green{font-size:13px;color:var(--green);background:var(--green-dim);border:1px solid rgba(74,222,128,0.2);border-radius:3px;padding:1px 6px;}
+.def{font-style:italic;color:var(--text-secondary)}
+
+.doc-wrap{max-width:860px;margin:0 auto;display:flex;flex-direction:column;}
+
+.doc-header{padding:22px 26px 16px;border-bottom:1px solid var(--border);background:var(--bg-surface);}
+.badges{display:flex;gap:8px;margin-bottom:11px;flex-wrap:wrap}
+.badge{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:0.07em;text-transform:uppercase;padding:3px 8px;border-radius:4px;border:1px solid;}
+.badge-type{color:var(--orange);background:var(--orange-dim);border-color:rgba(244,118,42,0.25)}
+.badge-mod{color:var(--sky);background:var(--sky-dim);border-color:rgba(93,184,242,0.25)}
+.badge-enrich{color:var(--green);background:var(--green-dim);border-color:rgba(74,222,128,0.25)}
+.doc-title{font-size:20px;font-weight:600;letter-spacing:-0.02em}
+.doc-subtitle{font-size:11px;font-family:var(--mono);color:var(--text-muted);margin-top:4px}
+.stat-row{display:flex;gap:20px;flex-wrap:wrap;margin-top:13px;padding-top:13px;border-top:1px solid var(--border);}
+.stat-val{font-family:var(--mono);font-size:15px;font-weight:600;color:var(--text-primary)}
+.stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-top:1px}
+
+.doc-body{padding:22px 26px;display:flex;flex-direction:column;gap:10px}
+
+.module-label{display:flex;align-items:center;gap:10px}
+.module-num{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--orange);letter-spacing:0.1em;text-transform:uppercase;}
+.module-rule{flex:1;height:1px;background:linear-gradient(to right,rgba(244,118,42,0.25),transparent);}
+.module-title{font-size:17px;font-weight:600;margin-bottom:10px}
+
+.overview{background:var(--bg-surface);border-top:2px solid var(--sky);border-radius:0 0 8px 8px;padding:14px 18px;}
+.overview-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--sky);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px}
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.overview-item{background:var(--bg-elevated);border:1px solid var(--border);border-radius:6px;padding:8px 10px;display:flex;align-items:flex-start;gap:8px;}
+.ov-letter{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--sky);background:var(--sky-dim);border:1px solid rgba(93,184,242,0.2);border-radius:3px;padding:2px 5px;flex-shrink:0;}
+.ov-title{font-size:12px;font-weight:500;color:var(--text-primary)}
+.ov-desc{font-size:11px;color:var(--text-secondary);margin-top:2px}
+.overview-divider{height:1px;background:var(--border);margin:10px 0}
+.meta-row{display:flex;gap:20px;flex-wrap:wrap}
+.meta-lbl{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-muted)}
+.meta-val{font-size:12px;color:var(--text-secondary);margin-top:2px}
+
+.intro{background:var(--bg-surface);border-left:3px solid var(--purple);border-radius:0 8px 8px 0;padding:14px 18px;}
+.intro-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--purple);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;}
+.intro p{font-size:13px;color:var(--text-secondary);line-height:1.8}
+.intro p+p{margin-top:8px}
+
+.section-card{background:var(--bg-section);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color 0.15s;}
+.section-card:hover{border-color:var(--border-hi)}
+.section-hdr{padding:12px 17px 10px;border-bottom:1px solid var(--border);position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;}
+.section-letter{font-family:var(--mono);font-size:12px;font-weight:600;width:25px;height:25px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.section-title{font-size:13px;font-weight:500;flex:1}
+.ghost-glyph{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:58px;font-weight:700;color:rgba(255,255,255,0.025);pointer-events:none;user-select:none;line-height:1;}
+.section-body{padding:15px 17px;display:flex;flex-direction:column;gap:11px}
+
+.subsection{display:flex;flex-direction:column;gap:6px}
+.subsection+.subsection{padding-top:11px;border-top:1px solid var(--border)}
+.sub-hdr{display:flex;align-items:center;gap:8px}
+.sub-num{font-family:var(--mono);font-size:10px;font-weight:500;color:var(--cyan);background:var(--cyan-dim);border:1px solid rgba(78,205,196,0.2);padding:2px 6px;border-radius:4px;}
+.sub-title{font-size:13px;font-weight:500}
+.sub-body{display:flex;flex-direction:column;gap:6px}
+.sub-body p{font-size:13px;color:var(--text-secondary);line-height:1.75}
+
+.enrich-plus{font-family:var(--mono);font-size:9px;font-weight:600;color:var(--green);background:var(--green-dim);border:1px solid rgba(74,222,128,0.2);padding:1px 4px;border-radius:3px;margin-left:4px;vertical-align:middle;}
+.enrich-tilde{font-family:var(--mono);font-size:9px;font-weight:600;color:var(--amber);background:rgba(244,185,66,0.08);border:1px solid rgba(244,185,66,0.2);padding:1px 4px;border-radius:3px;margin-left:4px;vertical-align:middle;}
+
+/* Compact key points — inline › style */
+.kp-inline{font-size:12px;color:var(--text-muted);line-height:1.7;padding:7px 10px;border-left:2px solid rgba(244,118,42,0.3);margin-top:4px;}
+.kp-inline .ki{display:inline;}
+.kp-inline .ki::before{content:'› ';color:var(--orange);font-weight:700;}
+.kp-inline .ki+.ki::before{content:' · › ';color:var(--orange);font-weight:700;}
+
+/* Compact definition rows */
+.def-grid{display:flex;flex-direction:column;gap:5px}
+.def-row{display:flex;gap:10px;align-items:baseline;padding:5px 8px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:5px;}
+.dr-term{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--orange);width:130px;flex-shrink:0;}
+.dr-desc{font-size:12.5px;color:var(--text-secondary);line-height:1.6}
+
+/* Compact comparison rows */
+.cmp-row{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.cmp-cell{background:var(--bg-elevated);border:1px solid var(--border);border-radius:6px;padding:9px 12px;}
+.cmp-title{font-family:var(--mono);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px}
+.cmp-body{font-size:12px;color:var(--text-secondary);line-height:1.6}
+
+/* Compact AWS service table */
+.svc-table{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.svc-row{display:flex;gap:8px;align-items:baseline;padding:6px 10px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:5px;}
+.svc-name{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--cyan);width:130px;flex-shrink:0;}
+.svc-desc{font-size:11.5px;color:var(--text-secondary);line-height:1.5}
+
+/* Warn pill */
+.warn-pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--salmon);background:var(--salmon-dim);border:1px solid rgba(240,128,128,0.2);border-radius:5px;padding:4px 10px;margin-top:4px;}
+
+/* Note block (lightweight) */
+.note{background:rgba(93,184,242,0.04);border:1px solid rgba(93,184,242,0.12);border-left:2px solid var(--sky);border-radius:0 5px 5px 0;padding:7px 11px;font-size:12px;color:var(--text-secondary);line-height:1.65;margin-top:4px;}
+
+.summary-block{background:var(--bg-surface);border:1px solid var(--border);border-bottom:2px solid var(--orange);border-radius:8px 8px 0 0;padding:14px 18px;}
+.summary-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--orange);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;}
+.summary-list{list-style:none;display:flex;flex-direction:column;gap:5px}
+.summary-list li{font-size:13px;color:var(--text-secondary);line-height:1.7;display:flex;gap:7px;}
+.summary-list li::before{content:'›';color:var(--orange);font-weight:700;font-size:14px;flex-shrink:0}
+
+.doc-footer{padding:12px 26px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--bg-surface);flex-wrap:wrap;gap:10px;}
+.footer-left{font-size:11px;color:var(--text-muted);font-family:var(--mono)}
+.footer-btns{display:flex;gap:10px}
+.footer-btn{display:flex;align-items:center;justify-content:center;gap:7px;font-family:var(--mono);font-size:11px;font-weight:500;width:128px;height:64px;border-radius:20px;border:1px solid;background:transparent;cursor:pointer;letter-spacing:0.03em;transition:all 0.15s;}
+.footer-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.btn-quiz  {color:var(--orange);border-color:rgba(244,118,42,0.35);background:var(--orange-dim)}
+.btn-recall{color:var(--cyan);  border-color:rgba(78,205,196,0.35);background:var(--cyan-dim)}
+.btn-export{color:var(--salmon);border-color:rgba(240,128,128,0.35);background:var(--salmon-dim)}
+.btn-quiz:hover  {background:rgba(244,118,42,0.18)}
+.btn-recall:hover{background:rgba(78,205,196,0.15)}
+.btn-export:hover{background:rgba(240,128,128,0.15)}
+
+@media(max-width:600px){
+  .doc-header,.doc-body{padding-left:16px;padding-right:16px}
+  .doc-footer{padding:12px 16px}
+  .overview-grid,.cmp-row,.svc-table{grid-template-columns:1fr}
+  .footer-btn{width:100px;height:52px;font-size:10px}
+  .def-row,.svc-row{flex-direction:column;gap:3px}
+  .dr-term,.svc-name{width:auto}
+}
+</style>
+</head>
+<body>
+<div class="doc-wrap">
+
+<!-- ── HEADER ── -->
+<div class="doc-header">
+  <div class="badges">
+    <span class="badge badge-type">Compact</span>
+    <span class="badge badge-mod">Module 1</span>
+    <span class="badge badge-enrich">Enrich: On</span>
+  </div>
+  <div class="doc-title">Fundamentals of Machine Learning and Artificial Intelligence</div>
+  <div class="doc-subtitle">AWS-AI MasterClass · Synaptix v2.2 · Mid Verbosity</div>
+  <div class="stat-row">
+    <div class="stat-item"><div class="stat-val">9</div><div class="stat-lbl">Sections</div></div>
+    <div class="stat-item"><div class="stat-val">A–I</div><div class="stat-lbl">Coverage</div></div>
+    <div class="stat-item"><div class="stat-val">Mid</div><div class="stat-lbl">Verbosity</div></div>
+    <div class="stat-item"><div class="stat-val">EN</div><div class="stat-lbl">Language</div></div>
+  </div>
+</div>
+
+<div class="doc-body">
+
+  <div class="module-label">
+    <span class="module-num">Module 1</span>
+    <div class="module-rule"></div>
+  </div>
+  <div class="module-title">Fundamentals of Machine Learning and Artificial Intelligence</div>
+
+  <!-- ── OVERVIEW ── -->
+  <div class="overview">
+    <div class="overview-label">Module Overview</div>
+    <div class="overview-grid">
+      <div class="overview-item"><span class="ov-letter">A</span><div><div class="ov-title">The AI Ecosystem</div><div class="ov-desc">AI → ML → DL → Generative AI hierarchy</div></div></div>
+      <div class="overview-item"><span class="ov-letter">B</span><div><div class="ov-title">ML Fundamentals</div><div class="ov-desc">Pipeline, data types, learning types, inference</div></div></div>
+      <div class="overview-item"><span class="ov-letter">C</span><div><div class="ov-title">Deep Learning</div><div class="ov-desc">Neural networks, layers, CV and NLP applications</div></div></div>
+      <div class="overview-item"><span class="ov-letter">D</span><div><div class="ov-title">Generative AI &amp; FMs</div><div class="ov-desc">Foundation Model lifecycle, self-supervised learning</div></div></div>
+      <div class="overview-item"><span class="ov-letter">E</span><div><div class="ov-title">Model Architectures</div><div class="ov-desc">LLMs, Diffusion, Multimodal, GANs, VAEs</div></div></div>
+      <div class="overview-item"><span class="ov-letter">F</span><div><div class="ov-title">Optimization</div><div class="ov-desc">Prompt engineering, fine-tuning, RLHF, RAG</div></div></div>
+      <div class="overview-item"><span class="ov-letter">G</span><div><div class="ov-title">AWS AI Infrastructure</div><div class="ov-desc">SageMaker, managed services, generative AI layer</div></div></div>
+      <div class="overview-item"><span class="ov-letter">H</span><div><div class="ov-title">AWS Advantages</div><div class="ov-desc">Speed, scalability, integration, security</div></div></div>
+      <div class="overview-item"><span class="ov-letter">I</span><div><div class="ov-title">Cost Considerations</div><div class="ov-desc">Latency, throughput, token pricing, custom costs</div></div></div>
+    </div>
+    <div class="overview-divider"></div>
+    <div class="meta-row">
+      <div><div class="meta-lbl">Prerequisites</div><div class="meta-val">None</div></div>
+      <div><div class="meta-lbl">Leads To</div><div class="meta-val">AWS AI services, deployment, cost optimization</div></div>
+    </div>
+  </div>
+
+  <!-- ── INTRO ── -->
+  <div class="intro">
+    <div class="intro-label">Module Introduction</div>
+    <p>This module establishes the <span class="b-orange">foundational vocabulary</span> for all of AWS AI. It maps the AI hierarchy, explains how machines learn from data, and shows how AWS organizes its services around these concepts. Every term introduced here recurs throughout the MasterClass.</p>
+  </div>
+
+
+  <!-- ══════════════════════════════
+       SECTION A: AI ECOSYSTEM
+  ═══════════════════════════════ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--sky);background:var(--sky-dim);border:1px solid rgba(93,184,242,0.2)">A</div>
+      <div class="section-title">The AI Ecosystem</div>
+      <div class="ghost-glyph">A</div>
+    </div>
+    <div class="section-body">
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">A1</span><span class="sub-title">The Four Terms and Their Hierarchy</span></div>
+        <div class="sub-body">
+          <div class="def-grid">
+            <div class="def-row"><div class="dr-term">Artificial Intelligence</div><div class="dr-desc">Umbrella field — enabling machines to simulate human intelligence</div></div>
+            <div class="def-row"><div class="dr-term">Machine Learning</div><div class="dr-desc">Subset of AI — systems learn patterns from data, no explicit rules</div></div>
+            <div class="def-row"><div class="dr-term">Deep Learning</div><div class="dr-desc">Subset of ML — uses layered neural networks for complex tasks</div></div>
+            <div class="def-row"><div class="dr-term">Generative AI</div><div class="dr-desc">Subset of DL — <span class="b-orange">creates</span> new content (text, images, audio, code)</div></div>
+          </div>
+          <p>Nesting: <span class="b-cyan">AI ⊃ ML ⊃ DL ⊃ Generative AI</span>. Each is a proper subset of the one above — not alternatives.</p>
+          <div class="warn-pill">Generative AI creates · Traditional ML analyzes or predicts</div>
+          <div class="kp-inline">
+            <span class="ki">All Generative AI is DL, but not all DL is generative</span>
+            <span class="ki">This nesting is the #1 exam diagram to memorize</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /A -->
+
+
+  <!-- ══════════════════════════════
+       SECTION B: ML FUNDAMENTALS
+  ═══════════════════════════════ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--cyan);background:var(--cyan-dim);border:1px solid rgba(78,205,196,0.2)">B</div>
+      <div class="section-title">Machine Learning Fundamentals</div>
+      <div class="ghost-glyph">B</div>
+    </div>
+    <div class="section-body">
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">B1</span><span class="sub-title">The ML Pipeline</span></div>
+        <div class="sub-body">
+          <p>Five-stage iterative cycle: <span class="b-orange">Data Collection</span> → <span class="b-orange">Data Preparation</span> (clean, preprocess) → <span class="b-orange">Training</span> (learn patterns) → <span class="b-orange">Evaluation</span> (measure performance) → <span class="b-orange">Iteration</span> (improve and repeat).</p>
+          <div class="warn-pill">Model quality = Data quality · "Garbage in, garbage out"</div>
+          <div class="kp-inline"><span class="ki">Training happens periodically — inference happens continuously at scale</span></div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">B2</span><span class="sub-title">Data Types</span></div>
+        <div class="sub-body">
+          <div class="cmp-row">
+            <div class="cmp-cell"><div class="cmp-title" style="color:var(--green)">Labeled</div><div class="cmp-body">Data with correct answers attached. Required for supervised learning. Expensive at scale.</div></div>
+            <div class="cmp-cell"><div class="cmp-title" style="color:var(--salmon)">Unlabeled</div><div class="cmp-body">Raw data, no annotations. Used in unsupervised and self-supervised learning. Abundant.</div></div>
+            <div class="cmp-cell"><div class="cmp-title" style="color:var(--cyan)">Structured</div><div class="cmp-body">Predefined schema — tabular (rows/columns) or time-series (sequential timestamps).</div></div>
+            <div class="cmp-cell"><div class="cmp-title" style="color:var(--orange)">Unstructured</div><div class="cmp-body">No fixed format — text, images, video, audio. Majority of real-world data.</div></div>
+          </div>
+          <div class="kp-inline">
+            <span class="ki">Labeled vs. Unlabeled → determines learning type</span>
+            <span class="ki">Structured vs. Unstructured → determines algorithm and preprocessing</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">B3</span><span class="sub-title">Learning Types</span></div>
+        <div class="sub-body">
+          <div class="def-grid">
+            <div class="def-row"><div class="dr-term">Supervised</div><div class="dr-desc">Learns from <span class="b-green">labeled data</span> — predicts outputs for unseen inputs (classification, regression)</div></div>
+            <div class="def-row"><div class="dr-term">Unsupervised</div><div class="dr-desc">Finds hidden structure in <span class="b-cyan">unlabeled data</span> — clustering, anomaly detection, dimensionality reduction</div></div>
+            <div class="def-row"><div class="dr-term">Reinforcement</div><div class="dr-desc">Agent learns via <span class="b-orange">reward/penalty</span> signals from an environment — used in AWS DeepRacer</div></div>
+            <div class="def-row"><div class="dr-term">Semi-Supervised</div><div class="dr-desc">Small labeled set + large unlabeled set. <span class="enrich-plus">[+]</span> Practical when labeling is costly.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">B4</span><span class="sub-title">Inference Modes</span></div>
+        <div class="sub-body">
+          <div class="cmp-row">
+            <div class="cmp-cell"><div class="cmp-title" style="color:var(--orange)">Batch Inference</div><div class="cmp-body">Large dataset, processed at once. Not time-sensitive. Lower cost per prediction. Example: overnight scoring jobs.</div></div>
+            <div class="cmp-cell"><div class="cmp-title" style="color:var(--cyan)">Real-Time Inference</div><div class="cmp-body">Instant, per-request predictions. Low latency required. Higher cost. Example: live recommendations.</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /B -->
+
+
+  <!-- ══════════════════════════════
+       SECTION C: DEEP LEARNING
+  ═══════════════════════════════ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--purple);background:var(--purple-dim);border:1px solid rgba(192,132,252,0.2)">C</div>
+      <div class="section-title">Deep Learning and Neural Networks</div>
+      <div class="ghost-glyph">C</div>
+    </div>
+    <div class="section-body">
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">C1</span><span class="sub-title">Neural Network Architecture</span></div>
+        <div class="sub-body">
+          <p>Artificial Neural Networks (ANNs) are layered computational structures of <span class="b-cyan">nodes (neurons)</span> connected by <span class="b-orange">weighted links</span>. Learning = adjusting weights to minimize prediction error across training examples.</p>
+          <div class="def-grid">
+            <div class="def-row"><div class="dr-term">Input Layer</div><div class="dr-desc">Receives raw data — one node per input feature</div></div>
+            <div class="def-row"><div class="dr-term">Hidden Layers</div><div class="dr-desc">Learn progressively abstract representations. "Deep" = many hidden layers.</div></div>
+            <div class="def-row"><div class="dr-term">Output Layer</div><div class="dr-desc">Produces final result — class label, probability, generated token</div></div>
+          </div>
+          <div class="kp-inline">
+            <span class="ki">"Deep" refers to the number of hidden layers, not depth of understanding</span>
+            <span class="ki">Backpropagation adjusts weights throughout the network after each prediction error <span class="enrich-plus">[+]</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">C2</span><span class="sub-title">Key Application Domains</span></div>
+        <div class="sub-body">
+          <div class="cmp-row">
+            <div class="cmp-cell">
+              <div class="cmp-title" style="color:var(--sky)">Computer Vision</div>
+              <div class="cmp-body">Image Classification · Object Detection · Segmentation<br>AWS: <span class="b-cyan">Amazon Rekognition</span></div>
+            </div>
+            <div class="cmp-cell">
+              <div class="cmp-title" style="color:var(--purple)">Natural Language Processing</div>
+              <div class="cmp-body">Text Classification · Sentiment Analysis · Translation · Text Generation<br>AWS: <span class="b-cyan">Comprehend, Translate, Lex</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /C -->
+
+
+  <!-- ══════════════════════════════
+       SECTION D: GENERATIVE AI & FMs
+  ═══════════════════════════════ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--orange);background:var(--orange-dim);border:1px solid rgba(244,118,42,0.2)">D</div>
+      <div class="section-title">Generative AI and Foundation Models</div>
+      <div class="ghost-glyph">D</div>
+    </div>
+    <div class="section-body">
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">D1</span><span class="sub-title">Foundation Models (FMs)</span></div>
+        <div class="sub-body">
+          <p><span class="b-orange">Foundation Models</span> are large models pretrained on internet-scale, unlabeled data using <span class="b-cyan">self-supervised learning</span>. They are <span class="b-green">general-purpose</span> — a single FM can perform many tasks — and serve as a starting point that developers adapt for specific use cases instead of training from scratch.</p>
+          <div class="note">Amazon Bedrock provides managed access to FMs from Anthropic, Meta, Mistral, and Amazon through a single API — no infrastructure management required.</div>
+          <div class="kp-inline">
+            <span class="ki">FMs use self-supervised learning — no human labels required for pretraining</span>
+            <span class="ki">Pretrained on internet-scale data → adaptable across domains</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">D2</span><span class="sub-title">FM Lifecycle</span></div>
+        <div class="sub-body">
+          <p>Six stages: <span class="b-orange">Data Selection</span> (large unlabeled datasets) → <span class="b-orange">Pre-training</span> (self-supervised; <em>Continuous Pre-Training</em> expands domain knowledge) → <span class="b-orange">Optimization</span> (fine-tuning, RLHF) → <span class="b-orange">Evaluation</span> (benchmarks and metrics) → <span class="b-orange">Deployment</span> (production integration) → <span class="b-orange">Feedback Loop</span> (continuous improvement).</p>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /D -->
+
+
+  <!-- ══════════════════════════════
+       SECTION E: MODEL ARCHITECTURES
+  ═══════════════════════════════ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--sky);background:var(--sky-dim);border:1px solid rgba(93,184,242,0.2)">E</div>
+      <div class="section-title">Generative Model Architectures</div>
+      <div class="ghost-glyph">E</div>
+    </div>
+    <div class="section-body">
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">E1</span><span class="sub-title">Large Language Models (LLMs)</span></div>
+        <div class="sub-body">
+          <p>Text-generating models built on the <span class="b-cyan">Transformer architecture</span>. They process language through three key mechanisms:</p>
+          <div class="def-grid">
+            <div class="def-row"><div class="dr-term">Tokens</div><div class="dr-desc">Smallest processing unit — words, subwords, characters, spaces. Standardizes input.</div></div>
+            <div class="def-row"><div class="dr-term">Embeddings</div><div class="dr-desc">Numerical vector representations of tokens. Semantically similar words → vectors that are close together.</div></div>
+            <div class="def-row"><div class="dr-term">Vectors</div><div class="dr-desc">Mathematical objects capturing semantic relationships. Enable the model to "understand" meaning.</div></div>
+          </div>
+          <div class="kp-inline">
+            <span class="ki">Text → Tokens → Embeddings → Transformer layers → generate next token → repeat <span class="enrich-plus">[+]</span></span>
+            <span class="ki">"Cat," "feline," "kitten" → embeddings close in vector space</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">E2</span><span class="sub-title">Diffusion Models</span></div>
+        <div class="sub-body">
+          <p>Architecture for image and audio generation. Two phases: <span class="b-salmon">Forward Diffusion</span> (training) — gradually add noise to clean data until it becomes pure noise; <span class="b-green">Reverse Diffusion</span> (inference) — iteratively remove noise from randomness until a coherent output emerges, guided by a prompt or condition.</p>
+          <div class="kp-inline">
+            <span class="ki">Forward = add noise (training) · Reverse = remove noise (generation)</span>
+            <span class="ki">Leading architecture for image generation (Stable Diffusion, DALL-E)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">E3</span><span class="sub-title">Multimodal Models</span></div>
+        <div class="sub-body">
+          <p>Process and generate across <span class="b-cyan">multiple data types simultaneously</span> — text + image, image + audio. Used for visual question answering, video captioning, and generating graphics from text instructions.</p>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">E4</span><span class="sub-title">Generative Adversarial Networks (GANs)</span></div>
+        <div class="sub-body">
+          <p>Two competing networks: <span class="b-orange">Generator</span> (creates synthetic/fake data) vs. <span class="b-cyan">Discriminator</span> (classifies real vs. fake). Training converges when the Generator produces fakes indistinguishable from real data. Largely <span class="b-salmon">superseded by Diffusion models</span> for image generation due to training instability. <span class="enrich-plus">[+]</span></p>
+          <div class="kp-inline"><span class="ki">Generator fools Discriminator · Discriminator trains Generator · Both improve together</span></div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">E5</span><span class="sub-title">Variational Autoencoders (VAEs)</span></div>
+        <div class="sub-body">
+          <p><span class="b-orange">Encoder</span> compresses input to a lower-dimensional <span class="b-cyan">probability distribution</span> (typically Gaussian). <span class="b-orange">Decoder</span> reconstructs or generates data from sampled points in that distribution. The probabilistic latent space enables controlled, predictable generation — you sample from a known distribution rather than fixed points. <span class="enrich-plus">[+]</span></p>
+          <div class="kp-inline">
+            <span class="ki">Encoder → distribution parameters (mean, variance) · Decoder → reconstruct from sample</span>
+            <span class="ki">Gaussian distribution → predictable, controllable generation</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /E -->
+
+
+  <!-- ══════════════════════════════
+       SECTION F: OPTIMIZATION
+  ═══════════════════════════════ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--cyan);background:var(--cyan-dim);border:1px solid rgba(78,205,196,0.2)">F</div>
+      <div class="section-title">Model Optimization Techniques</div>
+      <div class="ghost-glyph">F</div>
+    </div>
+    <div class="section-body">
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">F1</span><span class="sub-title">Prompt Engineering</span></div>
+        <div class="sub-body">
+          <p>Craft better <span class="b-orange">inputs</span> to get better outputs — no model changes. Four components: <span class="b-cyan">Instruction</span> (define the task) · <span class="b-cyan">Context</span> (background to guide interpretation) · <span class="b-cyan">Input Data</span> (raw content to act on) · <span class="b-cyan">Output Indicator</span> (specify format or constraints).</p>
+          <div class="kp-inline">
+            <span class="ki">No weight modification · Fastest and cheapest optimization technique</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">F2</span><span class="sub-title">Fine-Tuning and RLHF</span></div>
+        <div class="sub-body">
+          <p><span class="b-orange">Fine-tuning</span> continues training a pretrained FM on a smaller, domain-specific dataset — <span class="b-salmon">modifies model weights</span> to specialize behavior. Two variants: <span class="b-cyan">Instruction Tuning</span> (train on prompt-response pairs) and <span class="b-cyan">RLHF</span> (Reinforcement Learning from Human Feedback — humans rate responses; ratings train a reward model; FM is optimized to maximize reward).</p>
+          <div class="kp-inline">
+            <span class="ki">Fine-tuning changes weights · More expensive than prompting · Produces deeper behavioral change</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">F3</span><span class="sub-title">RAG (Retrieval-Augmented Generation)</span></div>
+        <div class="sub-body">
+          <p><span class="b-orange">RAG</span> retrieves relevant external documents at inference time and injects them into the prompt, giving the model access to current or private knowledge it was never trained on. <span class="b-green">Does not modify model weights</span> — operates entirely at inference time.</p>
+          <div class="warn-pill">RAG ≠ Fine-Tuning · RAG changes inputs, not weights</div>
+          <div class="kp-inline">
+            <span class="ki">Use RAG for: private data, up-to-date info, reducing hallucination via grounding</span>
+            <span class="ki">Cost hierarchy: Prompt Engineering (cheapest) → RAG → Fine-Tuning (most expensive)</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /F -->
+
+
+  <!-- ══════════════════════════════
+       SECTION G: AWS INFRASTRUCTURE
+  ═══════════════════════════════ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--purple);background:var(--purple-dim);border:1px solid rgba(192,132,252,0.2)">G</div>
+      <div class="section-title">AWS AI/ML Infrastructure</div>
+      <div class="ghost-glyph">G</div>
+    </div>
+    <div class="section-body">
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">G1</span><span class="sub-title">The Three-Layer Stack</span></div>
+        <div class="sub-body">
+          <div class="def-grid">
+            <div class="def-row"><div class="dr-term">ML Frameworks</div><div class="dr-desc">Build, train, and deploy custom models — <span class="b-cyan">Amazon SageMaker</span></div></div>
+            <div class="def-row"><div class="dr-term">AI/ML Services</div><div class="dr-desc">Pre-built task-specific APIs — no ML expertise required</div></div>
+            <div class="def-row"><div class="dr-term">Generative AI</div><div class="dr-desc">Foundation Model access and AI assistants — Bedrock, Amazon Q</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">G2</span><span class="sub-title">AI/ML Services — Know These</span></div>
+        <div class="sub-body">
+          <div class="svc-table">
+            <div class="svc-row"><div class="svc-name">Comprehend</div><div class="svc-desc">NLP insights — entities, sentiment, key phrases, topics</div></div>
+            <div class="svc-row"><div class="svc-name">Translate</div><div class="svc-desc">Neural machine translation, 75+ language pairs</div></div>
+            <div class="svc-row"><div class="svc-name">Textract</div><div class="svc-desc">OCR — extract text, tables, forms from documents</div></div>
+            <div class="svc-row"><div class="svc-name">Lex</div><div class="svc-desc">Chatbots/voice — ASR + NLU (understands commands and intent)</div></div>
+            <div class="svc-row"><div class="svc-name">Polly</div><div class="svc-desc">Text-to-speech (TTS) — voiceovers and accessibility</div></div>
+            <div class="svc-row"><div class="svc-name">Transcribe</div><div class="svc-desc">Speech-to-text only (ASR) — audio → text transcription</div></div>
+            <div class="svc-row"><div class="svc-name">Rekognition</div><div class="svc-desc">Image/video analysis — objects, faces, content moderation</div></div>
+            <div class="svc-row"><div class="svc-name">Kendra</div><div class="svc-desc">Intelligent enterprise search — natural language against internal docs</div></div>
+            <div class="svc-row"><div class="svc-name">Personalize</div><div class="svc-desc">Real-time personalized recommendations</div></div>
+            <div class="svc-row"><div class="svc-name">DeepRacer</div><div class="svc-desc">Reinforcement learning experimentation platform</div></div>
+          </div>
+          <div class="note" style="margin-top:6px">Key distinction: <span class="b-cyan">Lex</span> = chatbot (ASR + NLU, understands intent) · <span class="b-cyan">Transcribe</span> = speech-to-text only · <span class="b-cyan">Polly</span> = text-to-speech · <span class="b-cyan">Textract</span> = documents/forms</div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">G3</span><span class="sub-title">Generative AI Layer</span></div>
+        <div class="sub-body">
+          <div class="def-grid">
+            <div class="def-row"><div class="dr-term">Amazon Bedrock</div><div class="dr-desc">Managed FM access — Anthropic, Meta, Mistral, Amazon via one API</div></div>
+            <div class="def-row"><div class="dr-term">SageMaker JumpStart</div><div class="dr-desc">Prebuilt ML solutions and one-click deployable models</div></div>
+            <div class="def-row"><div class="dr-term">Amazon Q</div><div class="dr-desc">AI business assistant — answers questions from internal data</div></div>
+            <div class="def-row"><div class="dr-term">Amazon Q Developer</div><div class="dr-desc">AI code generation, review, and debugging for developers</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /G -->
+
+
+  <!-- ══════════════════════════════
+       SECTION H: AWS ADVANTAGES
+  ═══════════════════════════════ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--orange);background:var(--orange-dim);border:1px solid rgba(244,118,42,0.2)">H</div>
+      <div class="section-title">Advantages of AWS AI Solutions</div>
+      <div class="ghost-glyph">H</div>
+    </div>
+    <div class="section-body">
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">H1</span><span class="sub-title">Why AWS for AI</span></div>
+        <div class="sub-body">
+          <div class="def-grid">
+            <div class="def-row"><div class="dr-term">Faster Development</div><div class="dr-desc">Prebuilt APIs ship AI features in days, not months</div></div>
+            <div class="def-row"><div class="dr-term">Scalability</div><div class="dr-desc">Global infrastructure scales inference automatically</div></div>
+            <div class="def-row"><div class="dr-term">Cost Efficiency</div><div class="dr-desc">Pay-as-you-go — no upfront GPU cluster investment</div></div>
+            <div class="def-row"><div class="dr-term">Flexibility</div><div class="dr-desc">Access open-source and proprietary FMs through Bedrock and SageMaker</div></div>
+            <div class="def-row"><div class="dr-term">Integration</div><div class="dr-desc">Native connectivity to S3, Lambda, API Gateway, DynamoDB</div></div>
+            <div class="def-row"><div class="dr-term">Security</div><div class="dr-desc">Enterprise-grade encryption, IAM, VPC isolation, compliance certifications</div></div>
+          </div>
+          <div class="kp-inline"><span class="ki">AWS = rapid AI deployment without heavy infrastructure — key exam framing</span></div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /H -->
+
+
+  <!-- ══════════════════════════════
+       SECTION I: COST CONSIDERATIONS
+  ═══════════════════════════════ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--sky);background:var(--sky-dim);border:1px solid rgba(93,184,242,0.2)">I</div>
+      <div class="section-title">Cost Considerations</div>
+      <div class="ghost-glyph">I</div>
+    </div>
+    <div class="section-body">
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">I1</span><span class="sub-title">Cost-Performance Trade-offs</span></div>
+        <div class="sub-body">
+          <p>Every performance dimension has a cost trade-off: <span class="b-salmon">lower latency</span> costs more compute · <span class="b-salmon">higher availability</span> costs more redundancy · <span class="b-salmon">larger models</span> cost more per inference · <span class="b-salmon">custom models</span> cost more to train and host.</p>
+          <div class="def-grid">
+            <div class="def-row"><div class="dr-term">Token-based Pricing</div><div class="dr-desc">Pay per input/output token. Scales directly with usage. Default Bedrock FM billing.</div></div>
+            <div class="def-row"><div class="dr-term">Provisioned Throughput</div><div class="dr-desc">Reserve dedicated capacity upfront. Higher fixed cost, lower per-request cost at high volume.</div></div>
+            <div class="def-row"><div class="dr-term">Custom Models</div><div class="dr-desc">Highest cost — training compute + dedicated hosting for fine-tuned or proprietary models.</div></div>
+          </div>
+          <div class="kp-inline">
+            <span class="ki">Optimal architecture balances cost, performance, and scalability — not just one dimension</span>
+            <span class="ki">Token pricing = pay-per-use · Provisioned = consistent high-volume workloads</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /I -->
+
+
+  <!-- ── SUMMARY ── -->
+  <div class="summary-block">
+    <div class="summary-label">Module Summary</div>
+    <ul class="summary-list">
+      <li>AI ⊃ ML ⊃ DL ⊃ Generative AI — nested hierarchy. Generative AI <em>creates</em>; traditional ML <em>analyzes or predicts</em>.</li>
+      <li>ML quality = data quality. Pipeline: Collect → Prepare → Train → Evaluate → Iterate. Inference = prediction in production (batch vs. real-time).</li>
+      <li>Neural networks: input → hidden → output layers, learning via weight adjustment. FMs use self-supervised learning on internet-scale unlabeled data.</li>
+      <li>Optimization ladder: Prompt Engineering (no weight change) → RAG (external knowledge at inference, no weight change) → Fine-Tuning (modifies weights). RAG ≠ Fine-Tuning.</li>
+      <li>AWS AI stack: SageMaker (custom ML) · Managed AI APIs (10 task-specific services) · Generative AI layer (Bedrock, Q, JumpStart). Know which service maps to which task.</li>
+    </ul>
+  </div>
+
+</div><!-- /doc-body -->
+
+<!-- ── FOOTER ── -->
+<div class="doc-footer">
+  <div class="footer-left">Synaptix v2.2 · AWS-AI MasterClass · Module 1 · Compact · Mid</div>
+  <div class="footer-btns">
+    <button class="footer-btn btn-quiz" onclick="quizQuick()">
+      <div class="footer-dot" style="background:var(--orange)"></div>Quiz
+    </button>
+    <button class="footer-btn btn-recall" onclick="recallQuick()">
+      <div class="footer-dot" style="background:var(--cyan)"></div>Recall
+    </button>
+    <button class="footer-btn btn-export" onclick="exportMd()">
+      <div class="footer-dot" style="background:var(--salmon)"></div>Export
+    </button>
+  </div>
+</div>
+
+</div><!-- /doc-wrap -->
+<script>
+/* synaptix-runtime v1.0 — shared interaction layer */
+function sendPrompt(text){
+  if(window.parent && window.parent.postMessage){
+    window.parent.postMessage({type:'user_message',message:text},'*');
+  }
+}
+function quizQuick()  { sendPrompt('/quiz mc(10) hard'); }
+function recallQuick(){ sendPrompt('/recall term(10) hard'); }
+function exportMd()   { sendPrompt('/export -md'); }
+</script>
+</body>
+</html>

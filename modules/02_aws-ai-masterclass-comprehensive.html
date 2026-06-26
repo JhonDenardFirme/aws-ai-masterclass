@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Synaptix — M2: Exploring AI Use Cases and Applications</title>
+<style>
+/* synaptix-runtime v1.0 — do not edit inline — update via runtime-asset.md */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg-base:    #0e0e11;
+  --bg-surface: #16161a;
+  --bg-elevated:#1c1c21;
+  --bg-section: #1a1a1f;
+  --code-bg:    #0c0c0f;
+  --border:    rgba(255,255,255,0.07);
+  --border-hi: rgba(255,255,255,0.12);
+  --orange: #f4762a;
+  --salmon: #f08080;
+  --cyan:   #4ecdc4;
+  --green:  #4ade80;
+  --yellow: #f4d03f;
+  --purple: #c084fc;
+  --sky:    #5db8f2;
+  --amber:  #f4b942;
+  --red:    #f87171;
+  --orange-dim:  rgba(244,118,42,0.10);
+  --orange-glow: rgba(244,118,42,0.05);
+  --cyan-dim:    rgba(78,205,196,0.10);
+  --salmon-dim:  rgba(240,128,128,0.10);
+  --yellow-dim:  rgba(244,208,63,0.10);
+  --green-dim:   rgba(74,222,128,0.10);
+  --purple-dim:  rgba(192,132,252,0.10);
+  --sky-dim:     rgba(93,184,242,0.10);
+  --text-primary:   #e8e8ee;
+  --text-secondary: #8b8b9a;
+  --text-muted:     #4a4a5a;
+  --mono:'JetBrains Mono',monospace;
+  --sans:'Inter',system-ui,sans-serif;
+}
+
+body{background:var(--bg-base);color:var(--text-primary);font-family:var(--sans);font-size:13px;line-height:1.8;}
+
+.b-orange{color:var(--orange);font-weight:600}
+.b-salmon{color:var(--salmon);font-weight:600}
+.b-cyan  {color:var(--cyan);  font-weight:600}
+.b-green {color:var(--green); font-weight:600}
+.b-yellow{color:var(--yellow);font-weight:600}
+
+.kw-orange{font-family:var(--mono);font-size:12px;color:var(--orange);background:var(--orange-dim);border:1px solid rgba(244,118,42,0.2);border-radius:3px;padding:1px 5px;}
+.kw-cyan{font-family:var(--mono);font-size:12px;color:var(--cyan);background:var(--cyan-dim);border:1px solid rgba(78,205,196,0.2);border-radius:3px;padding:1px 5px;}
+.box-salmon{font-size:13px;color:var(--salmon);background:var(--salmon-dim);border:1px solid rgba(240,128,128,0.2);border-radius:3px;padding:1px 6px;}
+.box-yellow{font-size:13px;color:var(--yellow);background:var(--yellow-dim);border:1px solid rgba(244,208,63,0.2);border-radius:3px;padding:1px 6px;}
+.box-green{font-size:13px;color:var(--green);background:var(--green-dim);border:1px solid rgba(74,222,128,0.2);border-radius:3px;padding:1px 6px;}
+.def{font-style:italic;color:var(--text-secondary)}
+
+.doc-wrap{max-width:860px;margin:0 auto;display:flex;flex-direction:column;}
+
+.doc-header{padding:22px 26px 16px;border-bottom:1px solid var(--border);background:var(--bg-surface);}
+.badges{display:flex;gap:8px;margin-bottom:11px;flex-wrap:wrap}
+.badge{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:0.07em;text-transform:uppercase;padding:3px 8px;border-radius:4px;border:1px solid;}
+.badge-type{color:var(--orange);background:var(--orange-dim);border-color:rgba(244,118,42,0.25)}
+.badge-mod{color:var(--sky);background:var(--sky-dim);border-color:rgba(93,184,242,0.25)}
+.badge-enrich{color:var(--green);background:var(--green-dim);border-color:rgba(74,222,128,0.25)}
+.doc-title{font-size:20px;font-weight:600;letter-spacing:-0.02em}
+.doc-subtitle{font-size:11px;font-family:var(--mono);color:var(--text-muted);margin-top:4px}
+.stat-row{display:flex;gap:20px;flex-wrap:wrap;margin-top:13px;padding-top:13px;border-top:1px solid var(--border);}
+.stat-val{font-family:var(--mono);font-size:15px;font-weight:600;color:var(--text-primary)}
+.stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-top:1px}
+
+.doc-body{padding:22px 26px;display:flex;flex-direction:column;gap:10px}
+
+.module-label{display:flex;align-items:center;gap:10px}
+.module-num{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--orange);letter-spacing:0.1em;text-transform:uppercase;}
+.module-rule{flex:1;height:1px;background:linear-gradient(to right,rgba(244,118,42,0.25),transparent);}
+.module-title{font-size:17px;font-weight:600;margin-bottom:10px}
+
+.overview{background:var(--bg-surface);border-top:2px solid var(--sky);border-radius:0 0 8px 8px;padding:14px 18px;}
+.overview-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--sky);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px}
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.overview-item{background:var(--bg-elevated);border:1px solid var(--border);border-radius:6px;padding:8px 10px;display:flex;align-items:flex-start;gap:8px;}
+.ov-letter{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--sky);background:var(--sky-dim);border:1px solid rgba(93,184,242,0.2);border-radius:3px;padding:2px 5px;flex-shrink:0;}
+.ov-title{font-size:12px;font-weight:500;color:var(--text-primary)}
+.ov-desc{font-size:11px;color:var(--text-secondary);margin-top:2px}
+.overview-divider{height:1px;background:var(--border);margin:10px 0}
+.meta-row{display:flex;gap:20px;flex-wrap:wrap}
+.meta-lbl{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-muted)}
+.meta-val{font-size:12px;color:var(--text-secondary);margin-top:2px}
+
+.intro{background:var(--bg-surface);border-left:3px solid var(--purple);border-radius:0 8px 8px 0;padding:14px 18px;}
+.intro-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--purple);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;}
+.intro p{font-size:13px;color:var(--text-secondary);line-height:1.8}
+.intro p+p{margin-top:8px}
+
+.section-card{background:var(--bg-section);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color 0.15s;}
+.section-card:hover{border-color:var(--border-hi)}
+.section-hdr{padding:12px 17px 10px;border-bottom:1px solid var(--border);position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;}
+.section-letter{font-family:var(--mono);font-size:12px;font-weight:600;width:25px;height:25px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.section-title{font-size:13px;font-weight:500;flex:1}
+.ghost-glyph{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:58px;font-weight:700;color:rgba(255,255,255,0.025);pointer-events:none;user-select:none;line-height:1;}
+.section-body{padding:15px 17px;display:flex;flex-direction:column;gap:13px}
+
+.subsection{display:flex;flex-direction:column;gap:8px}
+.subsection+.subsection{padding-top:13px;border-top:1px solid var(--border)}
+.sub-hdr{display:flex;align-items:center;gap:8px}
+.sub-num{font-family:var(--mono);font-size:10px;font-weight:500;color:var(--cyan);background:var(--cyan-dim);border:1px solid rgba(78,205,196,0.2);padding:2px 6px;border-radius:4px;}
+.sub-title{font-size:13px;font-weight:500}
+.sub-body{display:flex;flex-direction:column;gap:8px}
+.sub-body p{font-size:13px;color:var(--text-secondary);line-height:1.8}
+
+.enrich-plus{font-family:var(--mono);font-size:9px;font-weight:600;color:var(--green);background:var(--green-dim);border:1px solid rgba(74,222,128,0.2);padding:1px 4px;border-radius:3px;margin-left:4px;vertical-align:middle;}
+.enrich-tilde{font-family:var(--mono);font-size:9px;font-weight:600;color:var(--amber);background:rgba(244,185,66,0.08);border:1px solid rgba(244,185,66,0.2);padding:1px 4px;border-radius:3px;margin-left:4px;vertical-align:middle;}
+
+.keypoints{background:var(--orange-glow);border:1px solid rgba(244,118,42,0.12);border-left:3px solid var(--orange);border-radius:0 6px 6px 0;padding:10px 14px;}
+.kp-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--orange);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:7px;}
+.kp-list{list-style:none;display:flex;flex-direction:column;gap:5px}
+.kp-list li{font-size:12px;color:var(--text-secondary);line-height:1.6;display:flex;gap:7px}
+.kp-list li::before{content:'›';color:var(--orange);font-weight:700;font-size:14px;flex-shrink:0}
+
+/* Extra component styles */
+.info-box{background:var(--bg-elevated);border:1px solid var(--border);border-left:3px solid var(--sky);border-radius:0 6px 6px 0;padding:10px 14px;}
+.info-box p{font-size:12.5px;color:var(--text-secondary);line-height:1.75}
+.info-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--sky);letter-spacing:0.07em;text-transform:uppercase;margin-bottom:6px}
+
+.warn-box{background:rgba(244,118,42,0.04);border:1px solid rgba(244,118,42,0.18);border-left:3px solid var(--orange);border-radius:0 6px 6px 0;padding:10px 14px;}
+.warn-box p{font-size:12.5px;color:var(--text-secondary);line-height:1.75}
+.warn-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--orange);letter-spacing:0.07em;text-transform:uppercase;margin-bottom:6px}
+
+.risk-box{background:rgba(240,128,128,0.04);border:1px solid rgba(240,128,128,0.18);border-left:3px solid var(--salmon);border-radius:0 6px 6px 0;padding:10px 14px;}
+.risk-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--salmon);letter-spacing:0.07em;text-transform:uppercase;margin-bottom:6px}
+.risk-box p{font-size:12.5px;color:var(--text-secondary);line-height:1.75}
+
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.compare-card{background:var(--bg-elevated);border:1px solid var(--border);border-radius:7px;padding:11px 13px}
+.compare-card-title{font-size:11px;font-weight:600;font-family:var(--mono);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:7px}
+.compare-card ul{list-style:none;display:flex;flex-direction:column;gap:4px}
+.compare-card ul li{font-size:12px;color:var(--text-secondary);line-height:1.6;display:flex;gap:6px}
+.compare-card ul li::before{content:'·';color:var(--text-muted);flex-shrink:0}
+
+.tier-row{display:flex;flex-direction:column;gap:6px}
+.tier{display:flex;align-items:baseline;gap:10px;padding:7px 10px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:6px}
+.tier-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--orange);width:130px;flex-shrink:0}
+.tier-desc{font-size:12.5px;color:var(--text-secondary);line-height:1.6}
+
+.industry-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.industry-card{background:var(--bg-elevated);border:1px solid var(--border);border-radius:7px;padding:10px 12px}
+.ic-name{font-family:var(--mono);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px}
+.ic-list{list-style:none;display:flex;flex-direction:column;gap:3px}
+.ic-list li{font-size:11.5px;color:var(--text-secondary);line-height:1.5;display:flex;gap:5px}
+.ic-list li::before{content:'·';color:var(--text-muted);flex-shrink:0}
+
+.model-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.model-card{background:var(--bg-elevated);border:1px solid var(--border);border-radius:6px;padding:9px 12px}
+.mc-name{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cyan);margin-bottom:3px}
+.mc-desc{font-size:12px;color:var(--text-secondary);line-height:1.5}
+
+.decision-block{display:flex;flex-direction:column;gap:6px}
+.decision-row{display:flex;gap:10px;align-items:flex-start;padding:8px 12px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:6px}
+.dr-icon{font-family:var(--mono);font-size:11px;font-weight:700;flex-shrink:0;width:30px}
+.dr-content{}
+.dr-title{font-size:12.5px;font-weight:500;color:var(--text-primary);margin-bottom:2px}
+.dr-desc{font-size:12px;color:var(--text-secondary);line-height:1.6}
+
+.summary-block{background:var(--bg-surface);border:1px solid var(--border);border-bottom:2px solid var(--orange);border-radius:8px 8px 0 0;padding:14px 18px;}
+.summary-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--orange);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;}
+.summary-list{list-style:none;display:flex;flex-direction:column;gap:5px}
+.summary-list li{font-size:13px;color:var(--text-secondary);line-height:1.7;display:flex;gap:7px;}
+.summary-list li::before{content:'›';color:var(--orange);font-weight:700;font-size:14px;flex-shrink:0}
+
+.doc-footer{padding:12px 26px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--bg-surface);flex-wrap:wrap;gap:10px;}
+.footer-left{font-size:11px;color:var(--text-muted);font-family:var(--mono)}
+.footer-btns{display:flex;gap:10px}
+.footer-btn{display:flex;align-items:center;justify-content:center;gap:7px;font-family:var(--mono);font-size:11px;font-weight:500;width:128px;height:64px;border-radius:20px;border:1px solid;background:transparent;cursor:pointer;letter-spacing:0.03em;transition:all 0.15s;}
+.footer-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.btn-quiz{color:var(--orange);border-color:rgba(244,118,42,0.35);background:var(--orange-dim)}
+.btn-recall{color:var(--cyan);border-color:rgba(78,205,196,0.35);background:var(--cyan-dim)}
+.btn-export{color:var(--salmon);border-color:rgba(240,128,128,0.35);background:var(--salmon-dim)}
+.btn-quiz:hover{background:rgba(244,118,42,0.18)}
+.btn-recall:hover{background:rgba(78,205,196,0.15)}
+.btn-export:hover{background:rgba(240,128,128,0.15)}
+
+@media(max-width:600px){
+  .doc-header,.doc-body{padding-left:16px;padding-right:16px}
+  .doc-footer{padding:12px 16px}
+  .overview-grid,.compare-grid,.industry-grid,.model-grid{grid-template-columns:1fr}
+  .footer-btn{width:100px;height:52px;font-size:10px}
+}
+</style>
+</head>
+<body>
+<div class="doc-wrap">
+
+<!-- ═══ HEADER ═══ -->
+<div class="doc-header">
+  <div class="badges">
+    <span class="badge badge-type">Comprehensive</span>
+    <span class="badge badge-mod">Module 2</span>
+    <span class="badge badge-enrich">Enrich: On</span>
+  </div>
+  <div class="doc-title">Exploring AI Use Cases and Applications</div>
+  <div class="doc-subtitle">AWS-AI MasterClass · Synaptix v2.2 · High Verbosity</div>
+  <div class="stat-row">
+    <div class="stat-item"><div class="stat-val">9</div><div class="stat-lbl">Sections</div></div>
+    <div class="stat-item"><div class="stat-val">A–I</div><div class="stat-lbl">Coverage</div></div>
+    <div class="stat-item"><div class="stat-val">High</div><div class="stat-lbl">Verbosity</div></div>
+    <div class="stat-item"><div class="stat-val">EN</div><div class="stat-lbl">Language</div></div>
+  </div>
+</div>
+
+<div class="doc-body">
+
+  <div class="module-label"><span class="module-num">Module 2</span><div class="module-rule"></div></div>
+  <div class="module-title">Exploring AI Use Cases and Applications</div>
+
+  <!-- OVERVIEW -->
+  <div class="overview">
+    <div class="overview-label">Module Overview</div>
+    <div class="overview-grid">
+      <div class="overview-item"><span class="ov-letter">A</span><div><div class="ov-title">AI Fundamentals Recap</div><div class="ov-desc">AI, ML, DL, Generative AI — definitions and content types</div></div></div>
+      <div class="overview-item"><span class="ov-letter">B</span><div><div class="ov-title">Industry Use Cases</div><div class="ov-desc">Media, Retail, Healthcare, Life Sciences, Finance, Manufacturing</div></div></div>
+      <div class="overview-item"><span class="ov-letter">C</span><div><div class="ov-title">Core AI Applications</div><div class="ov-desc">Computer Vision, NLP, IDP, Fraud Detection</div></div></div>
+      <div class="overview-item"><span class="ov-letter">D</span><div><div class="ov-title">When to Use ML</div><div class="ov-desc">Appropriate vs. inappropriate scenarios, decision criteria</div></div></div>
+      <div class="overview-item"><span class="ov-letter">E</span><div><div class="ov-title">ML Techniques</div><div class="ov-desc">Supervised, Unsupervised, Reinforcement — subtypes and use cases</div></div></div>
+      <div class="overview-item"><span class="ov-letter">F</span><div><div class="ov-title">Generative AI Capabilities</div><div class="ov-desc">Adaptability, creativity, personalization, scalability</div></div></div>
+      <div class="overview-item"><span class="ov-letter">G</span><div><div class="ov-title">Generative AI Challenges</div><div class="ov-desc">Risks, hallucinations, bias, mitigation strategies</div></div></div>
+      <div class="overview-item"><span class="ov-letter">H</span><div><div class="ov-title">Model Selection</div><div class="ov-desc">Factors, FM examples, cost vs. performance trade-offs</div></div></div>
+      <div class="overview-item"><span class="ov-letter">I</span><div><div class="ov-title">Business Metrics</div><div class="ov-desc">Success measurement: satisfaction, ARPU, conversion, ROI</div></div></div>
+    </div>
+    <div class="overview-divider"></div>
+    <div class="meta-row">
+      <div><div class="meta-lbl">Prerequisites</div><div class="meta-val">Module 1 — Fundamentals of ML & AI</div></div>
+      <div><div class="meta-lbl">Leads To</div><div class="meta-val">AWS service selection, model deployment, business alignment</div></div>
+    </div>
+  </div>
+
+  <!-- INTRO -->
+  <div class="intro">
+    <div class="intro-label">Module Introduction</div>
+    <p>Module 1 established the vocabulary — what AI, ML, Deep Learning, and Generative AI are. Module 2 asks the next question: <span class="b-orange">where does it actually go?</span> This module bridges theory to practice by mapping AI capabilities onto real industries, defining the four core application domains, and building a framework for deciding when ML is the right tool and which technique fits a given problem.</p>
+    <p>It also introduces the practical considerations that determine whether an AI solution <span class="b-cyan">succeeds in production</span> — model selection trade-offs, Generative AI's unique risks, mitigation strategies, and the business metrics used to measure real-world impact. By the end of this module, you will be able to connect a business problem to the correct AI approach and evaluate it against cost, performance, and compliance constraints.</p>
+  </div>
+
+  <!-- ══════ SECTION A: AI FUNDAMENTALS RECAP ══════ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--sky);background:var(--sky-dim);border:1px solid rgba(93,184,242,0.2)">A</div>
+      <div class="section-title">AI Fundamentals Recap</div>
+      <div class="ghost-glyph">A</div>
+    </div>
+    <div class="section-body">
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">A1</span><span class="sub-title">The Four-Layer Hierarchy</span></div>
+        <div class="sub-body">
+          <p>The four core terms from Module 1 reappear throughout this module as anchors. <span class="b-orange">Artificial Intelligence</span> is the umbrella field — any system that mimics human intelligence. <span class="b-orange">Machine Learning</span> learns patterns from data instead of following explicit rules. <span class="b-orange">Deep Learning</span> uses layered neural networks to handle complex, unstructured tasks. <span class="b-orange">Generative AI</span>, built on Deep Learning, goes beyond prediction to <span class="b-cyan">create entirely new content</span>.</p>
+          <div class="warn-box">
+            <div class="warn-label">The Persistent Distinction</div>
+            <p>Generative AI <span class="b-orange">creates</span> — it produces novel outputs (text, images, audio, code, video) that did not previously exist. Traditional ML <span class="b-cyan">predicts or analyzes</span> — it classifies, scores, or extracts from existing data. This distinction recurs across every industry use case in this module.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">A2</span><span class="sub-title">Generative AI Content Types</span></div>
+        <div class="sub-body">
+          <p>Generative AI is not limited to one output medium. Understanding what it can generate is prerequisite to mapping it to industry applications.</p>
+          <div class="tier-row">
+            <div class="tier"><div class="tier-label">Text</div><div class="tier-desc">Conversations, summaries, articles, reports, translations, code documentation</div></div>
+            <div class="tier"><div class="tier-label">Visual (Image/Video)</div><div class="tier-desc">Images, illustrations, video scenes, visual design assets, product renders</div></div>
+            <div class="tier"><div class="tier-label">Audio</div><div class="tier-desc">Music generation, speech synthesis, voiceovers, sound effects</div></div>
+            <div class="tier"><div class="tier-label">Code</div><div class="tier-desc">Programming outputs, function generation, code review, debugging assistance</div></div>
+          </div>
+          <div class="keypoints">
+            <div class="kp-label">Key Points</div>
+            <ul class="kp-list">
+              <li>AI hierarchy: AI ⊃ ML ⊃ DL ⊃ Generative AI — same nesting as Module 1.</li>
+              <li>Generative AI creates; traditional ML predicts or analyzes. Never conflate them.</li>
+              <li>Four output types: Text · Visual · Audio · Code — each maps to different industry use cases.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /A -->
+
+
+  <!-- ══════ SECTION B: INDUSTRY USE CASES ══════ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--cyan);background:var(--cyan-dim);border:1px solid rgba(78,205,196,0.2)">B</div>
+      <div class="section-title">Real-World AI Use Cases Across Industries</div>
+      <div class="ghost-glyph">B</div>
+    </div>
+    <div class="section-body">
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">B1</span><span class="sub-title">Why Industries Adopt AI</span></div>
+        <div class="sub-body">
+          <p>AI creates business value through three primary mechanisms: <span class="b-orange">automation</span> (replacing repetitive manual work), <span class="b-orange">optimization</span> (improving decisions or processes beyond human capacity), and <span class="b-orange">personalization</span> (tailoring experiences at a scale that rule-based systems cannot achieve). These mechanisms appear differently depending on the industry, but the underlying logic is always the same — AI handles what rules cannot scale to. <span class="enrich-plus">[+]</span></p>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">B2</span><span class="sub-title">Industry-by-Industry Breakdown</span></div>
+        <div class="sub-body">
+          <div class="industry-grid">
+            <div class="industry-card">
+              <div class="ic-name" style="color:var(--purple)">Media &amp; Entertainment</div>
+              <ul class="ic-list">
+                <li>Content Generation — scripts, stories, auto-summaries</li>
+                <li>Virtual Reality — immersive AI-generated environments</li>
+                <li>News Generation — automatic article creation and summarization</li>
+              </ul>
+            </div>
+            <div class="industry-card">
+              <div class="ic-name" style="color:var(--orange)">Retail</div>
+              <ul class="ic-list">
+                <li>Review Summaries — condensed product insight from thousands of reviews</li>
+                <li>Pricing Optimization — dynamic margin maximization</li>
+                <li>Virtual Try-ons — simulate product fitting without physical contact</li>
+                <li>Store Layout Optimization — improve shopping flow and conversion</li>
+              </ul>
+            </div>
+            <div class="industry-card">
+              <div class="ic-name" style="color:var(--green)">Healthcare</div>
+              <ul class="ic-list">
+                <li>Clinical Documentation (HealthScribe) — auto-generate clinical notes from provider-patient conversations</li>
+                <li>Personalized Medicine — tailor treatments to individual patient profiles</li>
+                <li>Medical Imaging Enhancement — improve diagnostic accuracy from scans</li>
+              </ul>
+            </div>
+            <div class="industry-card">
+              <div class="ic-name" style="color:var(--cyan)">Life Sciences</div>
+              <ul class="ic-list">
+                <li>Drug Discovery — generate and evaluate molecular structures</li>
+                <li>Protein Folding Prediction — predict 3D protein structures (e.g., AlphaFold) <span class="enrich-tilde">[~]</span></li>
+                <li>Synthetic Biology — engineer biological systems computationally</li>
+              </ul>
+            </div>
+            <div class="industry-card">
+              <div class="ic-name" style="color:var(--amber)">Financial Services</div>
+              <ul class="ic-list">
+                <li>Fraud Detection — identify anomalous transactions in real time</li>
+                <li>Portfolio Management — simulate market scenarios for risk assessment</li>
+                <li>Debt Collection Optimization — improve strategy and timing</li>
+              </ul>
+            </div>
+            <div class="industry-card">
+              <div class="ic-name" style="color:var(--sky)">Manufacturing</div>
+              <ul class="ic-list">
+                <li>Predictive Maintenance — detect failure before it occurs to reduce downtime</li>
+                <li>Process Optimization — improve throughput and efficiency</li>
+                <li>Product Design Generation — generate designs within constraint sets</li>
+                <li>Material Science — discover new materials computationally</li>
+              </ul>
+            </div>
+          </div>
+          <div class="info-box" style="margin-top:10px">
+            <div class="info-label">AWS HealthScribe</div>
+            <p>AWS HealthScribe is specifically called out in the source material as the AWS service for clinical documentation — it automatically generates clinical notes from provider-patient conversations using AI, reducing administrative burden on healthcare providers.</p>
+          </div>
+          <div class="keypoints">
+            <div class="kp-label">Key Points</div>
+            <ul class="kp-list">
+              <li>AI creates value through automation, optimization, and personalization — these three mechanisms recur across all industries.</li>
+              <li>Six industries: Media · Retail · Healthcare · Life Sciences · Financial Services · Manufacturing. Know at least two use cases per industry.</li>
+              <li>AWS HealthScribe = clinical documentation via AI — a named AWS service to remember.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /B -->
+
+
+  <!-- ══════ SECTION C: CORE AI APPLICATIONS ══════ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--purple);background:var(--purple-dim);border:1px solid rgba(192,132,252,0.2)">C</div>
+      <div class="section-title">Core AI Application Domains</div>
+      <div class="ghost-glyph">C</div>
+    </div>
+    <div class="section-body">
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">C1</span><span class="sub-title">Computer Vision</span></div>
+        <div class="sub-body">
+          <p><span class="b-orange">Computer Vision</span> enables machines to interpret and understand visual information — images and video — the way humans do. It is one of the oldest and most mature subfields of AI, now accelerated significantly by deep learning architectures. <span class="enrich-plus">[+]</span></p>
+          <div class="compare-grid">
+            <div class="compare-card">
+              <div class="compare-card-title" style="color:var(--sky)">Core Tasks</div>
+              <ul>
+                <li><span style="color:var(--orange);font-weight:600">Image Classification</span> — assign a label to an image ("cat," "dog," "tumor")</li>
+                <li><span style="color:var(--orange);font-weight:600">Object Detection</span> — identify and locate multiple objects within an image with bounding boxes</li>
+                <li><span style="color:var(--orange);font-weight:600">Segmentation</span> — classify every pixel in an image to its object (most granular level)</li>
+              </ul>
+            </div>
+            <div class="compare-card">
+              <div class="compare-card-title" style="color:var(--purple)">Industry Use Cases</div>
+              <ul>
+                <li><b>Autonomous Driving</b> — detect lanes, pedestrians, signs in real time</li>
+                <li><b>Healthcare Imaging</b> — improve accuracy of radiology and pathology diagnoses</li>
+                <li><b>Public Safety</b> — facial recognition for surveillance and access control</li>
+              </ul>
+            </div>
+          </div>
+          <div class="keypoints">
+            <div class="kp-label">Key Points</div>
+            <ul class="kp-list">
+              <li>Three CV tasks in order of granularity: Classification (whole image) → Detection (located objects) → Segmentation (every pixel).</li>
+              <li>AWS service: Amazon Rekognition handles image/video analysis for all three levels.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">C2</span><span class="sub-title">Natural Language Processing (NLP)</span></div>
+        <div class="sub-body">
+          <p><span class="b-orange">Natural Language Processing (NLP)</span> enables machines to understand, interpret, and generate human language. NLP powers everything from spell-checkers to large language models — it is the discipline connecting raw text to machine comprehension.</p>
+          <div class="compare-grid">
+            <div class="compare-card">
+              <div class="compare-card-title" style="color:var(--sky)">Core Tasks</div>
+              <ul>
+                <li><b>Text Classification</b> — categorize documents by topic or intent</li>
+                <li><b>Sentiment Analysis</b> — detect positive, negative, or neutral tone</li>
+                <li><b>Translation</b> — convert text between languages while preserving meaning</li>
+                <li><b>Text Generation</b> — produce coherent language continuations or responses</li>
+              </ul>
+            </div>
+            <div class="compare-card">
+              <div class="compare-card-title" style="color:var(--purple)">Industry Use Cases</div>
+              <ul>
+                <li><b>Insurance</b> — extract key clauses and data from policy documents</li>
+                <li><b>Telecom</b> — generate personalized product recommendations from usage patterns</li>
+                <li><b>Education</b> — power chatbot Q&amp;A systems for student support</li>
+              </ul>
+            </div>
+          </div>
+          <div class="keypoints">
+            <div class="kp-label">Key Points</div>
+            <ul class="kp-list">
+              <li>Four NLP tasks: Text Classification · Sentiment Analysis · Translation · Text Generation.</li>
+              <li>AWS services: Amazon Comprehend (NLP insights), Amazon Translate (translation), Amazon Lex (chatbots using NLU).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">C3</span><span class="sub-title">Intelligent Document Processing (IDP)</span></div>
+        <div class="sub-body">
+          <p><span class="b-orange">Intelligent Document Processing (IDP)</span> applies AI to extract structured information and insights from unstructured or semi-structured documents — PDFs, scanned forms, contracts, invoices, and records that cannot be processed by simple rule-based parsing.</p>
+          <div class="compare-grid">
+            <div class="compare-card">
+              <div class="compare-card-title" style="color:var(--sky)">Core Functions</div>
+              <ul>
+                <li><b>Data Extraction</b> — pull specific values from forms, tables, and text</li>
+                <li><b>Classification</b> — route documents to the correct workflow by type</li>
+                <li><b>Summarization</b> — condense long documents into key points</li>
+              </ul>
+            </div>
+            <div class="compare-card">
+              <div class="compare-card-title" style="color:var(--purple)">Industry Use Cases</div>
+              <ul>
+                <li><b>Finance</b> — automate loan application processing from submitted forms</li>
+                <li><b>Legal</b> — automate contract review and clause extraction</li>
+                <li><b>Healthcare</b> — process insurance claims and patient records</li>
+              </ul>
+            </div>
+          </div>
+          <div class="info-box" style="margin-top:6px">
+            <div class="info-label">IDP vs. NLP</div>
+            <p>IDP is a <em>superset workflow</em> that applies NLP (and CV for scanned images) to document-specific problems. NLP is a capability; IDP is an application of that capability to document-centric business processes. <span class="enrich-plus">[+]</span> AWS service: Amazon Textract for OCR and form extraction.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">C4</span><span class="sub-title">Fraud Detection</span></div>
+        <div class="sub-body">
+          <p><span class="b-orange">Fraud Detection</span> uses ML models to identify anomalous or malicious patterns in transaction data, user behavior, or network activity. Unlike rule-based fraud filters (which require explicit rules for every known fraud type), ML-based fraud detection <span class="b-cyan">learns what normal looks like</span> and flags statistical deviations — catching novel fraud patterns that no rule anticipated. <span class="enrich-plus">[+]</span></p>
+          <div class="tier-row">
+            <div class="tier"><div class="tier-label">Finance</div><div class="tier-desc">Anti-money laundering (AML), transaction anomaly detection, credit card fraud</div></div>
+            <div class="tier"><div class="tier-label">Retail</div><div class="tier-desc">Account takeover protection, return fraud, fake review detection</div></div>
+            <div class="tier"><div class="tier-label">Telecom</div><div class="tier-desc">SIM card fraud, subscription abuse, network intrusion monitoring</div></div>
+          </div>
+          <div class="keypoints">
+            <div class="kp-label">Key Points</div>
+            <ul class="kp-list">
+              <li>Four core application domains: Computer Vision · NLP · IDP · Fraud Detection.</li>
+              <li>Each domain = a category of AI capability, not a single algorithm or service.</li>
+              <li>Fraud Detection is ML-based — it learns normal patterns and flags deviations, unlike rigid rule-based filters.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /C -->
+
+
+  <!-- ══════ SECTION D: WHEN TO USE ML ══════ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--orange);background:var(--orange-dim);border:1px solid rgba(244,118,42,0.2)">D</div>
+      <div class="section-title">When to Use ML — and When Not To</div>
+      <div class="ghost-glyph">D</div>
+    </div>
+    <div class="section-body">
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">D1</span><span class="sub-title">The Core Decision Framework</span></div>
+        <div class="sub-body">
+          <p>ML is a powerful tool, but it is not always the right one. The decision to use ML versus a deterministic (rule-based) approach depends on the <span class="b-orange">complexity and scale</span> of the problem. If a human expert can write down all the rules that solve a problem — and those rules will hold at any scale — ML adds cost without benefit. ML becomes necessary when rules are too complex to enumerate or when the problem must scale beyond what rules can handle.</p>
+          <div class="decision-block">
+            <div class="decision-row">
+              <div class="dr-icon" style="color:var(--green)">USE</div>
+              <div class="dr-content">
+                <div class="dr-title">Complex Rules — too many edge cases to define manually</div>
+                <div class="dr-desc">Example: Spam filtering — thousands of evolving patterns, linguistic tricks, and sender behaviors that no static ruleset can capture.</div>
+              </div>
+            </div>
+            <div class="decision-row">
+              <div class="dr-icon" style="color:var(--green)">USE</div>
+              <div class="dr-content">
+                <div class="dr-title">High Variability — many interacting factors influence the outcome</div>
+                <div class="dr-desc">Example: Credit risk scoring — hundreds of variables interact non-linearly in ways rules cannot express.</div>
+              </div>
+            </div>
+            <div class="decision-row">
+              <div class="dr-icon" style="color:var(--green)">USE</div>
+              <div class="dr-content">
+                <div class="dr-title">Large Scale — massive datasets that humans cannot manually process</div>
+                <div class="dr-desc">Example: Real-time recommendation systems serving millions of users simultaneously.</div>
+              </div>
+            </div>
+            <div class="decision-row">
+              <div class="dr-icon" style="color:var(--salmon)">SKIP</div>
+              <div class="dr-content">
+                <div class="dr-title">Simple Logic — clear deterministic rules already exist</div>
+                <div class="dr-desc">Example: Calculating tax — a formula applies universally. ML adds complexity with no benefit.</div>
+              </div>
+            </div>
+            <div class="decision-row">
+              <div class="dr-icon" style="color:var(--salmon)">SKIP</div>
+              <div class="dr-content">
+                <div class="dr-title">Low Complexity — predefined steps are sufficient</div>
+                <div class="dr-desc">Example: Converting Celsius to Fahrenheit. No pattern to learn — the rule is complete.</div>
+              </div>
+            </div>
+          </div>
+          <div class="warn-box" style="margin-top:8px">
+            <div class="warn-label">Exam Framing</div>
+            <p>When a question describes a scenario with <span class="b-orange">complex, evolving patterns</span> or <span class="b-orange">massive data scale</span> — choose ML. When the problem has a <span class="b-green">known, deterministic solution</span> — rule-based logic is more appropriate. ML is not universally better; it is specifically better when rules cannot scale or be defined.</p>
+          </div>
+          <div class="keypoints">
+            <div class="kp-label">Key Points</div>
+            <ul class="kp-list">
+              <li>Use ML for: complex rules, high variability, large scale.</li>
+              <li>Skip ML for: simple deterministic logic, low-complexity tasks with known rule sets.</li>
+              <li>Canonical example for ML: spam filtering. Canonical example against ML: basic arithmetic.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /D -->
+
+
+  <!-- ══════ SECTION E: ML TECHNIQUES ══════ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--sky);background:var(--sky-dim);border:1px solid rgba(93,184,242,0.2)">E</div>
+      <div class="section-title">ML Techniques and Their Use Cases</div>
+      <div class="ghost-glyph">E</div>
+    </div>
+    <div class="section-body">
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">E1</span><span class="sub-title">Supervised Learning — Subtypes and Applications</span></div>
+        <div class="sub-body">
+          <p><span class="b-orange">Supervised Learning</span> trains on labeled data — every example has a known correct output — and learns to predict outputs for new, unseen inputs. It is the most widely deployed paradigm in production ML. Two subtypes determine what kind of output the model predicts.</p>
+          <div class="compare-grid">
+            <div class="compare-card">
+              <div class="compare-card-title" style="color:var(--orange)">Classification</div>
+              <ul>
+                <li>Predicts a <b>categorical</b> output — one of a finite set of classes</li>
+                <li>Fraud detection — fraud / not fraud</li>
+                <li>Image classification — cat / dog / bird</li>
+                <li>Customer churn prediction — will churn / will not churn</li>
+                <li>Medical diagnostics — disease positive / negative</li>
+              </ul>
+            </div>
+            <div class="compare-card">
+              <div class="compare-card-title" style="color:var(--cyan)">Regression</div>
+              <ul>
+                <li>Predicts a <b>continuous</b> output — a numeric value along a range</li>
+                <li>Weather forecasting — predict tomorrow's temperature</li>
+                <li>Market trend prediction — predict stock price movement</li>
+                <li>Life expectancy estimation — predict years remaining</li>
+                <li>Population growth modeling — predict future headcount</li>
+              </ul>
+            </div>
+          </div>
+          <div class="info-box" style="margin-top:8px">
+            <div class="info-label">Classification vs. Regression — Quick Test</div>
+            <p>Ask: "Is the answer one of a fixed set of categories, or is it a number on a continuous scale?" Categories → Classification. Continuous number → Regression. "Will this customer buy?" = Classification. "How much will this customer spend?" = Regression. <span class="enrich-plus">[+]</span></p>
+          </div>
+          <div class="keypoints">
+            <div class="kp-label">Key Points</div>
+            <ul class="kp-list">
+              <li>Supervised = labeled data → predict output. Input requires a known correct answer for every training example.</li>
+              <li>Classification = categorical output (discrete classes). Regression = continuous output (numeric value).</li>
+              <li>Know at least two use cases for each subtype.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">E2</span><span class="sub-title">Unsupervised Learning — Subtypes and Applications</span></div>
+        <div class="sub-body">
+          <p><span class="b-orange">Unsupervised Learning</span> discovers hidden structure in data <span class="b-cyan">without any labeled examples</span>. There is no correct answer provided — the model creates its own organization of the data. This is valuable when labeling is expensive, impossible, or unnecessary — or when the goal is exploration rather than prediction.</p>
+          <div class="compare-grid">
+            <div class="compare-card">
+              <div class="compare-card-title" style="color:var(--orange)">Clustering</div>
+              <ul>
+                <li>Groups similar data points together without predefined categories</li>
+                <li>Customer segmentation — group users by behavior profile</li>
+                <li>Targeted marketing — identify audience clusters for campaigns</li>
+                <li>Recommendation systems — group users with similar preferences</li>
+              </ul>
+            </div>
+            <div class="compare-card">
+              <div class="compare-card-title" style="color:var(--cyan)">Dimensionality Reduction</div>
+              <ul>
+                <li>Reduces the number of input features while preserving important structure</li>
+                <li>Data visualization — project high-dimensional data to 2D/3D</li>
+                <li>Compression — reduce data size for storage or transmission</li>
+                <li>Feature extraction — identify the most meaningful variables in large datasets</li>
+              </ul>
+            </div>
+          </div>
+          <div class="keypoints">
+            <div class="kp-label">Key Points</div>
+            <ul class="kp-list">
+              <li>Unsupervised = no labels — the model discovers structure on its own.</li>
+              <li>Clustering = group similar items (customer segmentation). Dimensionality Reduction = simplify feature space (visualization, compression).</li>
+              <li>Critical distinction: unsupervised learning is not "wrong" — it simply has no ground truth to check against.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">E3</span><span class="sub-title">Reinforcement Learning</span></div>
+        <div class="sub-body">
+          <p><span class="b-orange">Reinforcement Learning (RL)</span> is fundamentally different from both supervised and unsupervised paradigms. An <span class="b-cyan">agent</span> learns by interacting with an <span class="b-cyan">environment</span> — taking actions, receiving <span class="b-green">reward</span> signals for correct actions and <span class="b-salmon">penalty</span> signals for incorrect ones. Over many iterations, the agent develops a <span class="b-orange">policy</span> — a strategy for choosing actions that maximizes cumulative reward.</p>
+          <p>There is no dataset of correct answers. The agent discovers what works through trial and error. RL is particularly powerful for sequential decision-making problems where the optimal action at each step depends on long-term consequences. <span class="enrich-plus">[+]</span></p>
+          <div class="info-box">
+            <div class="info-label">AWS DeepRacer</div>
+            <p>AWS DeepRacer is an autonomous 1/18th-scale race car that learns to navigate a track using reinforcement learning. The agent (car) receives rewards for staying on track and progressing toward the finish, and penalties for going off-track. It is the canonical hands-on RL example in the AWS ecosystem.</p>
+          </div>
+          <div class="keypoints">
+            <div class="kp-label">Key Points</div>
+            <ul class="kp-list">
+              <li>RL components: Agent (decision-maker) · Environment (interaction space) · Reward/Penalty (feedback signal) · Policy (learned strategy).</li>
+              <li>RL learns through trial and error — no labeled dataset, no predefined correct answers.</li>
+              <li>AWS example: DeepRacer (autonomous driving via reward-based learning).</li>
+              <li>RL is best for sequential decision problems — game playing, robotics, resource scheduling. <span class="enrich-plus">[+]</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /E -->
+
+
+  <!-- ══════ SECTION F: GENERATIVE AI CAPABILITIES ══════ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--cyan);background:var(--cyan-dim);border:1px solid rgba(78,205,196,0.2)">F</div>
+      <div class="section-title">Capabilities of Generative AI</div>
+      <div class="ghost-glyph">F</div>
+    </div>
+    <div class="section-body">
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">F1</span><span class="sub-title">The Seven Capabilities</span></div>
+        <div class="sub-body">
+          <p>Generative AI is not a single capability — it is a cluster of properties that collectively explain why it creates so much business value across different domains. Understanding each capability helps you match Generative AI to the right problem.</p>
+          <div class="tier-row">
+            <div class="tier"><div class="tier-label">Adaptability</div><div class="tier-desc">A single FM can flex across completely different tasks and domains without being rebuilt for each one. The same model that writes code can also summarize legal documents.</div></div>
+            <div class="tier"><div class="tier-label">Responsiveness</div><div class="tier-desc">Generates output in real time — conversational exchange, instant drafts, live translation — without pre-computing or batch delays.</div></div>
+            <div class="tier"><div class="tier-label">Simplicity</div><div class="tier-desc">Automates workflows that previously required specialized technical skill. A non-developer can generate working code by describing intent in plain language.</div></div>
+            <div class="tier"><div class="tier-label">Creativity</div><div class="tier-desc">Produces genuinely novel outputs — new designs, original text, unexplored solutions — not just recombinations of existing templates.</div></div>
+            <div class="tier"><div class="tier-label">Data Efficiency</div><div class="tier-desc">Foundation Models pretrained on large datasets can be adapted to specific tasks with relatively small amounts of new data, compared to training from scratch.</div></div>
+            <div class="tier"><div class="tier-label">Personalization</div><div class="tier-desc">Tailors outputs to individual users at scale — personalized marketing copy, custom learning plans, user-specific recommendations — that rule-based systems cannot achieve per-user.</div></div>
+            <div class="tier"><div class="tier-label">Scalability</div><div class="tier-desc">Produces content at a volume and speed impossible for human teams. A single model can generate thousands of product descriptions, emails, or code modules per minute.</div></div>
+          </div>
+          <div class="keypoints">
+            <div class="kp-label">Key Points</div>
+            <ul class="kp-list">
+              <li>Seven capabilities: Adaptability · Responsiveness · Simplicity · Creativity · Data Efficiency · Personalization · Scalability.</li>
+              <li>The core business value proposition: Generative AI enables <em>automation and creativity at scale</em> — simultaneously. Traditional automation lacked creativity; human creativity lacked scale.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /F -->
+
+
+  <!-- ══════ SECTION G: CHALLENGES ══════ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--purple);background:var(--purple-dim);border:1px solid rgba(192,132,252,0.2)">G</div>
+      <div class="section-title">Challenges and Risks of Generative AI</div>
+      <div class="ghost-glyph">G</div>
+    </div>
+    <div class="section-body">
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">G1</span><span class="sub-title">Key Risks</span></div>
+        <div class="sub-body">
+          <p>Generative AI's power introduces risks that do not exist in traditional deterministic software. These risks arise from the probabilistic, learned nature of AI outputs — outputs are not guaranteed to be correct, safe, or compliant. Understanding each risk is necessary for responsible deployment.</p>
+          <div class="tier-row">
+            <div class="tier"><div class="tier-label" style="color:var(--salmon)">Hallucinations</div><div class="tier-desc">The model generates <span class="b-salmon">plausible but factually false</span> information with apparent confidence. The most critical and exam-tested risk. The model has no concept of "truth" — it predicts likely text, not correct text.</div></div>
+            <div class="tier"><div class="tier-label" style="color:var(--salmon)">Toxicity</div><div class="tier-desc">Offensive, harmful, discriminatory, or inappropriate outputs produced from biased training data or adversarial prompts.</div></div>
+            <div class="tier"><div class="tier-label" style="color:var(--salmon)">Privacy Concerns</div><div class="tier-desc">Models may memorize and regenerate personal data seen during training, or process confidential information in ways that violate data governance requirements.</div></div>
+            <div class="tier"><div class="tier-label" style="color:var(--salmon)">Regulatory Violations</div><div class="tier-desc">AI outputs may expose organizations to legal risk by revealing sensitive regulated data (PII, PHI, financial records) or by generating non-compliant content.</div></div>
+            <div class="tier"><div class="tier-label" style="color:var(--salmon)">Social Risks</div><div class="tier-desc">Reputationally harmful content, deepfakes, misinformation, or outputs that damage brand integrity or public trust.</div></div>
+            <div class="tier"><div class="tier-label" style="color:var(--salmon)">Interpretability</div><div class="tier-desc">It is often difficult to explain <em>why</em> a model produced a specific output — making audit, debugging, and regulatory compliance challenging.</div></div>
+            <div class="tier"><div class="tier-label" style="color:var(--salmon)">Nondeterminism</div><div class="tier-desc">The same input can produce different outputs across runs. This inconsistency is problematic for high-stakes applications requiring predictable, reproducible responses.</div></div>
+          </div>
+          <div class="risk-box" style="margin-top:8px">
+            <div class="risk-label">Hallucination — Exam Priority</div>
+            <p><span class="b-salmon">Hallucinations</span> are the most frequently tested Gen AI risk. The definition is precise: hallucinations are outputs that are <em>plausible-sounding but factually incorrect</em>. The model does not "know" it is wrong — it generates the most statistically likely continuation of the prompt, regardless of factual accuracy. This is why AI outputs must always be verified before use in high-stakes contexts.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">G2</span><span class="sub-title">Mitigation Strategies</span></div>
+        <div class="sub-body">
+          <p>Each risk class has corresponding mitigation strategies. These are not eliminations — they are controls that reduce the probability and impact of harmful outputs.</p>
+          <div class="compare-grid">
+            <div class="compare-card">
+              <div class="compare-card-title" style="color:var(--green)">Technical Controls</div>
+              <ul>
+                <li><b>Guardrails</b> — filter or block harmful output categories before they reach the user</li>
+                <li><b>Verification / RAG</b> — ground model outputs in retrieved factual sources to reduce hallucination</li>
+                <li><b>Model Testing</b> — evaluate outputs for bias, toxicity, and accuracy before deployment</li>
+                <li><b>Monitoring</b> — continuously detect inconsistencies and drift in production</li>
+                <li><b>Security Measures</b> — encryption, firewalls, access controls for data protection</li>
+              </ul>
+            </div>
+            <div class="compare-card">
+              <div class="compare-card-title" style="color:var(--sky)">Data Controls</div>
+              <ul>
+                <li><b>Data Anonymization</b> — remove or mask personally identifiable information before training or prompting</li>
+                <li><b>Data Curation</b> — remove harmful, biased, or low-quality content from training data</li>
+              </ul>
+            </div>
+          </div>
+          <div class="keypoints">
+            <div class="kp-label">Key Points</div>
+            <ul class="kp-list">
+              <li>Seven risks: Hallucinations · Toxicity · Privacy · Regulatory Violations · Social Risks · Interpretability · Nondeterminism.</li>
+              <li>Hallucination = plausible but false. The model predicts likely text, not correct text.</li>
+              <li>Primary mitigation for hallucination: Guardrails + Verification (RAG grounds outputs in facts).</li>
+              <li>AI outputs must always be verified before use in high-stakes contexts.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /G -->
+
+
+  <!-- ══════ SECTION H: MODEL SELECTION ══════ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--orange);background:var(--orange-dim);border:1px solid rgba(244,118,42,0.2)">H</div>
+      <div class="section-title">Model Selection Factors</div>
+      <div class="ghost-glyph">H</div>
+    </div>
+    <div class="section-body">
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">H1</span><span class="sub-title">The Five Core Selection Factors</span></div>
+        <div class="sub-body">
+          <p>Choosing the right model for a production system is not just a technical decision — it is a business decision. The wrong model can be accurate but too slow, too expensive, or non-compliant. Good model selection balances five factors simultaneously.</p>
+          <div class="tier-row">
+            <div class="tier"><div class="tier-label">Model Type</div><div class="tier-desc">Does the model support the specific task? A text-generation model cannot produce images. A vision model cannot translate text. Task-capability alignment is the first gate.</div></div>
+            <div class="tier"><div class="tier-label">Performance</div><div class="tier-desc">Accuracy and reliability on the target task. Measured by benchmarks, human evaluation, or task-specific metrics. Higher performance usually means higher cost.</div></div>
+            <div class="tier"><div class="tier-label">Constraints</div><div class="tier-desc">Available compute resources (GPU/CPU/memory), data availability, and deployment environment (cloud vs. on-premises vs. edge).</div></div>
+            <div class="tier"><div class="tier-label">Compliance</div><div class="tier-desc">Does the model meet data privacy regulations (GDPR, HIPAA), ethical guidelines, and organizational policies? Non-compliant models are disqualified regardless of performance.</div></div>
+            <div class="tier"><div class="tier-label">Cost</div><div class="tier-desc">Larger, more capable models cost more per inference. Smaller, faster models reduce cost but may sacrifice quality. The right answer depends on the use case tolerance for each.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">H2</span><span class="sub-title">Foundation Model Examples</span></div>
+        <div class="sub-body">
+          <p>Different Foundation Models have different strengths. Knowing which FM is suited to which task type is directly tested in AWS certification exams.</p>
+          <div class="model-grid">
+            <div class="model-card"><div class="mc-name">AI21 Jurassic-2</div><div class="mc-desc">Text generation, summarization, Q&amp;A — strong on long-form text tasks</div></div>
+            <div class="model-card"><div class="mc-name">Amazon Titan</div><div class="mc-desc">Embeddings, semantic search, Q&amp;A — AWS-native FM family via Bedrock</div></div>
+            <div class="model-card"><div class="mc-name">Anthropic Claude</div><div class="mc-desc">Chat, reasoning, coding, analysis — known for safety alignment and long context</div></div>
+            <div class="model-card"><div class="mc-name">Stable Diffusion</div><div class="mc-desc">Image generation from text prompts — leading open-source diffusion model</div></div>
+            <div class="model-card"><div class="mc-name">Cohere Command</div><div class="mc-desc">NLP tasks — classification, summarization, enterprise text processing</div></div>
+            <div class="model-card"><div class="mc-name">Meta Llama</div><div class="mc-desc">General text processing — open-weight model family, widely used for fine-tuning</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">H3</span><span class="sub-title">Cost vs. Performance Trade-off</span></div>
+        <div class="sub-body">
+          <p>Model size directly affects both capability and cost. There is no universally "best" model — the optimal choice is always relative to the use case's requirements and budget.</p>
+          <div class="compare-grid">
+            <div class="compare-card">
+              <div class="compare-card-title" style="color:var(--orange)">Large Models</div>
+              <ul>
+                <li>Higher accuracy and reasoning depth</li>
+                <li>Handle complex, nuanced tasks</li>
+                <li>Higher cost per inference</li>
+                <li>Slower response time at the same hardware</li>
+                <li>Use when: quality is critical, budget allows</li>
+              </ul>
+            </div>
+            <div class="compare-card">
+              <div class="compare-card-title" style="color:var(--cyan)">Small Models</div>
+              <ul>
+                <li>Lower cost per inference</li>
+                <li>Faster response — better latency</li>
+                <li>Lower resource requirements</li>
+                <li>Trade-off: reduced accuracy on complex tasks</li>
+                <li>Use when: speed and cost dominate, task is well-defined</li>
+              </ul>
+            </div>
+          </div>
+          <div class="keypoints">
+            <div class="kp-label">Key Points</div>
+            <ul class="kp-list">
+              <li>Five selection factors: Model Type · Performance · Constraints · Compliance · Cost.</li>
+              <li>Know six FM examples: Jurassic-2 (text) · Titan (embeddings) · Claude (chat/reasoning) · Stable Diffusion (images) · Cohere (NLP) · Llama (general text).</li>
+              <li>Model selection = task + cost + performance balance. No single winner — context decides.</li>
+              <li>Compliance is a hard gate — a non-compliant model is disqualified regardless of accuracy.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /H -->
+
+
+  <!-- ══════ SECTION I: BUSINESS METRICS ══════ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--sky);background:var(--sky-dim);border:1px solid rgba(93,184,242,0.2)">I</div>
+      <div class="section-title">Business Metrics for Generative AI</div>
+      <div class="ghost-glyph">I</div>
+    </div>
+    <div class="section-body">
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">I1</span><span class="sub-title">Measuring Real-World AI Success</span></div>
+        <div class="sub-body">
+          <p>A model can achieve excellent technical performance — high accuracy, low latency — and still fail to create business value. Conversely, a moderate-accuracy model deployed in the right context can transform a business operation. <span class="b-orange">Technical metrics tell you how well the model performs. Business metrics tell you whether it matters.</span> <span class="enrich-plus">[+]</span></p>
+          <p>Both dimensions are required. AWS exams test the ability to evaluate AI solutions not just on accuracy but on whether they align with and advance business objectives.</p>
+          <div class="tier-row">
+            <div class="tier"><div class="tier-label">User Satisfaction</div><div class="tier-desc">Measured through surveys, ratings, or qualitative feedback. Captures whether users find the AI output helpful, accurate, and trustworthy.</div></div>
+            <div class="tier"><div class="tier-label">ARPU</div><div class="tier-desc">Average Revenue Per User — tracks whether AI-powered personalization or recommendations translates to increased spending per customer.</div></div>
+            <div class="tier"><div class="tier-label">Cross-Domain Performance</div><div class="tier-desc">Measures how effectively a model generalizes across multiple domains or use cases — relevant for evaluating FM versatility in multi-purpose deployments.</div></div>
+            <div class="tier"><div class="tier-label">Conversion Rate</div><div class="tier-desc">The percentage of users who complete a desired action (purchase, sign-up, click). A direct indicator of whether AI-driven personalization or recommendations change behavior.</div></div>
+            <div class="tier"><div class="tier-label">Efficiency</div><div class="tier-desc">Resource and time optimization — how much faster or cheaper a process runs with AI versus without. Captures operational ROI.</div></div>
+          </div>
+          <div class="info-box" style="margin-top:8px">
+            <div class="info-label">Metrics are Use-Case Specific</div>
+            <p>No metric is universally applicable. A customer service chatbot prioritizes User Satisfaction and resolution time. An e-commerce recommendation engine prioritizes Conversion Rate and ARPU. A content moderation tool prioritizes accuracy and regulatory compliance. The choice of business metric must follow the business objective. <span class="enrich-plus">[+]</span></p>
+          </div>
+          <div class="keypoints">
+            <div class="kp-label">Key Points</div>
+            <ul class="kp-list">
+              <li>Five business metrics: User Satisfaction · ARPU · Cross-Domain Performance · Conversion Rate · Efficiency.</li>
+              <li>Technical performance alone is insufficient — AI success requires business metric alignment.</li>
+              <li>Metrics must be chosen based on the specific business objective — there is no universal success metric.</li>
+              <li>Core insight: AI success = technical performance + business value. Both halves are required.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /I -->
+
+
+  <!-- ══════ MODULE SUMMARY ══════ -->
+  <div class="summary-block">
+    <div class="summary-label">Module Summary</div>
+    <ul class="summary-list">
+      <li>Generative AI creates new content (text, visual, audio, code); traditional ML analyzes or predicts from existing data. Six industries — Media, Retail, Healthcare, Life Sciences, Finance, Manufacturing — deploy AI through automation, optimization, and personalization.</li>
+      <li>Four core application domains: Computer Vision (classify, detect, segment) · NLP (classify, analyze, translate, generate) · IDP (extract, classify, summarize documents) · Fraud Detection (anomaly identification from behavioral patterns).</li>
+      <li>Use ML when rules are too complex or scale is too high. Skip ML when a deterministic rule-based solution already exists. Canonical ML case: spam filtering. Non-ML case: basic calculation.</li>
+      <li>Supervised learning (labeled data) splits into Classification (categorical output) and Regression (continuous output). Unsupervised learning (no labels) splits into Clustering (group similar items) and Dimensionality Reduction (simplify feature space). Reinforcement learning learns via Agent → Environment → Reward/Penalty → Policy.</li>
+      <li>Generative AI has seven capabilities (Adaptability, Responsiveness, Simplicity, Creativity, Data Efficiency, Personalization, Scalability) and seven risks (Hallucinations, Toxicity, Privacy, Regulatory Violations, Social Risks, Interpretability, Nondeterminism). Hallucination — plausible but false output — is the primary exam-tested risk. Model selection balances task type, performance, constraints, compliance, and cost. AI success requires both technical performance and business metric alignment.</li>
+    </ul>
+  </div>
+
+</div><!-- /doc-body -->
+
+<!-- ── FOOTER ── -->
+<div class="doc-footer">
+  <div class="footer-left">Synaptix v2.2 · AWS-AI MasterClass · Module 2 · Comprehensive · High</div>
+  <div class="footer-btns">
+    <button class="footer-btn btn-quiz" onclick="quizQuick()">
+      <div class="footer-dot" style="background:var(--orange)"></div>Quiz
+    </button>
+    <button class="footer-btn btn-recall" onclick="recallQuick()">
+      <div class="footer-dot" style="background:var(--cyan)"></div>Recall
+    </button>
+    <button class="footer-btn btn-export" onclick="exportMd()">
+      <div class="footer-dot" style="background:var(--salmon)"></div>Export
+    </button>
+  </div>
+</div>
+
+</div><!-- /doc-wrap -->
+<script>
+/* synaptix-runtime v1.0 */
+function sendPrompt(t){if(window.parent&&window.parent.postMessage)window.parent.postMessage({type:'user_message',message:t},'*');}
+function quizQuick(){sendPrompt('/quiz mc(10) hard');}
+function recallQuick(){sendPrompt('/recall term(10) hard');}
+function exportMd(){sendPrompt('/export -md');}
+</script>
+</body>
+</html>
