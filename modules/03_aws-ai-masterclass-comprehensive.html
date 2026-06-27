@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Synaptix — M3: Responsible Artificial Intelligence Practices</title>
+<style>
+/* synaptix-runtime v1.0 */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg-base:#0e0e11;--bg-surface:#16161a;--bg-elevated:#1c1c21;--bg-section:#1a1a1f;
+  --border:rgba(255,255,255,0.07);--border-hi:rgba(255,255,255,0.12);
+  --orange:#f4762a;--salmon:#f08080;--cyan:#4ecdc4;--green:#4ade80;
+  --yellow:#f4d03f;--purple:#c084fc;--sky:#5db8f2;--amber:#f4b942;--red:#f87171;
+  --orange-dim:rgba(244,118,42,0.10);--orange-glow:rgba(244,118,42,0.05);
+  --cyan-dim:rgba(78,205,196,0.10);--salmon-dim:rgba(240,128,128,0.10);
+  --yellow-dim:rgba(244,208,63,0.10);--green-dim:rgba(74,222,128,0.10);
+  --purple-dim:rgba(192,132,252,0.10);--sky-dim:rgba(93,184,242,0.10);
+  --text-primary:#e8e8ee;--text-secondary:#8b8b9a;--text-muted:#4a4a5a;
+  --mono:'JetBrains Mono',monospace;--sans:'Inter',system-ui,sans-serif;
+}
+body{background:var(--bg-base);color:var(--text-primary);font-family:var(--sans);font-size:13px;line-height:1.8;}
+.b-orange{color:var(--orange);font-weight:600}
+.b-salmon{color:var(--salmon);font-weight:600}
+.b-cyan{color:var(--cyan);font-weight:600}
+.b-green{color:var(--green);font-weight:600}
+.b-yellow{color:var(--yellow);font-weight:600}
+.b-purple{color:var(--purple);font-weight:600}
+
+.doc-wrap{max-width:860px;margin:0 auto;display:flex;flex-direction:column;}
+.doc-header{padding:22px 26px 16px;border-bottom:1px solid var(--border);background:var(--bg-surface);}
+.badges{display:flex;gap:8px;margin-bottom:11px;flex-wrap:wrap}
+.badge{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:0.07em;text-transform:uppercase;padding:3px 8px;border-radius:4px;border:1px solid;}
+.badge-type{color:var(--orange);background:var(--orange-dim);border-color:rgba(244,118,42,0.25)}
+.badge-mod{color:var(--sky);background:var(--sky-dim);border-color:rgba(93,184,242,0.25)}
+.badge-enrich{color:var(--green);background:var(--green-dim);border-color:rgba(74,222,128,0.25)}
+.doc-title{font-size:20px;font-weight:600;letter-spacing:-0.02em}
+.doc-subtitle{font-size:11px;font-family:var(--mono);color:var(--text-muted);margin-top:4px}
+.stat-row{display:flex;gap:20px;flex-wrap:wrap;margin-top:13px;padding-top:13px;border-top:1px solid var(--border);}
+.stat-val{font-family:var(--mono);font-size:15px;font-weight:600;color:var(--text-primary)}
+.stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-top:1px}
+
+.doc-body{padding:22px 26px;display:flex;flex-direction:column;gap:10px}
+.module-label{display:flex;align-items:center;gap:10px}
+.module-num{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--orange);letter-spacing:0.1em;text-transform:uppercase;}
+.module-rule{flex:1;height:1px;background:linear-gradient(to right,rgba(244,118,42,0.25),transparent);}
+.module-title{font-size:17px;font-weight:600;margin-bottom:10px}
+
+.overview{background:var(--bg-surface);border-top:2px solid var(--sky);border-radius:0 0 8px 8px;padding:14px 18px;}
+.overview-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--sky);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px}
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.overview-item{background:var(--bg-elevated);border:1px solid var(--border);border-radius:6px;padding:8px 10px;display:flex;align-items:flex-start;gap:8px;}
+.ov-letter{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--sky);background:var(--sky-dim);border:1px solid rgba(93,184,242,0.2);border-radius:3px;padding:2px 5px;flex-shrink:0;}
+.ov-title{font-size:12px;font-weight:500;color:var(--text-primary)}
+.ov-desc{font-size:11px;color:var(--text-secondary);margin-top:2px}
+.overview-divider{height:1px;background:var(--border);margin:10px 0}
+.meta-row{display:flex;gap:20px;flex-wrap:wrap}
+.meta-lbl{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-muted)}
+.meta-val{font-size:12px;color:var(--text-secondary);margin-top:2px}
+
+.intro{background:var(--bg-surface);border-left:3px solid var(--purple);border-radius:0 8px 8px 0;padding:14px 18px;}
+.intro-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--purple);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;}
+.intro p{font-size:13px;color:var(--text-secondary);line-height:1.8}
+.intro p+p{margin-top:8px}
+
+.section-card{background:var(--bg-section);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color 0.15s;}
+.section-card:hover{border-color:var(--border-hi)}
+.section-hdr{padding:12px 17px 10px;border-bottom:1px solid var(--border);position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;}
+.section-letter{font-family:var(--mono);font-size:12px;font-weight:600;width:25px;height:25px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.section-title{font-size:13px;font-weight:500;flex:1}
+.ghost-glyph{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:58px;font-weight:700;color:rgba(255,255,255,0.025);pointer-events:none;user-select:none;line-height:1;}
+.section-body{padding:15px 17px;display:flex;flex-direction:column;gap:13px}
+
+.subsection{display:flex;flex-direction:column;gap:8px}
+.subsection+.subsection{padding-top:13px;border-top:1px solid var(--border)}
+.sub-hdr{display:flex;align-items:center;gap:8px}
+.sub-num{font-family:var(--mono);font-size:10px;font-weight:500;color:var(--cyan);background:var(--cyan-dim);border:1px solid rgba(78,205,196,0.2);padding:2px 6px;border-radius:4px;}
+.sub-title{font-size:13px;font-weight:500}
+.sub-body{display:flex;flex-direction:column;gap:8px}
+.sub-body p{font-size:13px;color:var(--text-secondary);line-height:1.8}
+
+.enrich-plus{font-family:var(--mono);font-size:9px;font-weight:600;color:var(--green);background:var(--green-dim);border:1px solid rgba(74,222,128,0.2);padding:1px 4px;border-radius:3px;margin-left:4px;vertical-align:middle;}
+.enrich-tilde{font-family:var(--mono);font-size:9px;font-weight:600;color:var(--amber);background:rgba(244,185,66,0.08);border:1px solid rgba(244,185,66,0.2);padding:1px 4px;border-radius:3px;margin-left:4px;vertical-align:middle;}
+
+.keypoints{background:var(--orange-glow);border:1px solid rgba(244,118,42,0.12);border-left:3px solid var(--orange);border-radius:0 6px 6px 0;padding:10px 14px;}
+.kp-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--orange);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:7px;}
+.kp-list{list-style:none;display:flex;flex-direction:column;gap:5px}
+.kp-list li{font-size:12px;color:var(--text-secondary);line-height:1.6;display:flex;gap:7px}
+.kp-list li::before{content:'›';color:var(--orange);font-weight:700;font-size:14px;flex-shrink:0}
+
+.info-box{background:var(--bg-elevated);border:1px solid var(--border);border-left:3px solid var(--sky);border-radius:0 6px 6px 0;padding:10px 14px;}
+.info-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--sky);letter-spacing:0.07em;text-transform:uppercase;margin-bottom:6px}
+.info-box p{font-size:12.5px;color:var(--text-secondary);line-height:1.75}
+
+.warn-box{background:rgba(244,118,42,0.04);border:1px solid rgba(244,118,42,0.18);border-left:3px solid var(--orange);border-radius:0 6px 6px 0;padding:10px 14px;}
+.warn-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--orange);letter-spacing:0.07em;text-transform:uppercase;margin-bottom:6px}
+.warn-box p{font-size:12.5px;color:var(--text-secondary);line-height:1.75}
+
+.risk-box{background:rgba(240,128,128,0.04);border:1px solid rgba(240,128,128,0.18);border-left:3px solid var(--salmon);border-radius:0 6px 6px 0;padding:10px 14px;}
+.risk-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--salmon);letter-spacing:0.07em;text-transform:uppercase;margin-bottom:6px}
+.risk-box p{font-size:12.5px;color:var(--text-secondary);line-height:1.75}
+
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.compare-card{background:var(--bg-elevated);border:1px solid var(--border);border-radius:7px;padding:11px 13px}
+.compare-card-title{font-size:11px;font-weight:600;font-family:var(--mono);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:7px}
+.compare-card ul{list-style:none;display:flex;flex-direction:column;gap:4px}
+.compare-card ul li{font-size:12px;color:var(--text-secondary);line-height:1.6;display:flex;gap:6px}
+.compare-card ul li::before{content:'·';color:var(--text-muted);flex-shrink:0}
+
+.tier-row{display:flex;flex-direction:column;gap:6px}
+.tier{display:flex;align-items:baseline;gap:10px;padding:7px 10px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:6px}
+.tier-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--orange);width:140px;flex-shrink:0}
+.tier-desc{font-size:12.5px;color:var(--text-secondary);line-height:1.6}
+
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+.dim-card{background:var(--bg-elevated);border:1px solid var(--border);border-radius:7px;padding:10px 12px}
+.dim-name{font-family:var(--mono);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:4px}
+.dim-desc{font-size:12px;color:var(--text-secondary);line-height:1.55}
+
+.aws-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.aws-card{background:var(--bg-elevated);border:1px solid var(--border);border-radius:6px;padding:9px 12px}
+.aws-name{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cyan);margin-bottom:3px}
+.aws-desc{font-size:12px;color:var(--text-secondary);line-height:1.5}
+
+.bias-visual{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:6px}
+.bv-card{background:var(--bg-elevated);border:1px solid var(--border);border-radius:7px;padding:10px 12px;text-align:center}
+.bv-label{font-family:var(--mono);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px}
+.bv-bias{font-size:11px;color:var(--text-secondary);margin-bottom:2px}
+.bv-var{font-size:11px;color:var(--text-secondary);margin-bottom:4px}
+.bv-result{font-size:11px;font-weight:600;padding:3px 8px;border-radius:4px;display:inline-block}
+
+.summary-block{background:var(--bg-surface);border:1px solid var(--border);border-bottom:2px solid var(--orange);border-radius:8px 8px 0 0;padding:14px 18px;}
+.summary-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--orange);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;}
+.summary-list{list-style:none;display:flex;flex-direction:column;gap:5px}
+.summary-list li{font-size:13px;color:var(--text-secondary);line-height:1.7;display:flex;gap:7px;}
+.summary-list li::before{content:'›';color:var(--orange);font-weight:700;font-size:14px;flex-shrink:0}
+
+.doc-footer{padding:12px 26px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--bg-surface);flex-wrap:wrap;gap:10px;}
+.footer-left{font-size:11px;color:var(--text-muted);font-family:var(--mono)}
+.footer-btns{display:flex;gap:10px}
+.footer-btn{display:flex;align-items:center;justify-content:center;gap:7px;font-family:var(--mono);font-size:11px;font-weight:500;width:128px;height:64px;border-radius:20px;border:1px solid;background:transparent;cursor:pointer;letter-spacing:0.03em;transition:all 0.15s;}
+.footer-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.btn-quiz{color:var(--orange);border-color:rgba(244,118,42,0.35);background:var(--orange-dim)}
+.btn-recall{color:var(--cyan);border-color:rgba(78,205,196,0.35);background:var(--cyan-dim)}
+.btn-export{color:var(--salmon);border-color:rgba(240,128,128,0.35);background:var(--salmon-dim)}
+.btn-quiz:hover{background:rgba(244,118,42,0.18)}
+.btn-recall:hover{background:rgba(78,205,196,0.15)}
+.btn-export:hover{background:rgba(240,128,128,0.15)}
+
+@media(max-width:600px){
+  .doc-header,.doc-body{padding-left:16px;padding-right:16px}
+  .doc-footer{padding:12px 16px}
+  .overview-grid,.compare-grid,.three-col,.aws-grid,.bias-visual{grid-template-columns:1fr}
+  .footer-btn{width:100px;height:52px;font-size:10px}
+}
+</style>
+</head>
+<body>
+<div class="doc-wrap">
+
+<!-- HEADER -->
+<div class="doc-header">
+  <div class="badges">
+    <span class="badge badge-type">Comprehensive</span>
+    <span class="badge badge-mod">Module 3</span>
+    <span class="badge badge-enrich">Enrich: On</span>
+  </div>
+  <div class="doc-title">Responsible Artificial Intelligence Practices</div>
+  <div class="doc-subtitle">AWS-AI MasterClass · Synaptix v2.2 · High Verbosity</div>
+  <div class="stat-row">
+    <div class="stat-item"><div class="stat-val">9</div><div class="stat-lbl">Sections</div></div>
+    <div class="stat-item"><div class="stat-val">A–I</div><div class="stat-lbl">Coverage</div></div>
+    <div class="stat-item"><div class="stat-val">High</div><div class="stat-lbl">Verbosity</div></div>
+    <div class="stat-item"><div class="stat-val">EN</div><div class="stat-lbl">Language</div></div>
+  </div>
+</div>
+
+<div class="doc-body">
+  <div class="module-label"><span class="module-num">Module 3</span><div class="module-rule"></div></div>
+  <div class="module-title">Responsible Artificial Intelligence Practices</div>
+
+  <!-- OVERVIEW -->
+  <div class="overview">
+    <div class="overview-label">Module Overview</div>
+    <div class="overview-grid">
+      <div class="overview-item"><span class="ov-letter">A</span><div><div class="ov-title">Responsible AI Fundamentals</div><div class="ov-desc">Definition, lifecycle coverage, traditional vs. generative AI responsibilities</div></div></div>
+      <div class="overview-item"><span class="ov-letter">B</span><div><div class="ov-title">Responsible AI Challenges</div><div class="ov-desc">Bias, variance, overfitting, underfitting, Gen AI-specific risks</div></div></div>
+      <div class="overview-item"><span class="ov-letter">C</span><div><div class="ov-title">8 Core Dimensions</div><div class="ov-desc">Fairness, Explainability, Transparency, Privacy, Robustness, Governance, Safety, Controllability</div></div></div>
+      <div class="overview-item"><span class="ov-letter">D</span><div><div class="ov-title">AWS Tools</div><div class="ov-desc">SageMaker, Bedrock, Guardrails, Clarify, Model Monitor, A2I, Model Cards</div></div></div>
+      <div class="overview-item"><span class="ov-letter">E</span><div><div class="ov-title">Responsible Model Selection</div><div class="ov-desc">Use case, performance, sustainability, agency, economics</div></div></div>
+      <div class="overview-item"><span class="ov-letter">F</span><div><div class="ov-title">Dataset Preparation</div><div class="ov-desc">Balance, diversity, curation, augmentation, auditing</div></div></div>
+      <div class="overview-item"><span class="ov-letter">G</span><div><div class="ov-title">Transparency and Explainability</div><div class="ov-desc">HOW vs. WHY, SHAP, LIME, counterfactuals, black box trade-offs</div></div></div>
+      <div class="overview-item"><span class="ov-letter">H</span><div><div class="ov-title">Model Trade-offs</div><div class="ov-desc">Interpretability vs. performance, safety vs. transparency, controllability</div></div></div>
+      <div class="overview-item"><span class="ov-letter">I</span><div><div class="ov-title">Human-Centered AI Design</div><div class="ov-desc">HCD principles, RLHF, SageMaker Ground Truth</div></div></div>
+    </div>
+    <div class="overview-divider"></div>
+    <div class="meta-row">
+      <div><div class="meta-lbl">Prerequisites</div><div class="meta-val">Module 1 (ML Fundamentals) · Module 2 (AI Use Cases)</div></div>
+      <div><div class="meta-lbl">Leads To</div><div class="meta-val">Ethical AI deployment, governance, compliance frameworks</div></div>
+    </div>
+  </div>
+
+  <!-- INTRO -->
+  <div class="intro">
+    <div class="intro-label">Module Introduction</div>
+    <p>Modules 1 and 2 established what AI can do and where it is deployed. Module 3 addresses the question that determines whether AI systems should be trusted: <span class="b-orange">are they built responsibly?</span> Building a capable model is necessary but not sufficient — a model that discriminates, hallucinates, or operates as an opaque black box creates legal, ethical, and reputational risk regardless of its accuracy.</p>
+    <p>This module introduces the full framework for responsible AI — from the technical challenges of bias and variance, through the eight core ethical dimensions, to the specific AWS tools that implement these principles in practice. It also covers how to select models, prepare datasets, and design systems with humans at the center. <span class="b-cyan">Responsible AI is not a post-deployment checklist</span> — it is a discipline that applies from the first design decision to continuous production monitoring.</p>
+  </div>
+
+
+  <!-- ══ A: FUNDAMENTALS ══ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--sky);background:var(--sky-dim);border:1px solid rgba(93,184,242,0.2)">A</div>
+      <div class="section-title">Responsible AI Fundamentals</div>
+      <div class="ghost-glyph">A</div>
+    </div>
+    <div class="section-body">
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">A1</span><span class="sub-title">Definition and Goal</span></div>
+        <div class="sub-body">
+          <p><span class="b-orange">Responsible AI</span> is the practice of designing, building, deploying, and monitoring AI systems in a way that is ethical, transparent, and trustworthy. The goal is to <span class="b-cyan">minimize harm and ensure accountability</span> — not just to make systems that are technically accurate, but to make systems that are fair, explainable, and safe for all people they affect.</p>
+          <p>Responsible AI is not a single technique or tool. It is a <span class="b-orange">framework of principles and practices</span> that applies at every stage of an AI system's life — from the first line of design thinking to long-term production monitoring. An AI system can score well on benchmarks and still be irresponsible if it discriminates, leaks private data, or produces harmful outputs.</p>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">A2</span><span class="sub-title">Lifecycle Coverage</span></div>
+        <div class="sub-body">
+          <p>Responsible AI principles must be embedded at <span class="b-orange">every stage</span> of the development lifecycle — not added as an afterthought before deployment. Each stage has distinct responsibilities.</p>
+          <div class="tier-row">
+            <div class="tier"><div class="tier-label">Design</div><div class="tier-desc">Ethical planning — define use case boundaries, identify potentially affected populations, establish fairness criteria before any data is collected.</div></div>
+            <div class="tier"><div class="tier-label">Development</div><div class="tier-desc">Bias mitigation — audit training data, apply preprocessing, validate model behavior across demographic groups.</div></div>
+            <div class="tier"><div class="tier-label">Deployment</div><div class="tier-desc">Safe release — establish guardrails, test in staged environments, confirm outputs meet safety and compliance requirements.</div></div>
+            <div class="tier"><div class="tier-label">Monitoring</div><div class="tier-desc">Continuous oversight — track data drift, model degradation, unexpected output patterns in production.</div></div>
+            <div class="tier"><div class="tier-label">Evaluation</div><div class="tier-desc">Performance + ethics check — periodically re-validate both technical metrics and ethical compliance against current standards.</div></div>
+          </div>
+          <div class="warn-box" style="margin-top:6px">
+            <div class="warn-label">Exam Point</div>
+            <p>Responsible AI applies <span class="b-orange">throughout the entire lifecycle</span> — not only during training or only at deployment. When an exam question asks "when does responsible AI apply?" — the answer is always: all stages.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">A3</span><span class="sub-title">Traditional AI vs. Generative AI Responsibilities</span></div>
+        <div class="sub-body">
+          <p>Both traditional and generative AI require responsible practices, but the nature of their outputs creates different risk profiles and different emphases.</p>
+          <div class="compare-grid">
+            <div class="compare-card">
+              <div class="compare-card-title" style="color:var(--sky)">Traditional AI</div>
+              <ul>
+                <li>Single-task prediction models (classification, ranking, regression)</li>
+                <li>Requires labeled training data</li>
+                <li>Output is a prediction or score — well-defined and verifiable</li>
+                <li>Primary risks: bias in predictions, unfair outcomes across groups</li>
+                <li>Examples: recommendation systems, fraud detection, loan approval</li>
+              </ul>
+            </div>
+            <div class="compare-card">
+              <div class="compare-card-title" style="color:var(--orange)">Generative AI</div>
+              <ul>
+                <li>Multi-task content generation (text, images, code, audio)</li>
+                <li>Powered by Foundation Models (FMs), driven by prompts</li>
+                <li>Output is open-ended and variable — harder to verify</li>
+                <li>Primary risks: hallucinations, toxicity, IP violations, misuse</li>
+                <li>Requires additional safeguards: guardrails, grounding, output verification</li>
+              </ul>
+            </div>
+          </div>
+          <div class="info-box" style="margin-top:8px">
+            <div class="info-label">Business Value Requires Responsibility</div>
+            <p>Generative AI enables <span class="b-cyan">creativity</span> (generate new content), <span class="b-green">productivity</span> (automate workflows), and <span class="b-orange">connectivity</span> (improved engagement). But these benefits are only realizable when the system is trustworthy — irresponsible Gen AI erodes all three through user loss of confidence. <span class="enrich-plus">[+]</span></p>
+          </div>
+          <div class="keypoints">
+            <div class="kp-label">Key Points</div>
+            <ul class="kp-list">
+              <li>Responsible AI = ethical + transparent + trustworthy AI systems. Goal: minimize harm, ensure accountability.</li>
+              <li>Lifecycle coverage: Design → Development → Deployment → Monitoring → Evaluation. All five stages.</li>
+              <li>Traditional AI predicts (structured, verifiable output). Generative AI creates (open-ended, harder to verify).</li>
+              <li>Gen AI's additional risks — hallucinations, toxicity, IP — require additional safeguards beyond what traditional AI needs.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /A -->
+
+
+  <!-- ══ B: CHALLENGES ══ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--salmon);background:var(--salmon-dim);border:1px solid rgba(240,128,128,0.2)">B</div>
+      <div class="section-title">Responsible AI Challenges</div>
+      <div class="ghost-glyph">B</div>
+    </div>
+    <div class="section-body">
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">B1</span><span class="sub-title">The #1 Problem: Accuracy — Bias and Variance</span></div>
+        <div class="sub-body">
+          <p>The primary technical challenge in responsible AI is <span class="b-orange">accuracy</span> — specifically, ensuring a model generalizes correctly to new data rather than memorizing training patterns or oversimplifying them. Accuracy problems stem from two fundamental sources: <span class="b-salmon">bias</span> and <span class="b-salmon">variance</span>. Understanding both — and the trade-off between them — is essential for building reliable models.</p>
+
+          <div class="compare-grid">
+            <div class="compare-card">
+              <div class="compare-card-title" style="color:var(--salmon)">Bias</div>
+              <ul>
+                <li>Definition: model misses key features in the data — the gap between expected predictions and true values is wide</li>
+                <li>Low Bias (good) — narrow gap between predictions and reality</li>
+                <li>High Bias (bad) — wide gap; model fails to capture the true pattern</li>
+                <li>Effect: <b>underfitting</b> — the model is too simple to learn the task</li>
+                <li>Symptom: poor performance on both training and test data</li>
+              </ul>
+            </div>
+            <div class="compare-card">
+              <div class="compare-card-title" style="color:var(--purple)">Variance</div>
+              <ul>
+                <li>Definition: model is too sensitive to noise in the training data</li>
+                <li>High Variance (bad) — model memorizes training data specifics</li>
+                <li>Effect: <b>overfitting</b> — model is too comfortable with training data</li>
+                <li>Symptom: excellent training performance, crashes on deployment</li>
+                <li>The model learned the noise, not the signal</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="info-box" style="margin-top:8px">
+            <div class="info-label">The Bias-Variance Trade-off</div>
+            <p>These two errors push in opposite directions — reducing bias often increases variance, and vice versa. The goal is an <span class="b-green">optimal balance</span>: a model with low bias AND low variance that generalizes well to new, unseen data. This is the ideal "balanced model."</p>
+          </div>
+
+          <div class="bias-visual">
+            <div class="bv-card">
+              <div class="bv-label" style="color:var(--salmon)">Underfitted</div>
+              <div class="bv-bias">High Bias</div>
+              <div class="bv-var">Low Variance</div>
+              <div class="bv-result" style="color:var(--salmon);background:var(--salmon-dim)">Too Simple</div>
+            </div>
+            <div class="bv-card">
+              <div class="bv-label" style="color:var(--purple)">Overfitted</div>
+              <div class="bv-bias">Low Bias</div>
+              <div class="bv-var">High Variance</div>
+              <div class="bv-result" style="color:var(--purple);background:var(--purple-dim)">Memorized</div>
+            </div>
+            <div class="bv-card">
+              <div class="bv-label" style="color:var(--green)">Balanced</div>
+              <div class="bv-bias">Low Bias</div>
+              <div class="bv-var">Low Variance</div>
+              <div class="bv-result" style="color:var(--green);background:var(--green-dim)">Generalizes</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">B2</span><span class="sub-title">Mitigation Techniques</span></div>
+        <div class="sub-body">
+          <p>Several techniques address bias-variance problems at different levels of the model development process. None is universally sufficient — practitioners typically combine multiple approaches.</p>
+          <div class="tier-row">
+            <div class="tier"><div class="tier-label">Cross-Validation</div><div class="tier-desc">Split data into multiple folds; train on some, test on others, and rotate. Detects overfitting by measuring how well the model generalizes across different data subsets. <span class="enrich-plus">[+]</span></div></div>
+            <div class="tier"><div class="tier-label">Increase Data</div><div class="tier-desc">More training samples expose the model to more variation, reducing sensitivity to individual noise patterns and improving generalization.</div></div>
+            <div class="tier"><div class="tier-label">Regularization</div><div class="tier-desc">Penalizes model complexity during training, discouraging overly specific parameter values that would overfit to noise. Examples: L1 (Lasso), L2 (Ridge). <span class="enrich-plus">[+]</span></div></div>
+            <div class="tier"><div class="tier-label">Simpler Models</div><div class="tier-desc">Reduce model complexity (fewer layers, fewer parameters) to prevent the model from having enough capacity to memorize training data.</div></div>
+            <div class="tier"><div class="tier-label">Dimensionality Reduction</div><div class="tier-desc">Remove redundant or irrelevant features that add noise without contributing signal — reduces the space the model can overfit to.</div></div>
+            <div class="tier"><div class="tier-label">Early Stopping</div><div class="tier-desc">Stop training when validation performance begins to deteriorate — prevents the model from continuing to memorize training-specific patterns.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">B3</span><span class="sub-title">Generative AI-Specific Challenges</span></div>
+        <div class="sub-body">
+          <p>Generative AI introduces a distinct set of responsible AI challenges that do not apply to traditional prediction models — because the outputs are open-ended, creative, and often impossible to verify automatically.</p>
+          <div class="tier-row">
+            <div class="tier"><div class="tier-label" style="color:var(--salmon)">Toxicity</div><div class="tier-desc">The model generates harmful, offensive, or discriminatory content — from biased training data or adversarial prompts.</div></div>
+            <div class="tier"><div class="tier-label" style="color:var(--salmon)">Hallucinations</div><div class="tier-desc"><span class="b-salmon">Plausible but factually false</span> outputs. The model predicts likely text — not correct text. No concept of truth, only statistical likelihood.</div></div>
+            <div class="tier"><div class="tier-label" style="color:var(--salmon)">Intellectual Property</div><div class="tier-desc">Model may reproduce copyrighted material from training data — creating legal exposure for organizations deploying or using the output.</div></div>
+            <div class="tier"><div class="tier-label" style="color:var(--salmon)">Plagiarism / Cheating</div><div class="tier-desc">Misuse in academic or professional contexts — submitting AI-generated content as original human work.</div></div>
+            <div class="tier"><div class="tier-label" style="color:var(--salmon)">Work Disruption</div><div class="tier-desc">Job displacement concerns — AI automation of tasks previously performed by human workers creates socioeconomic risk at scale.</div></div>
+          </div>
+          <div class="keypoints">
+            <div class="kp-label">Key Points</div>
+            <ul class="kp-list">
+              <li>#1 technical challenge: accuracy — rooted in bias (underfitting) and variance (overfitting).</li>
+              <li>Bias = too simple, misses pattern. Variance = too complex, memorizes noise. Balanced = low bias + low variance.</li>
+              <li>Underfitting: high bias, low variance. Overfitting: low bias, high variance. Target: both low.</li>
+              <li>Six mitigation techniques: Cross-Validation · Increase Data · Regularization · Simpler Models · Dimensionality Reduction · Early Stopping.</li>
+              <li>Gen AI-specific challenges: Toxicity · Hallucinations · IP violations · Plagiarism · Work Disruption.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /B -->
+
+
+  <!-- ══ C: 8 DIMENSIONS ══ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--purple);background:var(--purple-dim);border:1px solid rgba(192,132,252,0.2)">C</div>
+      <div class="section-title">The Eight Core Dimensions of Responsible AI</div>
+      <div class="ghost-glyph">C</div>
+    </div>
+    <div class="section-body">
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">C1</span><span class="sub-title">The Eight Dimensions</span></div>
+        <div class="sub-body">
+          <p>Responsible AI is multidimensional — no single property is sufficient. Eight dimensions define the full scope of what it means to build and deploy AI responsibly. Each dimension addresses a different category of risk and a different stakeholder need.</p>
+          <div class="three-col">
+            <div class="dim-card"><div class="dim-name" style="color:var(--green)">Fairness</div><div class="dim-desc">Avoid discrimination — ensure outcomes are inclusive and unbiased across demographic groups.</div></div>
+            <div class="dim-card"><div class="dim-name" style="color:var(--orange)">Explainability</div><div class="dim-desc"><b>WHY</b> a decision was made — human-understandable reasoning behind model outputs.</div></div>
+            <div class="dim-card"><div class="dim-name" style="color:var(--cyan)">Transparency</div><div class="dim-desc"><b>HOW</b> the model works — visible processes, documented architecture and training.</div></div>
+            <div class="dim-card"><div class="dim-name" style="color:var(--sky)">Privacy &amp; Security</div><div class="dim-desc">Protect personal data — prevent leakage of PII, unauthorized access, and data misuse.</div></div>
+            <div class="dim-card"><div class="dim-name" style="color:var(--amber)">Veracity &amp; Robustness</div><div class="dim-desc">Reliable under uncertainty — stable performance across varied inputs and edge cases.</div></div>
+            <div class="dim-card"><div class="dim-name" style="color:var(--purple)">Governance</div><div class="dim-desc">Enforce policies — centralized control, audit trails, compliance frameworks.</div></div>
+            <div class="dim-card"><div class="dim-name" style="color:var(--salmon)">Safety</div><div class="dim-desc">Prevent harm — guardrails, output filtering, human oversight in high-stakes decisions.</div></div>
+            <div class="dim-card"><div class="dim-name" style="color:var(--yellow)">Controllability</div><div class="dim-desc">Guide AI behavior — ability to steer, correct, or override model outputs when needed.</div></div>
+          </div>
+
+          <div class="warn-box" style="margin-top:8px">
+            <div class="warn-label">Critical Point</div>
+            <p>No single dimension is sufficient. A model can be highly explainable but still unfair. It can be transparent but unsafe. Responsible AI requires all eight dimensions to be addressed — not just the ones that are easiest to implement.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">C2</span><span class="sub-title">Transparency vs. Explainability — The Critical Distinction</span></div>
+        <div class="sub-body">
+          <p>These two terms are frequently confused but address different questions. Getting this distinction right is important for both implementation and exam questions.</p>
+          <div class="compare-grid">
+            <div class="compare-card">
+              <div class="compare-card-title" style="color:var(--cyan)">Transparency — HOW</div>
+              <ul>
+                <li>Addresses how the model works as a system</li>
+                <li>Covers: model architecture, training data, development process</li>
+                <li>Example: "This model was trained on X data using Y algorithm with Z parameters"</li>
+                <li>Documentation-level visibility — stakeholders can see the system's construction</li>
+              </ul>
+            </div>
+            <div class="compare-card">
+              <div class="compare-card-title" style="color:var(--orange)">Explainability — WHY</div>
+              <ul>
+                <li>Addresses why a specific prediction or decision was made</li>
+                <li>Covers: feature contributions, decision rationale per output</li>
+                <li>Example: "This loan was denied because income weight was 0.6 and employment duration was 0.3"</li>
+                <li>Prediction-level visibility — stakeholders can understand individual decisions</li>
+              </ul>
+            </div>
+          </div>
+          <div class="keypoints">
+            <div class="kp-label">Key Points</div>
+            <ul class="kp-list">
+              <li>Eight dimensions: Fairness · Explainability · Transparency · Privacy &amp; Security · Veracity &amp; Robustness · Governance · Safety · Controllability.</li>
+              <li>No single dimension is sufficient — all eight are required for fully responsible AI.</li>
+              <li>Transparency = HOW the model works (system-level). Explainability = WHY a decision was made (prediction-level). These are different questions with different tools.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">C3</span><span class="sub-title">Business Benefits of Responsible AI</span></div>
+        <div class="sub-body">
+          <p>Responsible AI is not only ethically correct — it is also <span class="b-green">strategically valuable</span>. Organizations that invest in responsible practices gain advantages that irresponsible competitors cannot replicate.</p>
+          <div class="tier-row">
+            <div class="tier"><div class="tier-label">Trust &amp; Reputation</div><div class="tier-desc">Users who understand and trust AI outputs are more likely to engage with and rely on the system — increasing adoption and retention.</div></div>
+            <div class="tier"><div class="tier-label">Regulatory Compliance</div><div class="tier-desc">GDPR, AI Act, HIPAA, and sector-specific regulations increasingly mandate fairness, explainability, and audit trails — responsible AI preempts regulatory penalties. <span class="enrich-plus">[+]</span></div></div>
+            <div class="tier"><div class="tier-label">Risk Reduction</div><div class="tier-desc">Fewer unexpected failures, edge-case disasters, and legal liabilities — responsible systems are more predictable.</div></div>
+            <div class="tier"><div class="tier-label">Competitive Advantage</div><div class="tier-desc">Ethical differentiation is an increasingly meaningful market signal, especially in regulated industries like healthcare and finance.</div></div>
+            <div class="tier"><div class="tier-label">Better Decisions</div><div class="tier-desc">Reliable, explainable outputs improve the quality of human decisions made with AI assistance — multiplying the value of the system.</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /C -->
+
+
+  <!-- ══ D: AWS TOOLS ══ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--orange);background:var(--orange-dim);border:1px solid rgba(244,118,42,0.2)">D</div>
+      <div class="section-title">AWS Tools for Responsible AI</div>
+      <div class="ghost-glyph">D</div>
+    </div>
+    <div class="section-body">
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">D1</span><span class="sub-title">The Two Platforms: SageMaker vs. Bedrock</span></div>
+        <div class="sub-body">
+          <p>AWS organizes its responsible AI tooling around two flagship platforms. Understanding which platform owns which capability is critical for exam scenarios.</p>
+          <div class="compare-grid">
+            <div class="compare-card">
+              <div class="compare-card-title" style="color:var(--sky)">Amazon SageMaker AI</div>
+              <ul>
+                <li>Fully-managed ML lifecycle platform</li>
+                <li>Build, train, and deploy custom ML models</li>
+                <li>Distributed training for large-scale datasets</li>
+                <li>Secure, production-ready deployment environments</li>
+                <li>Owns: bias detection, explainability, monitoring, governance</li>
+              </ul>
+            </div>
+            <div class="compare-card">
+              <div class="compare-card-title" style="color:var(--orange)">Amazon Bedrock</div>
+              <ul>
+                <li>Access to Foundation Models via a unified API</li>
+                <li>Build generative AI applications — serverless, no infra management</li>
+                <li>Secure customization with private data</li>
+                <li>Owns: FM evaluation, guardrails for Gen AI safety</li>
+              </ul>
+            </div>
+          </div>
+          <div class="warn-box" style="margin-top:6px">
+            <div class="warn-label">Platform Distinction — High Exam Priority</div>
+            <p><span class="b-orange">Bedrock = Generative AI platform</span> (FM access, Gen AI apps, guardrails). <span class="b-cyan">SageMaker = ML lifecycle platform</span> (build, train, deploy custom models, bias detection, monitoring, governance). These roles are distinct and frequently tested.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">D2</span><span class="sub-title">Foundation Model Evaluation</span></div>
+        <div class="sub-body">
+          <p>Before deploying a Foundation Model, it must be evaluated. AWS provides two evaluation pathways — automatic and human — and a dedicated tool within SageMaker for responsible AI metrics.</p>
+          <div class="compare-grid">
+            <div class="compare-card">
+              <div class="compare-card-title" style="color:var(--green)">Automatic Evaluation (Bedrock)</div>
+              <ul>
+                <li>Metrics: accuracy, robustness, toxicity scores</li>
+                <li>Runs at scale without human reviewer involvement</li>
+                <li>Best for: objective, measurable quality dimensions</li>
+              </ul>
+            </div>
+            <div class="compare-card">
+              <div class="compare-card-title" style="color:var(--amber)">Human Evaluation (Bedrock)</div>
+              <ul>
+                <li>Metrics: style, friendliness, brand voice alignment</li>
+                <li>Options: internal team or AWS-managed reviewers</li>
+                <li>Best for: subjective quality dimensions that automation cannot measure</li>
+              </ul>
+            </div>
+          </div>
+          <div class="info-box" style="margin-top:6px">
+            <div class="info-label">SageMaker Clarify — Responsible AI Evaluation</div>
+            <p>SageMaker Clarify supports automated FM evaluation with a focus on <span class="b-cyan">responsible AI metrics</span> — bias awareness, fairness across groups, and feature-level analysis — beyond the accuracy and toxicity checks available in Bedrock's automatic evaluation.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">D3</span><span class="sub-title">Guardrails for Amazon Bedrock</span></div>
+        <div class="sub-body">
+          <p><span class="b-orange">Guardrails for Amazon Bedrock</span> add a configurable safety layer that applies across all Foundation Models accessed through Bedrock — regardless of which model is in use. Guardrails are not part of any individual model; they operate at the application layer.</p>
+          <div class="tier-row">
+            <div class="tier"><div class="tier-label">Block Topics</div><div class="tier-desc">Restrict model responses to specific domains — prevent the model from discussing topics outside the intended use case.</div></div>
+            <div class="tier"><div class="tier-label">Filter Harmful Content</div><div class="tier-desc">Detect and block hate speech, violence, abuse, and other unsafe content categories from inputs and outputs.</div></div>
+            <div class="tier"><div class="tier-label">Redact PII</div><div class="tier-desc">Automatically detect and remove personally identifiable information from model outputs — protecting user privacy.</div></div>
+            <div class="tier"><div class="tier-label">Policy Enforcement</div><div class="tier-desc">Define custom rules per use case — enforce organization-specific content policies across all interactions.</div></div>
+            <div class="tier"><div class="tier-label">Real-Time Monitoring</div><div class="tier-desc">Evaluate both user inputs and model outputs in real time — detect violations as they occur and log them for audit.</div></div>
+          </div>
+          <div class="keypoints" style="margin-top:6px">
+            <div class="kp-label">Key Points</div>
+            <ul class="kp-list">
+              <li>Guardrails apply across all models in Bedrock — not model-specific.</li>
+              <li>Five capabilities: Block Topics · Filter Harmful Content · Redact PII · Policy Enforcement · Real-Time Monitoring.</li>
+              <li>Guardrails add an <em>extra safety layer</em> — they do not replace model selection or fine-tuning.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">D4</span><span class="sub-title">Bias Detection and Data Balancing</span></div>
+        <div class="sub-body">
+          <p>AWS provides two complementary tools for detecting and correcting bias at the data and model level.</p>
+          <div class="compare-grid">
+            <div class="compare-card">
+              <div class="compare-card-title" style="color:var(--cyan)">SageMaker Clarify</div>
+              <ul>
+                <li>Detects bias at the feature level — e.g., gender, age, ethnicity</li>
+                <li>Outputs visual reports and bias metrics</li>
+                <li>Works pre-training (data bias) and post-training (model bias)</li>
+              </ul>
+            </div>
+            <div class="compare-card">
+              <div class="compare-card-title" style="color:var(--orange)">SageMaker Data Wrangler</div>
+              <ul>
+                <li>Balances datasets using three techniques:</li>
+                <li>Random Undersampling — remove majority class samples</li>
+                <li>Random Oversampling — duplicate minority class samples</li>
+                <li>SMOTE — generate synthetic minority samples <span class="enrich-plus">[+]</span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="info-box" style="margin-top:6px">
+            <div class="info-label">SMOTE — Synthetic Minority Over-sampling Technique</div>
+            <p>SMOTE creates synthetic data points for underrepresented classes by interpolating between existing minority samples — rather than simply duplicating them. This produces more diverse training examples and reduces the risk of overfitting to the duplicated minority examples that simple oversampling creates. <span class="enrich-plus">[+]</span></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">D5</span><span class="sub-title">Monitoring, Human Review, and Governance</span></div>
+        <div class="sub-body">
+          <p>Responsible AI does not end at deployment. AWS provides a suite of tools to maintain oversight of models in production.</p>
+          <div class="aws-grid">
+            <div class="aws-card"><div class="aws-name">SageMaker Model Monitor</div><div class="aws-desc">Tracks model performance in production. Detects data drift (when input distribution shifts from training data) and quality degradation. Sends alerts for anomalies.</div></div>
+            <div class="aws-card"><div class="aws-name">Amazon A2I (Augmented AI)</div><div class="aws-desc">Human-in-the-loop workflows — routes low-confidence predictions to human reviewers for manual validation before acting on them.</div></div>
+            <div class="aws-card"><div class="aws-name">SageMaker Role Manager</div><div class="aws-desc">Defines and enforces access permissions — controls who can access, modify, or deploy models within an organization.</div></div>
+            <div class="aws-card"><div class="aws-name">SageMaker Model Cards</div><div class="aws-desc">Structured documentation for individual models — records intended use, risk ratings, training details, and evaluation results.</div></div>
+            <div class="aws-card"><div class="aws-name">SageMaker Model Dashboard</div><div class="aws-desc">Centralized monitoring of all deployed models — provides risk visibility, bias summaries, and lifecycle tracking across the portfolio.</div></div>
+            <div class="aws-card"><div class="aws-name">AWS AI Service Cards</div><div class="aws-desc">Transparency documentation for AWS-managed AI services — covers use cases, limitations, responsible design principles, and best practices.</div></div>
+          </div>
+          <div class="keypoints" style="margin-top:8px">
+            <div class="kp-label">Key Points — Full AWS Tool Map</div>
+            <ul class="kp-list">
+              <li>SageMaker = ML lifecycle platform · Bedrock = Gen AI / FM platform.</li>
+              <li>Clarify → bias detection + explainability (feature importance). Data Wrangler → dataset balancing (undersample, oversample, SMOTE).</li>
+              <li>Model Monitor → production drift detection. A2I → human-in-the-loop review.</li>
+              <li>Model Cards → per-model documentation. AI Service Cards → per-AWS-service transparency documentation.</li>
+              <li>Guardrails → cross-model safety layer in Bedrock (block topics, filter content, redact PII, enforce policies, real-time monitoring).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /D -->
+
+
+  <!-- ══ E: MODEL SELECTION ══ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--cyan);background:var(--cyan-dim);border:1px solid rgba(78,205,196,0.2)">E</div>
+      <div class="section-title">Responsible Model Selection</div>
+      <div class="ghost-glyph">E</div>
+    </div>
+    <div class="section-body">
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">E1</span><span class="sub-title">Selection Framework</span></div>
+        <div class="sub-body">
+          <p>Responsible model selection begins with a narrow, specific use case definition — then evaluates models across five dimensions. Use case definition is the prerequisite; without it, performance comparisons lack context.</p>
+          <div class="tier-row">
+            <div class="tier"><div class="tier-label">Use Case</div><div class="tier-desc">Define target audience, expected output, and constraints before selecting a model. Use case ≠ technology — specifying "I need an LLM" is not a use case. Specifying "I need a model to summarize patient notes in under 200 words for English-speaking physicians" is.</div></div>
+            <div class="tier"><div class="tier-label">Performance</div><div class="tier-desc">Five technical factors: customization ability, model size (parameter count), latency (response time), context window (input size), and licensing (usage restrictions).</div></div>
+            <div class="tier"><div class="tier-label">Sustainability</div><div class="tier-desc">Environmental impact — energy consumption, carbon footprint, hardware demand. Larger models consume more energy per inference. Responsible selection considers long-term environmental cost. <span class="enrich-plus">[+]</span></div></div>
+            <div class="tier"><div class="tier-label">Responsible Agency</div><div class="tier-desc">Four factors: value alignment (does the model reflect human ethics?), reasoning capability (can it make moral judgments?), autonomy level (how much human oversight is required?), accountability (are decisions traceable?).</div></div>
+            <div class="tier"><div class="tier-label">Economic Considerations</div><div class="tier-desc">Benefits (efficiency gains), risks (job displacement), and market impact (potential for increased inequality if AI access is unequal).</div></div>
+          </div>
+          <div class="info-box" style="margin-top:6px">
+            <div class="info-label">Model Performance = Model + Dataset</div>
+            <p>A model's performance is never absolute — it is always relative to the dataset it is evaluated on. A model that scores 95% on one benchmark may score 72% on a domain-specific dataset. Responsible selection evaluates models across multiple datasets relevant to the target use case.</p>
+          </div>
+          <div class="keypoints">
+            <div class="kp-label">Key Points</div>
+            <ul class="kp-list">
+              <li>Selection framework: Use Case → Performance → Sustainability → Responsible Agency → Economic Considerations.</li>
+              <li>Performance factors: customization, model size, latency, context window, licensing.</li>
+              <li>Sustainability = energy + carbon + hardware demand — increasingly important at scale.</li>
+              <li>Model performance is always dataset-relative — evaluate on multiple datasets matching the use case.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /E -->
+
+
+  <!-- ══ F: DATASET PREPARATION ══ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--green);background:var(--green-dim);border:1px solid rgba(74,222,128,0.2)">F</div>
+      <div class="section-title">Responsible Dataset Preparation</div>
+      <div class="ghost-glyph">F</div>
+    </div>
+    <div class="section-body">
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">F1</span><span class="sub-title">The Principle: Data Bias = Model Bias</span></div>
+        <div class="sub-body">
+          <p>A model can be no more fair than the data it was trained on. <span class="b-orange">Biased data produces biased models</span> — regardless of how sophisticated the algorithm is. This means responsible dataset preparation is not optional; it is the foundational step that determines whether everything built on top of it can be trusted.</p>
+          <div class="tier-row">
+            <div class="tier"><div class="tier-label">Balanced Datasets</div><div class="tier-desc">Equal representation of classes and groups — prevents the model from learning to favor the majority class by default.</div></div>
+            <div class="tier"><div class="tier-label">Inclusive Collection</div><div class="tier-desc">Data must cover multiple demographics and include fair representation of all groups the model will serve — not just the easiest to collect.</div></div>
+            <div class="tier"><div class="tier-label">Data Curation</div><div class="tier-desc">Preprocessing (clean data), Augmentation (add samples to underrepresented groups), and Auditing (continuous checks for bias that creep in over time).</div></div>
+            <div class="tier"><div class="tier-label">Use Case Alignment</div><div class="tier-desc">The dataset must match the problem context — a dataset collected from one population cannot reliably generalize to a different population without validation.</div></div>
+          </div>
+          <div class="keypoints">
+            <div class="kp-label">Key Points</div>
+            <ul class="kp-list">
+              <li>Data bias → model bias. No algorithm can compensate for a fundamentally biased dataset.</li>
+              <li>Four preparation principles: Balance · Inclusive Collection · Curation (preprocess + augment + audit) · Use Case Alignment.</li>
+              <li>AWS tools: Clarify (detect data bias) + Data Wrangler (balance via undersample / oversample / SMOTE).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /F -->
+
+
+  <!-- ══ G: TRANSPARENCY AND EXPLAINABILITY ══ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--sky);background:var(--sky-dim);border:1px solid rgba(93,184,242,0.2)">G</div>
+      <div class="section-title">Transparent and Explainable AI</div>
+      <div class="ghost-glyph">G</div>
+    </div>
+    <div class="section-body">
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">G1</span><span class="sub-title">Black Box Models and the Transparency Challenge</span></div>
+        <div class="sub-body">
+          <p>The most powerful AI models — large neural networks, ensemble methods, deep learning architectures — are often <span class="b-salmon">black boxes</span>: they produce accurate predictions but provide no human-readable explanation of how they arrived at them. This creates a fundamental tension in responsible AI.</p>
+          <p>Black box models offer <span class="b-orange">high performance</span> but <span class="b-salmon">low transparency</span>. In high-stakes domains — loan approvals, medical diagnosis, criminal justice, hiring — this opacity is not just uncomfortable; it may be legally non-compliant. EU regulations increasingly require the right to explanation for automated decisions. <span class="enrich-plus">[+]</span></p>
+          <div class="info-box">
+            <div class="info-label">Benefits of Explainability</div>
+            <p><span class="b-green">Trust</span> — users who understand why a decision was made are more likely to accept and act on it. <span class="b-cyan">Debugging</span> — feature importance reveals which inputs are driving wrong predictions, making errors easier to fix. <span class="b-orange">Insight</span> — understanding model behavior surfaces patterns in the data that humans might not have seen.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">G2</span><span class="sub-title">Explainability Techniques</span></div>
+        <div class="sub-body">
+          <p>Three techniques are the industry standards for explaining model decisions. Each operates at a different level of analysis.</p>
+          <div class="tier-row">
+            <div class="tier">
+              <div class="tier-label">SHAP</div>
+              <div class="tier-desc"><span class="b-orange">SHapley Additive exPlanations</span> — assigns each feature a contribution score for a specific prediction using game theory principles. Globally accurate — can explain both individual predictions and overall model behavior. <span class="enrich-tilde">[~]</span></div>
+            </div>
+            <div class="tier">
+              <div class="tier-label">LIME</div>
+              <div class="tier-desc"><span class="b-orange">Local Interpretable Model-agnostic Explanations</span> — builds a simple, interpretable model that approximates the black box model's behavior locally around a specific prediction. Explains individual decisions without requiring access to the model's internals. <span class="enrich-plus">[+]</span></div>
+            </div>
+            <div class="tier">
+              <div class="tier-label">Counterfactuals</div>
+              <div class="tier-desc">Answers: "What would need to change for a different outcome?" — e.g., "Your loan was denied. If your income were $5,000 higher, it would have been approved." Provides actionable, human-understandable explanations. <span class="enrich-plus">[+]</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">G3</span><span class="sub-title">Risks of Explainability</span></div>
+        <div class="sub-body">
+          <p>Explainability is valuable, but it introduces its own risks that must be managed.</p>
+          <div class="tier-row">
+            <div class="tier"><div class="tier-label" style="color:var(--salmon)">Higher Cost</div><div class="tier-desc">Generating explanations adds computational overhead — SHAP and LIME require additional inference passes per prediction.</div></div>
+            <div class="tier"><div class="tier-label" style="color:var(--salmon)">Security Risks</div><div class="tier-desc">Feature importance scores can reveal model internals — enabling adversaries to craft inputs that exploit known weaknesses (adversarial attacks). <span class="enrich-plus">[+]</span></div></div>
+            <div class="tier"><div class="tier-label" style="color:var(--salmon)">Privacy Exposure</div><div class="tier-desc">Explanation details may inadvertently reveal information about training data individuals.</div></div>
+            <div class="tier"><div class="tier-label" style="color:var(--salmon)">False Transparency</div><div class="tier-desc">Approximate explanation methods (LIME) may give users false confidence — the explanation is an approximation of the black box, not the black box itself.</div></div>
+          </div>
+          <div class="keypoints">
+            <div class="kp-label">Key Points</div>
+            <ul class="kp-list">
+              <li>Black box = high performance, low transparency. Trade-off is often unavoidable with complex models.</li>
+              <li>Transparency = HOW (system-level documentation). Explainability = WHY (per-prediction reasoning).</li>
+              <li>Three techniques: SHAP (feature contribution, game theory), LIME (local approximation, model-agnostic), Counterfactuals (what-if scenarios, actionable).</li>
+              <li>Explainability risks: Cost · Security · Privacy · False Transparency.</li>
+              <li>AWS tools: SageMaker Clarify (feature importance) · SageMaker Autopilot (model insights).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /G -->
+
+
+  <!-- ══ H: TRADE-OFFS ══ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--amber);background:rgba(244,185,66,0.08);border:1px solid rgba(244,185,66,0.2)">H</div>
+      <div class="section-title">Model Trade-offs</div>
+      <div class="ghost-glyph">H</div>
+    </div>
+    <div class="section-body">
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">H1</span><span class="sub-title">The Unavoidable Trade-offs</span></div>
+        <div class="sub-body">
+          <p>AI system design involves fundamental tensions where improving one property typically degrades another. Responsible AI does not eliminate these trade-offs — it makes them <span class="b-orange">explicit and deliberate</span> rather than accidental.</p>
+          <div class="tier-row">
+            <div class="tier">
+              <div class="tier-label">Interpretability vs. Performance</div>
+              <div class="tier-desc">Simple, interpretable models (linear regression, decision trees) are fully explainable but limited in accuracy. Complex models (deep neural networks) are highly accurate but opaque. Higher interpretability generally means lower performance on complex tasks — and vice versa.</div>
+            </div>
+            <div class="tier">
+              <div class="tier-label">Privacy vs. Transparency</div>
+              <div class="tier-desc">Full transparency about training data and model internals can expose private information about individuals in the training set. Maximum privacy protection limits what can be shared about how the model works.</div>
+            </div>
+            <div class="tier">
+              <div class="tier-label">Security vs. Auditability</div>
+              <div class="tier-desc">Detailed audit logs and explanations improve accountability but can also expose system vulnerabilities. More openness for auditors means more attack surface for adversaries.</div>
+            </div>
+            <div class="tier">
+              <div class="tier-label">Output Filtering vs. Usefulness</div>
+              <div class="tier-desc">Aggressive content filtering and guardrails reduce harmful outputs but may also block legitimate, useful responses — over-filtering reduces model utility.</div>
+            </div>
+          </div>
+          <div class="info-box" style="margin-top:6px">
+            <div class="info-label">Controllability</div>
+            <p><span class="b-cyan">Controllability</span> — the ability to steer, correct, or override model outputs — is a key dimension that mediates many of these trade-offs. Higher controllability improves fairness and safety but depends on model architecture. Not all architectures support the same degree of controllability. <span class="enrich-plus">[+]</span></p>
+          </div>
+          <div class="keypoints">
+            <div class="kp-label">Key Points</div>
+            <ul class="kp-list">
+              <li>Trade-offs are inevitable — responsible AI makes them explicit, not eliminated.</li>
+              <li>Key trade-offs: Interpretability vs. Performance · Privacy vs. Transparency · Security vs. Auditability · Filtering vs. Usefulness.</li>
+              <li>Controllability = ability to steer AI outputs — improves fairness and safety but is architecture-dependent.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /H -->
+
+
+  <!-- ══ I: HUMAN-CENTERED AI ══ -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <div class="section-letter" style="color:var(--purple);background:var(--purple-dim);border:1px solid rgba(192,132,252,0.2)">I</div>
+      <div class="section-title">Human-Centered AI Design</div>
+      <div class="ghost-glyph">I</div>
+    </div>
+    <div class="section-body">
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">I1</span><span class="sub-title">Human-Centered Design (HCD)</span></div>
+        <div class="sub-body">
+          <p><span class="b-orange">Human-Centered Design (HCD)</span> is a philosophy that places users at the center of every design and deployment decision. For AI systems, this means building for clarity, usability, and fairness — not just technical performance. An AI system that is technically excellent but incomprehensible or unusable to its intended users has failed its design goal.</p>
+          <p>HCD for AI involves five principles for <span class="b-cyan">amplified decision-making</span> — helping humans make better decisions with AI assistance rather than removing humans from the loop:</p>
+          <div class="tier-row">
+            <div class="tier"><div class="tier-label">Clarity</div><div class="tier-desc">AI outputs must be presented in a way that users can understand — plain language, clear confidence indicators, no jargon.</div></div>
+            <div class="tier"><div class="tier-label">Simplicity</div><div class="tier-desc">Interfaces and workflows should minimize cognitive load — users should not need to understand how the model works to benefit from it.</div></div>
+            <div class="tier"><div class="tier-label">Usability</div><div class="tier-desc">The system must work effectively for its intended users in their actual context — not just in a controlled evaluation environment.</div></div>
+            <div class="tier"><div class="tier-label">Reflexivity</div><div class="tier-desc">The system should support users in questioning and challenging AI outputs — not passively accepting them. Critical thinking is designed in, not designed out. <span class="enrich-plus">[+]</span></div></div>
+            <div class="tier"><div class="tier-label">Accountability</div><div class="tier-desc">Clear ownership of decisions — when AI assists in a decision, it must be clear who is accountable for the outcome: the human, the organization, or both.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="sub-hdr"><span class="sub-num">I2</span><span class="sub-title">RLHF — Reinforcement Learning from Human Feedback</span></div>
+        <div class="sub-body">
+          <p><span class="b-orange">RLHF (Reinforcement Learning from Human Feedback)</span> is the primary technique for aligning AI model behavior with human values and preferences. Rather than defining what "good" output looks like through explicit rules, RLHF learns it from human ratings and comparisons.</p>
+          <p>The process: humans rate or compare model outputs → a reward model is trained on those preferences → the FM is fine-tuned to maximize the reward score → the model's outputs progressively align with what humans prefer. This is how major LLMs are tuned to be helpful, harmless, and honest. <span class="enrich-plus">[+]</span></p>
+          <div class="info-box">
+            <div class="info-label">AWS Tool: SageMaker Ground Truth</div>
+            <p>SageMaker Ground Truth enables organizations to collect and manage human feedback for RLHF workflows — providing a managed labeling interface, workforce management (internal or Amazon Mechanical Turk), and quality control mechanisms. It is the AWS-native tool for building the human feedback datasets that power RLHF alignment.</p>
+          </div>
+          <div class="keypoints">
+            <div class="kp-label">Key Points</div>
+            <ul class="kp-list">
+              <li>HCD = user-centered AI design. Goal: usability + clarity + fairness — AI that serves its users, not just its developers.</li>
+              <li>Five amplified decision-making principles: Clarity · Simplicity · Usability · Reflexivity · Accountability.</li>
+              <li>RLHF = aligning AI with human values via human feedback → reward model → FM fine-tuning.</li>
+              <li>AWS tool: SageMaker Ground Truth — manages human labeling and feedback collection for RLHF.</li>
+              <li>RLHF benefits: improved performance, better alignment, higher user satisfaction.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /I -->
+
+
+  <!-- SUMMARY -->
+  <div class="summary-block">
+    <div class="summary-label">Module Summary</div>
+    <ul class="summary-list">
+      <li>Responsible AI = ethical + transparent + trustworthy systems that minimize harm. It applies across the full lifecycle: Design → Development → Deployment → Monitoring → Evaluation — never just one stage.</li>
+      <li>The #1 technical challenge is accuracy: Bias (underfitting — high bias, low variance) vs. Variance (overfitting — low bias, high variance). Target: balanced model (low bias + low variance). Six mitigations: Cross-Validation, Increase Data, Regularization, Simpler Models, Dimensionality Reduction, Early Stopping. Gen AI adds: Toxicity, Hallucinations, IP violations, Plagiarism, Work Disruption.</li>
+      <li>Eight core dimensions: Fairness · Explainability (WHY) · Transparency (HOW) · Privacy &amp; Security · Veracity &amp; Robustness · Governance · Safety · Controllability. No single dimension is sufficient. Business benefits: Trust, Regulatory Compliance, Risk Reduction, Competitive Advantage, Better Decisions.</li>
+      <li>AWS tool map: SageMaker (ML lifecycle — Clarify for bias+explainability, Data Wrangler for balancing, Model Monitor for drift, A2I for human review, Model Cards for docs, Role Manager for governance) · Bedrock (Gen AI — FM evaluation auto+human, Guardrails for safety) · Ground Truth (RLHF human feedback).</li>
+      <li>Model selection: Use Case → Performance (customization, size, latency, context, licensing) → Sustainability → Agency → Economics. Dataset: balanced + inclusive + curated + use-case-aligned. Data bias = model bias. Explainability tools: SHAP (feature contribution), LIME (local approximation), Counterfactuals (what-if). Trade-offs are inevitable — make them explicit. RLHF aligns AI with human values via reward modeling.</li>
+    </ul>
+  </div>
+
+</div><!-- /doc-body -->
+
+<!-- FOOTER -->
+<div class="doc-footer">
+  <div class="footer-left">Synaptix v2.2 · AWS-AI MasterClass · Module 3 · Comprehensive · High</div>
+  <div class="footer-btns">
+    <button class="footer-btn btn-quiz" onclick="sendPrompt('/quiz mc(10) hard')">
+      <div class="footer-dot" style="background:var(--orange)"></div>Quiz
+    </button>
+    <button class="footer-btn btn-recall" onclick="sendPrompt('/recall term(10) hard')">
+      <div class="footer-dot" style="background:var(--cyan)"></div>Recall
+    </button>
+    <button class="footer-btn btn-export" onclick="sendPrompt('/export -md')">
+      <div class="footer-dot" style="background:var(--salmon)"></div>Export
+    </button>
+  </div>
+</div>
+
+</div><!-- /doc-wrap -->
+<script>
+function sendPrompt(t){if(window.parent&&window.parent.postMessage)window.parent.postMessage({type:'user_message',message:t},'*');}
+</script>
+</body>
+</html>

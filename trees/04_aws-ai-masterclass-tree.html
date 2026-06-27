@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Synaptix — M4 Tree: Developing ML Solutions</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0e0e11;--sf:#16161a;--el:#1c1c21;--sc:#1a1a1f;--cb:#0c0c0f;
+  --bd:rgba(255,255,255,.07);--bh:rgba(255,255,255,.12);
+  --or:#f4762a;--sa:#f08080;--cy:#4ecdc4;--gn:#4ade80;
+  --ye:#f4d03f;--pu:#c084fc;--sk:#5db8f2;--am:#f4b942;
+  --od:rgba(244,118,42,.10);--cd:rgba(78,205,196,.10);
+  --sd:rgba(240,128,128,.10);--gd:rgba(74,222,128,.10);
+  --pd:rgba(192,132,252,.10);--skd:rgba(93,184,242,.10);
+  --t1:#e8e8ee;--t2:#8b8b9a;--t3:#4a4a5a;
+  --mono:'JetBrains Mono',monospace;--sans:'Inter',sans-serif;
+}
+body{background:var(--bg);color:var(--t1);font-family:var(--sans);font-size:13px;line-height:1.8;}
+
+.wrap{max-width:860px;margin:0 auto;}
+.hdr{padding:20px 24px 15px;border-bottom:1px solid var(--bd);background:var(--sf);}
+.bdgs{display:flex;gap:7px;margin-bottom:9px;flex-wrap:wrap}
+.bdg{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;padding:3px 8px;border-radius:4px;border:1px solid;}
+.bt{color:var(--or);background:var(--od);border-color:rgba(244,118,42,.25)}
+.bm{color:var(--sk);background:var(--skd);border-color:rgba(93,184,242,.25)}
+.bp{color:var(--pu);background:var(--pd);border-color:rgba(192,132,252,.25)}
+.ttl{font-size:19px;font-weight:600;letter-spacing:-.02em}
+.sub{font-size:11px;font-family:var(--mono);color:var(--t3);margin-top:3px}
+.sts{display:flex;gap:18px;flex-wrap:wrap;margin-top:11px;padding-top:11px;border-top:1px solid var(--bd);}
+.sv{font-family:var(--mono);font-size:14px;font-weight:600}.sl{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-top:1px}
+
+.body{padding:20px 24px;display:flex;flex-direction:column;gap:10px}
+.mod-lbl{display:flex;align-items:center;gap:10px}
+.mn{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--or);letter-spacing:.1em;text-transform:uppercase;}
+.mr2{flex:1;height:1px;background:linear-gradient(to right,rgba(244,118,42,.25),transparent);}
+.mt{font-size:17px;font-weight:600;margin-bottom:10px}
+
+/* Legend */
+.leg{display:flex;gap:14px;flex-wrap:wrap;padding:9px 13px;background:var(--sf);border:1px solid var(--bd);border-radius:7px;}
+.li{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10px;color:var(--t3)}
+.ld{width:8px;height:8px;border-radius:2px}
+
+/* Section card */
+.sec{background:var(--sc);border:1px solid var(--bd);border-radius:9px;overflow:hidden;transition:border-color .15s;}
+.sec:hover{border-color:var(--bh)}
+.sec-h{padding:10px 15px 9px;border-bottom:1px solid var(--bd);position:relative;overflow:hidden;display:flex;align-items:center;gap:9px;}
+.sl2{font-family:var(--mono);font-size:12px;font-weight:600;width:24px;height:24px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.st2{font-size:13px;font-weight:500;flex:1}
+.gg{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:56px;font-weight:700;color:rgba(255,255,255,.025);pointer-events:none;line-height:1;}
+.sec-b{padding:13px 15px;}
+
+/* Tree block */
+.tb{background:var(--cb);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:15px 18px;font-family:var(--mono);font-size:12px;line-height:1.85;overflow-x:auto;white-space:pre;}
+.tm{color:var(--or);font-weight:600}
+.ts{color:var(--sk);font-weight:500}
+.tl{color:var(--cy)}
+.tg{color:var(--gn)}
+.tp{color:var(--pu)}
+.ty{color:var(--ye)}
+.tr{color:var(--sa)}
+.tc{color:var(--t3)}
+
+/* Summary */
+.sum{background:var(--sf);border:1px solid var(--bd);border-bottom:2px solid var(--or);border-radius:8px 8px 0 0;padding:13px 17px;}
+.suml{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--or);letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px;}
+.sumu{list-style:none;display:flex;flex-direction:column;gap:4px}
+.sumu li{font-size:13px;color:var(--t2);line-height:1.7;display:flex;gap:6px}
+.sumu li::before{content:'›';color:var(--or);font-weight:700;font-size:13px;flex-shrink:0}
+
+/* Footer */
+.ftr{padding:11px 24px;border-top:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;background:var(--sf);flex-wrap:wrap;gap:9px;}
+.fl{font-size:11px;color:var(--t3);font-family:var(--mono)}
+.fbs{display:flex;gap:9px}
+.fb{display:flex;align-items:center;justify-content:center;gap:6px;font-family:var(--mono);font-size:11px;font-weight:500;width:120px;height:58px;border-radius:18px;border:1px solid;background:transparent;cursor:pointer;transition:all .15s;}
+.fd{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.fq{color:var(--or);border-color:rgba(244,118,42,.35);background:var(--od)}.fq:hover{background:rgba(244,118,42,.18)}
+.fr{color:var(--cy);border-color:rgba(78,205,196,.35);background:var(--cd)}.fr:hover{background:rgba(78,205,196,.15)}
+.fe{color:var(--sa);border-color:rgba(240,128,128,.35);background:var(--sd)}.fe:hover{background:rgba(240,128,128,.15)}
+
+@media(max-width:580px){
+  .hdr,.body{padding-left:14px;padding-right:14px}
+  .ftr{padding:11px 14px}
+  .tb{font-size:11px;padding:11px 13px}
+  .fb{width:100px;height:50px;font-size:10px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="bdgs"><span class="bdg bt">Tree</span><span class="bdg bm">Module 4</span><span class="bdg bp">Structure Only</span></div>
+  <div class="ttl">Developing Machine Learning Solutions</div>
+  <div class="sub">AWS-AI MasterClass · Synaptix v2.2 · Minimal Verbosity</div>
+  <div class="sts">
+    <div><div class="sv">9</div><div class="sl">Sections</div></div>
+    <div><div class="sv">A–I</div><div class="sl">Coverage</div></div>
+    <div><div class="sv">Full</div><div class="sl">Expansion</div></div>
+    <div><div class="sv">EN</div><div class="sl">Language</div></div>
+  </div>
+</div>
+
+<div class="body">
+<div class="mod-lbl"><span class="mn">Module 4</span><div class="mr2"></div></div>
+<div class="mt">Developing Machine Learning Solutions</div>
+
+<!-- Legend -->
+<div class="leg">
+  <div class="li"><div class="ld" style="background:var(--or)"></div>Section/Root</div>
+  <div class="li"><div class="ld" style="background:var(--sk)"></div>Subsection</div>
+  <div class="li"><div class="ld" style="background:var(--cy)"></div>Concept/Term</div>
+  <div class="li"><div class="ld" style="background:var(--gn)"></div>Advantage/Positive</div>
+  <div class="li"><div class="ld" style="background:var(--ye)"></div>Warning/Exception</div>
+  <div class="li"><div class="ld" style="background:var(--sa)"></div>Risk/Cost</div>
+  <div class="li"><div class="ld" style="background:var(--pu)"></div>AWS Service/Note</div>
+</div>
+
+
+<!-- ══ A: ML LIFECYCLE ══ -->
+<div class="sec">
+  <div class="sec-h"><div class="sl2" style="color:var(--sk);background:var(--skd);border:1px solid rgba(93,184,242,.2)">A</div><div class="st2">The ML Development Lifecycle</div><div class="gg">A</div></div>
+  <div class="sec-b"><div class="tb"><span class="tm">A. The ML Development Lifecycle</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">A1. The Seven Phases</span>
+<span class="tc">│   ├──</span> <span class="tl">01 Business Goal Identification</span>  <span class="tc">— define objective, success criteria, constraints</span>
+<span class="tc">│   ├──</span> <span class="tl">02 ML Problem Framing</span>  <span class="tc">— translate into classification, regression, clustering, etc.</span>
+<span class="tc">│   ├──</span> <span class="tl">03 Data Processing</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Data Collection</span>  <span class="tc">— gather raw data from sources</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Data Preprocessing</span>  <span class="tc">— clean, transform, handle missing values</span>
+<span class="tc">│   │   └──</span> <span class="tl">Feature Engineering</span>  <span class="tc">— extract and transform variables for predictive signal</span>
+<span class="tc">│   ├──</span> <span class="tl">04 Model Development</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Training</span>  <span class="tc">— fit model to labeled data</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Tuning</span>  <span class="tc">— adjust hyperparameters for better performance</span>
+<span class="tc">│   │   └──</span> <span class="tl">Evaluation</span>  <span class="tc">— validate against held-out data</span>
+<span class="tc">│   ├──</span> <span class="tl">05 Model Deployment</span>  <span class="tc">— integrate into production for real-world predictions</span>
+<span class="tc">│   ├──</span> <span class="tl">06 Model Monitoring</span>  <span class="tc">— track performance, detect drift, flag degradation</span>
+<span class="tc">│   └──</span> <span class="tl">07 Model Retraining</span>  <span class="tc">— update with new data when performance drops</span>
+<span class="tc">│</span>
+<span class="tc">└──</span> <span class="ty">ML is an iterative loop — monitoring triggers retraining, NOT a linear process ending at deployment</span></div></div>
+</div>
+
+
+<!-- ══ B: REAL-WORLD EXAMPLE ══ -->
+<div class="sec">
+  <div class="sec-h"><div class="sl2" style="color:var(--cy);background:var(--cd);border:1px solid rgba(78,205,196,.2)">B</div><div class="st2">Real-World ML Example — Call Center Routing</div><div class="gg">B</div></div>
+  <div class="sec-b"><div class="tb"><span class="tm">B. Real-World ML Example — Call Center Routing</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">B1. Business → ML Translation</span>
+<span class="tc">│   ├──</span> <span class="tl">Business problem: inefficient call routing</span>  <span class="tc">— wrong agent, delays, poor experience</span>
+<span class="tc">│   ├──</span> <span class="tl">ML task: predict correct agent skill</span>  <span class="tc">= Multiclass Classification</span>
+<span class="tc">│   └──</span> <span class="tl">Learning type: Supervised Learning</span>  <span class="tc">— historical calls with known routing outcomes as labels</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">B2. Features</span>
+<span class="tc">│   ├──</span> <span class="tl">Recent orders</span>
+<span class="tc">│   ├──</span> <span class="tl">Device ownership</span>  <span class="tc">— e.g., Kindle</span>
+<span class="tc">│   └──</span> <span class="tl">Membership status</span>  <span class="tc">— Prime, standard, etc.</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">B3. Data Preparation</span>
+<span class="tc">│   ├──</span> <span class="tl">Data Cleaning</span>  <span class="tc">— remove errors and incomplete records</span>
+<span class="tc">│   ├──</span> <span class="tl">Label Refinement</span>  <span class="tc">— merge similar labels (e.g., multiple Kindle issues → one label)</span>
+<span class="tc">│   └──</span> <span class="tl">Visualization</span>  <span class="tc">— understand distributions (e.g., % of call types)</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">B4. Data Split</span>
+<span class="tc">│   ├──</span> <span class="tl">Training</span>  <span class="tc">— 70–80%</span>
+<span class="tc">│   ├──</span> <span class="tl">Validation</span>  <span class="tc">— 10–15%</span>
+<span class="tc">│   └──</span> <span class="tl">Test</span>  <span class="tc">— 10–15% · sealed until final evaluation</span>
+<span class="tc">│</span>
+<span class="tc">└──</span> <span class="ts">B5. Outcomes</span>
+<span class="tc">    ├──</span> <span class="tg">Result: fewer call transfers · improved customer experience</span>
+<span class="tc">    ├──</span> <span class="ty">Never evaluate on training data</span>
+<span class="tc">    └──</span> <span class="ty">Success metric = business improvement, not model accuracy alone</span></div></div>
+</div>
+
+
+<!-- ══ C: SAGEMAKER TOOLS ══ -->
+<div class="sec">
+  <div class="sec-h"><div class="sl2" style="color:var(--or);background:var(--od);border:1px solid rgba(244,118,42,.2)">C</div><div class="st2">Amazon SageMaker AI — Platform and Tools</div><div class="gg">C</div></div>
+  <div class="sec-b"><div class="tb"><span class="tm">C. Amazon SageMaker AI</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">C1. Platform</span>
+<span class="tc">│   ├──</span> <span class="tl">Fully managed ML lifecycle platform</span>
+<span class="tc">│   ├──</span> <span class="tp">SageMaker Studio</span>  <span class="tc">— unified web IDE</span>
+<span class="tc">│   │   ├──</span> <span class="tl">JupyterLab</span>  <span class="tc">— notebooks and coding</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Canvas</span>  <span class="tc">— no-code AutoML</span>
+<span class="tc">│   │   ├──</span> <span class="tl">RStudio</span>  <span class="tc">— R-based workflows</span>
+<span class="tc">│   │   └──</span> <span class="tl">Code Editor (VS Code)</span>  <span class="tc">— development tools</span>
+<span class="tc">│   └──</span> <span class="tl">Model artifacts stored in Amazon S3</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">C2. Data Preparation Tools</span>
+<span class="tc">│   ├──</span> <span class="tp">Data Wrangler</span>  <span class="tc">— low-code/no-code data prep, visual feature engineering</span>
+<span class="tc">│   ├──</span> <span class="tp">Studio + EMR/Glue</span>  <span class="tc">— large-scale workflows, distributed compute, ETL pipelines</span>
+<span class="tc">│   └──</span> <span class="tp">Processing API</span>  <span class="tc">— run custom scripts on managed scalable compute</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">C3. Feature Management</span>
+<span class="tc">│   └──</span> <span class="tp">Feature Store</span>
+<span class="tc">│       ├──</span> <span class="tl">Store</span>  <span class="tc">— save computed features centrally, versioned</span>
+<span class="tc">│       ├──</span> <span class="tl">Retrieve</span>  <span class="tc">— reuse features across models, avoid redundant computation</span>
+<span class="tc">│       ├──</span> <span class="tl">Serve</span>  <span class="tc">— online (low latency) + offline (batch) serving</span>
+<span class="tc">│       └──</span> <span class="tg">Prevents training-serving skew — consistency across models</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">C4. Training and Evaluation</span>
+<span class="tc">│   ├──</span> <span class="tp">Training Jobs</span>  <span class="tc">— built-in or custom algorithms on managed compute</span>
+<span class="tc">│   ├──</span> <span class="tp">Canvas</span>  <span class="tc">— no-code ML predictions (AutoML underneath)</span>
+<span class="tc">│   ├──</span> <span class="tp">JumpStart</span>  <span class="tc">— pretrained model hub: deploy, fine-tune, evaluate, templates</span>
+<span class="tc">│   ├──</span> <span class="tp">Experiments</span>  <span class="tc">— track and compare training runs, hyperparameters, metrics</span>
+<span class="tc">│   └──</span> <span class="tp">Hyperparameter Tuning</span>  <span class="tc">— automated search for optimal configuration</span>
+<span class="tc">│</span>
+<span class="tc">└──</span> <span class="ts">C5. Monitoring</span>
+<span class="tc">    └──</span> <span class="tp">Model Monitor</span>  <span class="tc">— detect data drift, quality degradation, send anomaly alerts</span></div></div>
+</div>
+
+
+<!-- ══ D: MODEL SOURCES ══ -->
+<div class="sec">
+  <div class="sec-h"><div class="sl2" style="color:var(--pu);background:var(--pd);border:1px solid rgba(192,132,252,.2)">D</div><div class="st2">Model Sources and Built-in Algorithms</div><div class="gg">D</div></div>
+  <div class="sec-b"><div class="tb"><span class="tm">D. Model Sources and Built-in Algorithms</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">D1. Four Source Options (effort → flexibility spectrum)</span>
+<span class="tc">│   ├──</span> <span class="tg">Pretrained Models</span>  <span class="tc">— least effort · ready to deploy or fine-tune · JumpStart / Bedrock</span>
+<span class="tc">│   ├──</span> <span class="tl">Built-in Algorithms</span>  <span class="tc">— moderate effort · SageMaker-native · configure, not code</span>
+<span class="tc">│   ├──</span> <span class="tl">Custom Framework Models</span>  <span class="tc">— high flexibility · TensorFlow, PyTorch, Scikit-learn</span>
+<span class="tc">│   ├──</span> <span class="tr">Custom Docker Models</span>  <span class="tc">— maximum control · any language/library · highest effort</span>
+<span class="tc">│   └──</span> <span class="ty">Model source = effort vs flexibility trade-off</span>
+<span class="tc">│</span>
+<span class="tc">└──</span> <span class="ts">D2. Built-in Algorithm Categories</span>
+<span class="tc">    ├──</span> <span class="tl">Supervised Learning</span>
+<span class="tc">    │   ├──</span> <span class="tl">Classification</span>  <span class="tc">— predict categorical labels</span>
+<span class="tc">    │   └──</span> <span class="tl">Regression</span>  <span class="tc">— predict continuous values</span>
+<span class="tc">    ├──</span> <span class="tl">Unsupervised Learning</span>
+<span class="tc">    │   ├──</span> <span class="tl">Clustering</span>  <span class="tc">— group similar items</span>
+<span class="tc">    │   ├──</span> <span class="tl">Dimensionality Reduction</span>  <span class="tc">— compress feature space</span>
+<span class="tc">    │   └──</span> <span class="tl">Anomaly Detection</span>  <span class="tc">— flag statistical outliers</span>
+<span class="tc">    ├──</span> <span class="tl">Image Processing</span>
+<span class="tc">    │   ├──</span> <span class="tl">Image Classification</span>
+<span class="tc">    │   └──</span> <span class="tl">Object Detection</span>
+<span class="tc">    ├──</span> <span class="tl">Text Analysis</span>
+<span class="tc">    │   ├──</span> <span class="tl">NLP tasks</span>
+<span class="tc">    │   ├──</span> <span class="tl">Document Classification</span>
+<span class="tc">    │   └──</span> <span class="tl">Machine Translation</span>
+<span class="tc">    └──</span> <span class="ty">Algorithm selection = data type + task type</span></div></div>
+</div>
+
+
+<!-- ══ E: EVALUATION DATASETS & FIT ══ -->
+<div class="sec">
+  <div class="sec-h"><div class="sl2" style="color:var(--gn);background:var(--gd);border:1px solid rgba(74,222,128,.2)">E</div><div class="st2">Evaluation Datasets and Model Fit</div><div class="gg">E</div></div>
+  <div class="sec-b"><div class="tb"><span class="tm">E. Evaluation Datasets and Model Fit</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">E1. Three Dataset Roles</span>
+<span class="tc">│   ├──</span> <span class="tl">Training Set</span>  <span class="tc">— model learns from this · fits parameters · ~70–80%</span>
+<span class="tc">│   ├──</span> <span class="tl">Validation Set</span>  <span class="tc">— guides tuning iteratively · evaluate after each run · ~10–15%</span>
+<span class="tc">│   ├──</span> <span class="tl">Test Set</span>  <span class="tc">— final unbiased evaluation · once-only · ~10–15%</span>
+<span class="tc">│   ├──</span> <span class="ty">Test set must remain sealed until all development decisions are made</span>
+<span class="tc">│   └──</span> <span class="tr">Data leakage: using test set during development contaminates it as a fair estimate</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">E2. Model Fit States</span>
+<span class="tc">│   ├──</span> <span class="tr">Underfitting</span>  <span class="tc">— High Bias · Low Variance · poor on train AND test · model too simple</span>
+<span class="tc">│   ├──</span> <span class="tr">Overfitting</span>  <span class="tc">— Low Bias · High Variance · great train · poor test · memorized noise</span>
+<span class="tc">│   └──</span> <span class="tg">Balanced ✓</span>  <span class="tc">— Low Bias · Low Variance · generalizes well · target state</span>
+<span class="tc">│</span>
+<span class="tc">└──</span> <span class="ts">E3. Bias-Variance Trade-off</span>
+<span class="tc">    ├──</span> <span class="tl">Bias</span>  <span class="tc">— error from wrong assumptions · off-target predictions · underfitting</span>
+<span class="tc">    ├──</span> <span class="tl">Variance</span>  <span class="tc">— sensitivity to noise · scattered results · overfitting</span>
+<span class="tc">    ├──</span> <span class="tl">Bullseye analogy: center = true value · spread = variance · distance = bias</span>
+<span class="tc">    └──</span> <span class="tg">Ideal: Low Bias + Low Variance = tight cluster at the bullseye</span></div></div>
+</div>
+
+
+<!-- ══ F: CLASSIFICATION METRICS ══ -->
+<div class="sec">
+  <div class="sec-h"><div class="sl2" style="color:var(--am);background:rgba(244,185,66,.08);border:1px solid rgba(244,185,66,.2)">F</div><div class="st2">Classification Metrics</div><div class="gg">F</div></div>
+  <div class="sec-b"><div class="tb"><span class="tm">F. Classification Metrics</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">F1. Confusion Matrix</span>
+<span class="tc">│   ├──</span> <span class="tg">True Positive (TP)</span>  <span class="tc">— correctly predicted positive</span>
+<span class="tc">│   ├──</span> <span class="tg">True Negative (TN)</span>  <span class="tc">— correctly predicted negative</span>
+<span class="tc">│   ├──</span> <span class="tr">False Positive (FP)</span>  <span class="tc">— wrong alarm · predicted positive, actually negative</span>
+<span class="tc">│   └──</span> <span class="tr">False Negative (FN)</span>  <span class="tc">— missed positive · predicted negative, actually positive</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">F2. The Five Metrics</span>
+<span class="tc">│   ├──</span> <span class="tl">Accuracy</span>  <span class="tc">— (TP+TN)/(TP+TN+FP+FN)</span>
+<span class="tc">│   │   └──</span> <span class="tr">Misleading with imbalanced data — avoid relying on alone</span>
+<span class="tc">│   ├──</span> <span class="tl">Precision</span>  <span class="tc">— TP/(TP+FP) · minimize false positives</span>
+<span class="tc">│   │   └──</span> <span class="tl">Use when FP is costly · example: spam filtering</span>
+<span class="tc">│   ├──</span> <span class="tl">Recall (Sensitivity)</span>  <span class="tc">— TP/(TP+FN) · minimize false negatives</span>
+<span class="tc">│   │   └──</span> <span class="tl">Use when FN is critical · example: disease detection</span>
+<span class="tc">│   ├──</span> <span class="tl">F1 Score</span>  <span class="tc">— harmonic mean of Precision and Recall</span>
+<span class="tc">│   │   └──</span> <span class="tl">Use when both FP and FN matter · imbalanced data</span>
+<span class="tc">│   └──</span> <span class="tl">AUC-ROC</span>  <span class="tc">— area under ROC curve (TPR vs FPR)</span>
+<span class="tc">│       ├──</span> <span class="tl">AUC ≈ 0.5</span>  <span class="tc">— random guessing</span>
+<span class="tc">│       ├──</span> <span class="tl">AUC = 1.0</span>  <span class="tc">— perfect classifier</span>
+<span class="tc">│       └──</span> <span class="tg">Threshold-independent — compare models before choosing decision cutoff</span>
+<span class="tc">│</span>
+<span class="tc">└──</span> <span class="ty">Metric choice = business cost of each error type (FP vs FN)</span></div></div>
+</div>
+
+
+<!-- ══ G: REGRESSION METRICS ══ -->
+<div class="sec">
+  <div class="sec-h"><div class="sl2" style="color:var(--sk);background:var(--skd);border:1px solid rgba(93,184,242,.2)">G</div><div class="st2">Regression Metrics</div><div class="gg">G</div></div>
+  <div class="sec-b"><div class="tb"><span class="tm">G. Regression Metrics</span>
+<span class="tc">│</span>
+<span class="tc">└──</span> <span class="ts">G1. MSE and R²</span>
+<span class="tc">    ├──</span> <span class="tl">MSE — Mean Squared Error</span>
+<span class="tc">    │   ├──</span> <span class="tl">Average of (prediction − actual)² across all samples</span>
+<span class="tc">    │   ├──</span> <span class="tl">Squaring penalizes large errors more than small ones</span>
+<span class="tc">    │   ├──</span> <span class="tg">Lower MSE = better model — minimize toward zero</span>
+<span class="tc">    │   └──</span> <span class="tr">Sensitive to outliers — one large error inflates MSE significantly</span>
+<span class="tc">    ├──</span> <span class="tl">R² — Coefficient of Determination</span>
+<span class="tc">    │   ├──</span> <span class="tl">Proportion of target variance explained by the model</span>
+<span class="tc">    │   ├──</span> <span class="tl">Range 0 to 1 (can be negative for very poor models)</span>
+<span class="tc">    │   ├──</span> <span class="tg">R² = 1.0 → perfect fit · R² = 0.0 → no better than mean</span>
+<span class="tc">    │   └──</span> <span class="tl">Unitless — comparable across different scales</span>
+<span class="tc">    └──</span> <span class="tl">Together: MSE = error magnitude · R² = goodness of fit</span></div></div>
+</div>
+
+
+<!-- ══ H: BUSINESS METRICS & DEPLOYMENT ══ -->
+<div class="sec">
+  <div class="sec-h"><div class="sl2" style="color:var(--or);background:var(--od);border:1px solid rgba(244,118,42,.2)">H</div><div class="st2">Business Metrics, Deployment, and Inference</div><div class="gg">H</div></div>
+  <div class="sec-b"><div class="tb"><span class="tm">H. Business Metrics, Deployment, and Inference</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">H1. Business KPI Alignment</span>
+<span class="tc">│   ├──</span> <span class="tl">ML metrics</span>  <span class="tc">— accuracy, F1, MSE (model behavior in isolation)</span>
+<span class="tc">│   ├──</span> <span class="tl">Business metrics</span>  <span class="tc">— sales, cost, retention (real-world impact)</span>
+<span class="tc">│   ├──</span> <span class="ty">High ML metrics ≠ business success — must optimize the right thing</span>
+<span class="tc">│   ├──</span> <span class="tl">Error Cost Asymmetry</span>
+<span class="tc">│   │   ├──</span> <span class="tr">FP → operational cost (manual reviews, customer friction)</span>
+<span class="tc">│   │   └──</span> <span class="tr">FN → missed revenue, safety risk</span>
+<span class="tc">│   ├──</span> <span class="tl">Cost Function</span>  <span class="tc">— assign dollar values to errors · optimize threshold for business</span>
+<span class="tc">│   ├──</span> <span class="tl">A/B Testing</span>  <span class="tc">— two model versions live simultaneously · compare business outcomes</span>
+<span class="tc">│   └──</span> <span class="tl">Canary Deployment</span>  <span class="tc">— new model receives small % of traffic before full rollout</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">H2. Deployment Types</span>
+<span class="tc">│   ├──</span> <span class="tl">Self-Hosted API</span>
+<span class="tc">│   │   ├──</span> <span class="tg">Full infrastructure control · customization flexibility</span>
+<span class="tc">│   │   └──</span> <span class="tr">High operational overhead · manual scaling and maintenance</span>
+<span class="tc">│   └──</span> <span class="tl">Managed API (Amazon SageMaker)</span>
+<span class="tc">│       ├──</span> <span class="tg">No infra management · auto scaling · secure HTTPS · multi-model hosting</span>
+<span class="tc">│       └──</span> <span class="tr">Less control than self-hosted</span>
+<span class="tc">│</span>
+<span class="tc">└──</span> <span class="ts">H3. Four Inference Types</span>
+<span class="tc">    ├──</span> <span class="tl">Real-time Inference</span>
+<span class="tc">    │   ├──</span> <span class="tl">Low latency · persistent endpoint · interactive applications</span>
+<span class="tc">    │   └──</span> <span class="tr">Always-on cost</span>
+<span class="tc">    ├──</span> <span class="tl">Batch Transform</span>
+<span class="tc">    │   ├──</span> <span class="tl">Large dataset · no persistent endpoint · offline scoring</span>
+<span class="tc">    │   └──</span> <span class="tg">Lower cost · higher latency acceptable</span>
+<span class="tc">    ├──</span> <span class="tl">Asynchronous Inference</span>
+<span class="tc">    │   ├──</span> <span class="tl">Large payloads · long processing time · queued requests</span>
+<span class="tc">    │   └──</span> <span class="tl">Use for video analysis, long document processing</span>
+<span class="tc">    └──</span> <span class="tl">Serverless Inference</span>
+<span class="tc">        ├──</span> <span class="tg">No infra management · auto-scale · best for intermittent traffic</span>
+<span class="tc">        └──</span> <span class="tr">Cold start latency trade-off</span></div></div>
+</div>
+
+
+<!-- ══ I: MLOPS ══ -->
+<div class="sec">
+  <div class="sec-h"><div class="sl2" style="color:var(--pu);background:var(--pd);border:1px solid rgba(192,132,252,.2)">I</div><div class="st2">MLOps — Principles, Pipelines, AWS Stack</div><div class="gg">I</div></div>
+  <div class="sec-b"><div class="tb"><span class="tm">I. MLOps — Principles, Pipelines, AWS Stack</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">I1. Definition and Need</span>
+<span class="tc">│   ├──</span> <span class="tl">MLOps</span>  <span class="tc">= DevOps for ML — people + processes + technology</span>
+<span class="tc">│   ├──</span> <span class="tl">Scope: development → deployment → monitoring → retraining</span>
+<span class="tc">│   ├──</span> <span class="tr">Models degrade: data drift (feature distribution shifts)</span>
+<span class="tc">│   ├──</span> <span class="tr">Models degrade: concept drift (feature→label relationship changes)</span>
+<span class="tc">│   └──</span> <span class="tl">Goal: keep models useful over time with automated oversight</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">I2. Five Benefits</span>
+<span class="tc">│   ├──</span> <span class="tg">Productivity</span>  <span class="tc">— faster experimentation, access to curated datasets</span>
+<span class="tc">│   ├──</span> <span class="tg">Reliability</span>  <span class="tc">— CI/CD improves consistency, reduces human error</span>
+<span class="tc">│   ├──</span> <span class="tg">Repeatability</span>  <span class="tc">— automated pipelines produce reproducible results</span>
+<span class="tc">│   ├──</span> <span class="tg">Auditability</span>  <span class="tc">— track data, models, experiments for compliance</span>
+<span class="tc">│   └──</span> <span class="tg">Data &amp; Model Quality</span>  <span class="tc">— continuous bias and drift monitoring</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">I3. Four Core Principles</span>
+<span class="tc">│   ├──</span> <span class="tl">Version Control</span>  <span class="tc">— track code, data, models · enables rollback</span>
+<span class="tc">│   ├──</span> <span class="tl">Automation</span>  <span class="tc">— automate ingestion, training, testing, deployment</span>
+<span class="tc">│   ├──</span> <span class="tl">CI/CD for ML</span>  <span class="tc">— 4 components:</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Continuous Integration</span>  <span class="tc">— test code, data, models</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Continuous Delivery</span>  <span class="tc">— deploy models automatically</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Continuous Training</span>  <span class="tc">— retrain models with new data</span>
+<span class="tc">│   │   └──</span> <span class="tl">Continuous Monitoring</span>  <span class="tc">— track model + business metrics</span>
+<span class="tc">│   └──</span> <span class="tl">Model Governance</span>  <span class="tc">— fairness, compliance, security, documentation</span>
+<span class="tc">│</span>
+<span class="tc">├──</span> <span class="ts">I4. Two MLOps Pipelines</span>
+<span class="tc">│   ├──</span> <span class="tl">Training Pipeline</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Data preparation → Feature engineering</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Model build → Training run</span>
+<span class="tc">│   │   ├──</span> <span class="tl">Evaluation → meets criteria?</span>
+<span class="tc">│   │   └──</span> <span class="tl">Registration → Model approval gate</span>
+<span class="tc">│   └──</span> <span class="tl">Deployment Pipeline</span>
+<span class="tc">│       ├──</span> <span class="tl">Source → Build → Deploy → Test → Promote</span>
+<span class="tc">│       ├──</span> <span class="tl">Production monitoring: infra · data quality · model performance</span>
+<span class="tc">│       └──</span> <span class="tl">Drift detected → triggers retraining → loops to training pipeline</span>
+<span class="tc">│</span>
+<span class="tc">└──</span> <span class="ts">I5. AWS MLOps Stack</span>
+<span class="tc">    ├──</span> <span class="tp">SageMaker Pipelines</span>  <span class="tc">— automate end-to-end ML workflows</span>
+<span class="tc">    ├──</span> <span class="tp">Model Registry</span>  <span class="tc">— version, approve/reject model artifacts</span>
+<span class="tc">    ├──</span> <span class="tp">SageMaker Experiments</span>  <span class="tc">— track runs, hyperparameters, metrics</span>
+<span class="tc">    ├──</span> <span class="tp">Model Monitor</span>  <span class="tc">— detect drift, trigger retraining alerts</span>
+<span class="tc">    ├──</span> <span class="tp">Feature Store</span>  <span class="tc">— versioned features for training + inference consistency</span>
+<span class="tc">    └──</span> <span class="tp">Data Wrangler</span>  <span class="tc">— low-code prep integrated directly into Pipelines</span></div></div>
+</div>
+
+
+<!-- SUMMARY -->
+<div class="sum">
+  <div class="suml">Module Summary</div>
+  <ul class="sumu">
+    <li>ML lifecycle = 7-phase iterative loop: Business Goal → Problem Framing → Data Processing (Collection · Preprocessing · Feature Engineering) → Model Development → Deployment → Monitoring → Retraining. Loop never ends.</li>
+    <li>Call center routing: multiclass classification + supervised learning. Features: orders, device, membership. Split: 70–80/10–15/10–15. Test set sealed. Never evaluate on training data.</li>
+    <li>SageMaker tools: Data Wrangler · Feature Store (consistency, prevents skew) · Canvas (no-code) · JumpStart (pretrained) · Experiments (tracking) · Hyperparameter Tuning · Model Monitor (drift). Artifacts in S3.</li>
+    <li>Model sources: Pretrained → Built-in → Custom Framework → Custom Docker (effort ↑, flexibility ↑). Algorithm categories: Supervised · Unsupervised · Image · Text. Selection = data type + task type.</li>
+    <li>Model fit: Underfitting (high bias) · Overfitting (high variance) · Balanced (both low). Classification: Accuracy (imbalanced limitation) · Precision (FP cost) · Recall (FN cost) · F1 (balance) · AUC-ROC (threshold-independent). Regression: MSE (error magnitude) + R² (goodness of fit). Inference: Real-time · Batch · Async · Serverless.</li>
+    <li>MLOps = DevOps for ML. 5 benefits (Productivity · Reliability · Repeatability · Auditability · Quality) · 4 principles (Versioning · Automation · CI/CD · Governance) · CI/CD = 4 components (Integration · Delivery · Training · Monitoring). Two pipelines: Training + Deployment. AWS stack: Pipelines · Registry · Experiments · Monitor · Feature Store · Data Wrangler.</li>
+  </ul>
+</div>
+
+</div><!-- /body -->
+
+<!-- FOOTER -->
+<div class="ftr">
+  <div class="fl">Synaptix v2.2 · AWS-AI MasterClass · Module 4 · Tree · Structure Only</div>
+  <div class="fbs">
+    <button class="fb fq" onclick="sp('/quiz mc(10) hard')"><div class="fd" style="background:var(--or)"></div>Quiz</button>
+    <button class="fb fr" onclick="sp('/recall term(10) hard')"><div class="fd" style="background:var(--cy)"></div>Recall</button>
+    <button class="fb fe" onclick="sp('/export -md')"><div class="fd" style="background:var(--sa)"></div>Export</button>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+<script>function sp(t){if(window.parent&&window.parent.postMessage)window.parent.postMessage({type:'user_message',message:t},'*');}</script>
+</body>
+</html>

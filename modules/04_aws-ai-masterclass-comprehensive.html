@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Synaptix — M4: Developing Machine Learning Solutions</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0e0e11;--sf:#16161a;--el:#1c1c21;--sc:#1a1a1f;
+  --bd:rgba(255,255,255,.07);--bh:rgba(255,255,255,.12);
+  --or:#f4762a;--sa:#f08080;--cy:#4ecdc4;--gn:#4ade80;
+  --ye:#f4d03f;--pu:#c084fc;--sk:#5db8f2;--am:#f4b942;
+  --od:rgba(244,118,42,.10);--og:rgba(244,118,42,.05);
+  --cd:rgba(78,205,196,.10);--sd:rgba(240,128,128,.10);
+  --gd:rgba(74,222,128,.10);--pd:rgba(192,132,252,.10);--skd:rgba(93,184,242,.10);
+  --t1:#e8e8ee;--t2:#8b8b9a;--t3:#4a4a5a;
+  --mono:'JetBrains Mono',monospace;--sans:'Inter',sans-serif;
+}
+body{background:var(--bg);color:var(--t1);font-family:var(--sans);font-size:13px;line-height:1.8;}
+.bo{color:var(--or);font-weight:600}.bc{color:var(--cy);font-weight:600}
+.bg{color:var(--gn);font-weight:600}.bs{color:var(--sa);font-weight:600}
+
+.wrap{max-width:860px;margin:0 auto;}
+.hdr{padding:20px 24px 15px;border-bottom:1px solid var(--bd);background:var(--sf);}
+.bdgs{display:flex;gap:7px;margin-bottom:10px;flex-wrap:wrap}
+.bdg{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;padding:3px 8px;border-radius:4px;border:1px solid;}
+.bt{color:var(--or);background:var(--od);border-color:rgba(244,118,42,.25)}
+.bm{color:var(--sk);background:var(--skd);border-color:rgba(93,184,242,.25)}
+.be{color:var(--gn);background:var(--gd);border-color:rgba(74,222,128,.25)}
+.ttl{font-size:19px;font-weight:600;letter-spacing:-.02em}
+.sub{font-size:11px;font-family:var(--mono);color:var(--t3);margin-top:3px}
+.sts{display:flex;gap:18px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid var(--bd);}
+.sv{font-family:var(--mono);font-size:14px;font-weight:600}.sl{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-top:1px}
+
+.body{padding:20px 24px;display:flex;flex-direction:column;gap:10px}
+
+.mod-lbl{display:flex;align-items:center;gap:10px}
+.mn{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--or);letter-spacing:.1em;text-transform:uppercase;}
+.mr{flex:1;height:1px;background:linear-gradient(to right,rgba(244,118,42,.25),transparent);}
+.mt{font-size:17px;font-weight:600;margin-bottom:10px}
+
+/* Overview */
+.ov{background:var(--sf);border-top:2px solid var(--sk);border-radius:0 0 8px 8px;padding:13px 17px;}
+.ovl{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--sk);letter-spacing:.08em;text-transform:uppercase;margin-bottom:9px}
+.ovg{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:9px}
+.ovi{background:var(--el);border:1px solid var(--bd);border-radius:6px;padding:7px 9px;display:flex;align-items:flex-start;gap:7px;}
+.ovk{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--sk);background:var(--skd);border:1px solid rgba(93,184,242,.2);border-radius:3px;padding:2px 5px;flex-shrink:0;}
+.ovt{font-size:12px;font-weight:500}.ovd{font-size:11px;color:var(--t2);margin-top:2px}
+.ovdiv{height:1px;background:var(--bd);margin:9px 0}
+.ovm{display:flex;gap:18px;flex-wrap:wrap}
+.oml{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3)}
+.omv{font-size:12px;color:var(--t2);margin-top:2px}
+
+/* Intro */
+.intro{background:var(--sf);border-left:3px solid var(--pu);border-radius:0 8px 8px 0;padding:13px 17px;}
+.intl{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--pu);letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px;}
+.intro p{font-size:13px;color:var(--t2);line-height:1.8}.intro p+p{margin-top:7px}
+
+/* Section */
+.sec{background:var(--sc);border:1px solid var(--bd);border-radius:9px;overflow:hidden;transition:border-color .15s;}
+.sec:hover{border-color:var(--bh)}
+.sec-h{padding:11px 16px 9px;border-bottom:1px solid var(--bd);position:relative;overflow:hidden;display:flex;align-items:center;gap:9px;}
+.sl2{font-family:var(--mono);font-size:12px;font-weight:600;width:24px;height:24px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.st2{font-size:13px;font-weight:500;flex:1}
+.gg{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:56px;font-weight:700;color:rgba(255,255,255,.025);pointer-events:none;line-height:1;}
+.sec-b{padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+
+/* Subsection */
+.ss{display:flex;flex-direction:column;gap:7px}
+.ss+.ss{padding-top:12px;border-top:1px solid var(--bd)}
+.ssh{display:flex;align-items:center;gap:7px}
+.ssn{font-family:var(--mono);font-size:10px;font-weight:500;color:var(--cy);background:var(--cd);border:1px solid rgba(78,205,196,.2);padding:2px 6px;border-radius:4px;}
+.sst{font-size:13px;font-weight:500}
+.ssb{display:flex;flex-direction:column;gap:7px}
+.ssb p{font-size:13px;color:var(--t2);line-height:1.8}
+
+.ep{font-family:var(--mono);font-size:9px;font-weight:600;color:var(--gn);background:var(--gd);border:1px solid rgba(74,222,128,.2);padding:1px 4px;border-radius:3px;margin-left:4px;vertical-align:middle;}
+
+/* Key points */
+.kp{background:var(--og);border:1px solid rgba(244,118,42,.12);border-left:3px solid var(--or);border-radius:0 6px 6px 0;padding:9px 13px;}
+.kpl{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--or);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+.kpu{list-style:none;display:flex;flex-direction:column;gap:4px}
+.kpu li{font-size:12px;color:var(--t2);line-height:1.6;display:flex;gap:6px}
+.kpu li::before{content:'›';color:var(--or);font-weight:700;font-size:13px;flex-shrink:0}
+
+/* Info / warn boxes */
+.ib{background:var(--el);border:1px solid var(--bd);border-left:3px solid var(--sk);border-radius:0 6px 6px 0;padding:9px 13px;}
+.ibl{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--sk);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px}
+.ib p{font-size:12.5px;color:var(--t2);line-height:1.75}
+.wb{background:rgba(244,118,42,.04);border:1px solid rgba(244,118,42,.18);border-left:3px solid var(--or);border-radius:0 6px 6px 0;padding:9px 13px;}
+.wbl{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--or);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px}
+.wb p{font-size:12.5px;color:var(--t2);line-height:1.75}
+
+/* Grids */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:7px}
+.gc{background:var(--el);border:1px solid var(--bd);border-radius:6px;padding:9px 12px}
+.gct{font-family:var(--mono);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.gcu{list-style:none;display:flex;flex-direction:column;gap:3px}
+.gcu li{font-size:12px;color:var(--t2);line-height:1.55;display:flex;gap:5px}
+.gcu li::before{content:'·';color:var(--t3);flex-shrink:0}
+
+/* Tier rows */
+.tr{display:flex;flex-direction:column;gap:5px}
+.ti{display:flex;align-items:baseline;gap:9px;padding:6px 9px;background:var(--el);border:1px solid var(--bd);border-radius:5px}
+.tl{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--or);width:150px;flex-shrink:0}
+.td{font-size:12.5px;color:var(--t2);line-height:1.6}
+
+/* Confusion matrix */
+.cm-wrap{overflow-x:auto;margin-top:6px}
+.cm{border-collapse:collapse;width:100%;font-size:12px;font-family:var(--mono);}
+.cm th,.cm td{border:1px solid var(--bd);padding:8px 12px;text-align:center}
+.cm th{background:var(--el);color:var(--t2);font-size:10px;text-transform:uppercase;letter-spacing:.06em}
+.cm-tp{color:var(--gn);font-weight:600;background:rgba(74,222,128,.06)}
+.cm-tn{color:var(--gn);font-weight:600;background:rgba(74,222,128,.06)}
+.cm-fp{color:var(--sa);font-weight:600;background:rgba(240,128,128,.06)}
+.cm-fn{color:var(--sa);font-weight:600;background:rgba(240,128,128,.06)}
+
+/* Metric pills */
+.mp{display:flex;flex-direction:column;gap:5px}
+.mpr{display:flex;gap:8px;align-items:baseline;padding:6px 10px;background:var(--el);border:1px solid var(--bd);border-radius:5px}
+.mpn{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--or);width:100px;flex-shrink:0}
+.mpf{font-family:var(--mono);font-size:11px;color:var(--cy);flex-shrink:0;width:140px}
+.mpd{font-size:12px;color:var(--t2)}
+
+/* Pipeline steps */
+.ps{display:flex;flex-direction:column;gap:5px}
+.pi{display:flex;gap:11px;align-items:flex-start;padding:8px 11px;background:var(--el);border:1px solid var(--bd);border-radius:5px}
+.pn{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--sk);width:20px;flex-shrink:0;padding-top:1px}
+.pc .pt{font-size:12.5px;font-weight:500;color:var(--t1);margin-bottom:2px}
+.pc .pd{font-size:12px;color:var(--t2);line-height:1.6}
+
+/* Tool map */
+.tm{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.tmr{display:flex;gap:8px;align-items:baseline;padding:6px 10px;background:var(--el);border:1px solid var(--bd);border-radius:5px}
+.tmn{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--cy);width:170px;flex-shrink:0}
+.tmd{font-size:11.5px;color:var(--t2);line-height:1.5}
+
+/* Summary */
+.sum{background:var(--sf);border:1px solid var(--bd);border-bottom:2px solid var(--or);border-radius:8px 8px 0 0;padding:13px 17px;}
+.suml{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--or);letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px;}
+.sumu{list-style:none;display:flex;flex-direction:column;gap:5px}
+.sumu li{font-size:13px;color:var(--t2);line-height:1.7;display:flex;gap:6px}
+.sumu li::before{content:'›';color:var(--or);font-weight:700;font-size:13px;flex-shrink:0}
+
+/* Footer */
+.ftr{padding:11px 24px;border-top:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;background:var(--sf);flex-wrap:wrap;gap:9px;}
+.fl{font-size:11px;color:var(--t3);font-family:var(--mono)}
+.fbs{display:flex;gap:9px}
+.fb{display:flex;align-items:center;justify-content:center;gap:6px;font-family:var(--mono);font-size:11px;font-weight:500;width:120px;height:58px;border-radius:18px;border:1px solid;background:transparent;cursor:pointer;transition:all .15s;}
+.fd{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.fq{color:var(--or);border-color:rgba(244,118,42,.35);background:var(--od)}.fq:hover{background:rgba(244,118,42,.18)}
+.fr{color:var(--cy);border-color:rgba(78,205,196,.35);background:var(--cd)}.fr:hover{background:rgba(78,205,196,.15)}
+.fe{color:var(--sa);border-color:rgba(240,128,128,.35);background:var(--sd)}.fe:hover{background:rgba(240,128,128,.15)}
+
+@media(max-width:580px){
+  .hdr,.body{padding-left:14px;padding-right:14px}
+  .ftr{padding:11px 14px}
+  .ovg,.g2,.g3,.g4,.tm{grid-template-columns:1fr}
+  .fb{width:100px;height:50px;font-size:10px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="bdgs"><span class="bdg bt">Comprehensive</span><span class="bdg bm">Module 4</span><span class="bdg be">Enrich: On</span></div>
+  <div class="ttl">Developing Machine Learning Solutions</div>
+  <div class="sub">AWS-AI MasterClass · Synaptix v2.2 · High Verbosity</div>
+  <div class="sts">
+    <div><div class="sv">9</div><div class="sl">Sections</div></div>
+    <div><div class="sv">A–I</div><div class="sl">Coverage</div></div>
+    <div><div class="sv">High</div><div class="sl">Verbosity</div></div>
+    <div><div class="sv">EN</div><div class="sl">Language</div></div>
+  </div>
+</div>
+
+<div class="body">
+<div class="mod-lbl"><span class="mn">Module 4</span><div class="mr"></div></div>
+<div class="mt">Developing Machine Learning Solutions</div>
+
+<!-- OVERVIEW -->
+<div class="ov">
+  <div class="ovl">Module Overview</div>
+  <div class="ovg">
+    <div class="ovi"><span class="ovk">A</span><div><div class="ovt">ML Development Lifecycle</div><div class="ovd">End-to-end phases from business goal to retraining</div></div></div>
+    <div class="ovi"><span class="ovk">B</span><div><div class="ovt">Real-World ML Example</div><div class="ovd">Call center routing — multiclass classification walkthrough</div></div></div>
+    <div class="ovi"><span class="ovk">C</span><div><div class="ovt">SageMaker Platform & Tools</div><div class="ovd">Data prep, Feature Store, training, evaluation, deployment, monitoring</div></div></div>
+    <div class="ovi"><span class="ovk">D</span><div><div class="ovt">Model Sources & Algorithms</div><div class="ovd">Pretrained, built-in, custom framework, Docker; algorithm categories</div></div></div>
+    <div class="ovi"><span class="ovk">E</span><div><div class="ovt">Evaluation Datasets & Model Fit</div><div class="ovd">Train/validation/test splits; underfitting, overfitting, bias-variance</div></div></div>
+    <div class="ovi"><span class="ovk">F</span><div><div class="ovt">Classification Metrics</div><div class="ovd">Confusion matrix, Accuracy, Precision, Recall, F1, AUC-ROC</div></div></div>
+    <div class="ovi"><span class="ovk">G</span><div><div class="ovt">Regression Metrics</div><div class="ovd">MSE, R² — error magnitude and goodness of fit</div></div></div>
+    <div class="ovi"><span class="ovk">H</span><div><div class="ovt">Business Metrics & Deployment</div><div class="ovd">KPI alignment, cost functions, A/B testing, inference types, MLOps</div></div></div>
+    <div class="ovi"><span class="ovk">I</span><div><div class="ovt">MLOps Principles & Pipelines</div><div class="ovd">Versioning, automation, CI/CD, governance, AWS MLOps stack</div></div></div>
+  </div>
+  <div class="ovdiv"></div>
+  <div class="ovm">
+    <div><div class="oml">Prerequisites</div><div class="omv">Modules 1–3 — ML fundamentals, use cases, responsible AI</div></div>
+    <div><div class="oml">Leads To</div><div class="omv">AWS ML certification readiness, production ML systems</div></div>
+  </div>
+</div>
+
+<!-- INTRO -->
+<div class="intro">
+  <div class="intl">Module Introduction</div>
+  <p>The first three modules established what AI and ML are, where they apply, and how to build them responsibly. Module 4 addresses <span class="bo">how to actually develop, evaluate, deploy, and operate an ML system end-to-end</span> — from translating a business problem into an ML task, through choosing the right SageMaker tools, all the way to measuring success with the right metrics and keeping models healthy in production through MLOps.</p>
+  <p>This is the most technically dense module in the MasterClass. It introduces the full ML lifecycle, every major SageMaker service, the complete set of model evaluation metrics, and the operational discipline of MLOps. Every concept builds on the previous — a model is only as good as its data, its evaluation, and its post-deployment monitoring.</p>
+</div>
+
+
+<!-- ══ A: ML LIFECYCLE ══ -->
+<div class="sec">
+  <div class="sec-h">
+    <div class="sl2" style="color:var(--sk);background:var(--skd);border:1px solid rgba(93,184,242,.2)">A</div>
+    <div class="st2">The ML Development Lifecycle</div><div class="gg">A</div>
+  </div>
+  <div class="sec-b">
+    <div class="ss">
+      <div class="ssh"><span class="ssn">A1</span><span class="sst">The Core Phases</span></div>
+      <div class="ssb">
+        <p>Building an ML system is not a one-time event — it is a <span class="bo">continuous, iterative loop</span> that cycles through the same phases repeatedly as new data arrives, business needs evolve, and model performance changes. Understanding the lifecycle prevents the most common failure mode: treating ML as a one-shot project that ends at deployment.</p>
+        <div class="ps">
+          <div class="pi"><div class="pn">01</div><div class="pc"><div class="pt">Business Goal Identification</div><div class="pd">Define the specific business objective — what problem needs solving, what success looks like, and what constraints apply (cost, latency, compliance).</div></div></div>
+          <div class="pi"><div class="pn">02</div><div class="pc"><div class="pt">ML Problem Framing</div><div class="pd">Translate the business goal into a concrete ML task. Is this classification, regression, clustering, or something else? What label do we predict? What features are available?</div></div></div>
+          <div class="pi"><div class="pn">03</div><div class="pc"><div class="pt">Data Processing</div><div class="pd">Three sub-steps: <strong>Data Collection</strong> (gather raw data from sources), <strong>Data Preprocessing</strong> (clean, transform, handle missing values), <strong>Feature Engineering</strong> (extract, combine, or transform variables to maximize predictive signal).</div></div></div>
+          <div class="pi"><div class="pn">04</div><div class="pc"><div class="pt">Model Development</div><div class="pd">Training (fit a model to data), Tuning (adjust hyperparameters for better performance), Evaluation (validate against held-out data).</div></div></div>
+          <div class="pi"><div class="pn">05</div><div class="pc"><div class="pt">Model Deployment</div><div class="pd">Integrate the trained model into a production system where it generates real-world predictions for end users or downstream systems.</div></div></div>
+          <div class="pi"><div class="pn">06</div><div class="pc"><div class="pt">Model Monitoring</div><div class="pd">Track model performance over time in production — detect data drift, performance degradation, and unexpected behavior.</div></div></div>
+          <div class="pi"><div class="pn">07</div><div class="pc"><div class="pt">Model Retraining</div><div class="pd">Update the model with new data when monitoring reveals performance has degraded or the data distribution has shifted.</div></div></div>
+        </div>
+        <div class="wb"><div class="wbl">Critical Exam Point</div><p>ML is an <span class="bo">iterative loop</span>, not a linear process. Monitoring triggers retraining, retraining feeds new evaluation, evaluation may change deployment — the cycle never ends. This is the fundamental distinction between ML and traditional software development.</p></div>
+        <div class="kp"><div class="kpl">Key Points</div><ul class="kpu">
+          <li>Seven phases: Business Goal → Problem Framing → Data Processing → Model Development → Deployment → Monitoring → Retraining.</li>
+          <li>ML is iterative — monitoring and retraining form a feedback loop, not a termination point.</li>
+          <li>Data Processing has three sub-steps: Collection → Preprocessing → Feature Engineering.</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+</div><!-- /A -->
+
+
+<!-- ══ B: REAL-WORLD EXAMPLE ══ -->
+<div class="sec">
+  <div class="sec-h">
+    <div class="sl2" style="color:var(--cy);background:var(--cd);border:1px solid rgba(78,205,196,.2)">B</div>
+    <div class="st2">Real-World ML Example — Amazon Call Center</div><div class="gg">B</div>
+  </div>
+  <div class="sec-b">
+    <div class="ss">
+      <div class="ssh"><span class="ssn">B1</span><span class="sst">Problem Framing: Business → ML</span></div>
+      <div class="ssb">
+        <p>The call center example illustrates how every step of the lifecycle applies to a real problem. The business problem is <span class="bo">inefficient call routing</span> — calls being sent to the wrong agent, causing delays, extra transfers, and poor customer experience. The business goal is to reduce these transfers and improve satisfaction.</p>
+        <p>Translating to an ML task: if we can <span class="bc">predict the correct agent skill</span> before the call is connected, routing becomes automatic and accurate. Since there are multiple possible agent skills (billing, tech support, device help, etc.), this is a <span class="bo">multiclass classification</span> problem — predicting one of several categorical outcomes.</p>
+        <p>The learning type is <span class="bc">supervised learning</span> — historical call records (with known correct routing outcomes) serve as labeled training data. The model learns from past examples to predict future routing decisions.</p>
+        <div class="ib"><div class="ibl">Feature Engineering</div><p>Three key features were identified: <span class="bo">Recent orders</span> (what the customer recently bought), <span class="bo">Device ownership</span> (e.g., whether they own a Kindle), and <span class="bo">Membership status</span> (Prime, standard, etc.). These signal why the customer is likely calling before they say a word.</p></div>
+      </div>
+    </div>
+    <div class="ss">
+      <div class="ssh"><span class="ssn">B2</span><span class="sst">Data Preparation and Training</span></div>
+      <div class="ssb">
+        <p>Data preprocessing involves two key steps here: <span class="bc">cleaning</span> (removing erroneous or incomplete records) and <span class="bc">label refinement</span> — combining similar labels into unified categories. For example, multiple distinct Kindle-related issue labels might be merged into a single "Kindle Support" label, reducing noise and improving model reliability. <span class="ep">[+]</span></p>
+        <p>The dataset is split into three non-overlapping subsets. A standard split is <span class="bo">70–80% training</span>, <span class="bo">10–15% validation</span>, and <span class="bo">10–15% test</span>. The model trains on the training set, is tuned against the validation set, and is evaluated once — only once — on the test set before deployment.</p>
+        <div class="wb"><div class="wbl">Never Evaluate on Training Data</div><p>A model evaluated on its own training data will always appear better than it actually is — it has already "seen" those examples. <span class="bo">Always evaluate on held-out data</span>. The test set must remain untouched until the final evaluation step; using it for tuning invalidates it as a fair measure.</p></div>
+        <div class="kp"><div class="kpl">Key Points</div><ul class="kpu">
+          <li>Call center routing = multiclass classification (multiple possible agent skill classes).</li>
+          <li>Learning type = supervised (historical records with known routing outcomes as labels).</li>
+          <li>Label refinement: merge similar labels to reduce noise (e.g., multiple Kindle issues → one label).</li>
+          <li>Standard data split: 70–80% train · 10–15% validation · 10–15% test.</li>
+          <li>Success metric = business improvement (fewer call transfers), not just model accuracy.</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+</div><!-- /B -->
+
+
+<!-- ══ C: SAGEMAKER TOOLS ══ -->
+<div class="sec">
+  <div class="sec-h">
+    <div class="sl2" style="color:var(--or);background:var(--od);border:1px solid rgba(244,118,42,.2)">C</div>
+    <div class="st2">Amazon SageMaker AI — Platform and Tools</div><div class="gg">C</div>
+  </div>
+  <div class="sec-b">
+    <div class="ss">
+      <div class="ssh"><span class="ssn">C1</span><span class="sst">Platform Overview</span></div>
+      <div class="ssb">
+        <p><span class="bo">Amazon SageMaker AI</span> is AWS's fully managed ML platform covering the complete lifecycle — data preparation, model training, deployment, and monitoring — in a single integrated environment. It eliminates the need to manage the underlying infrastructure, allowing practitioners to focus on the ML work itself. SageMaker Studio provides the unified IDE (web-based, with JupyterLab, Canvas, RStudio, and VS Code support).</p>
+      </div>
+    </div>
+    <div class="ss">
+      <div class="ssh"><span class="ssn">C2</span><span class="sst">Data Preparation Tools</span></div>
+      <div class="ssb">
+        <div class="tr">
+          <div class="ti"><div class="tl">Data Wrangler</div><div class="td">Low-code/no-code data preparation — visual interface for feature engineering, transformations, and data flow construction without writing code.</div></div>
+          <div class="ti"><div class="tl">SageMaker Studio</div><div class="td">Large-scale data workflows — integrates with Amazon EMR (distributed compute) and AWS Glue (ETL pipelines) for enterprise-scale preprocessing.</div></div>
+          <div class="ti"><div class="tl">Processing API</div><div class="td">Run custom preprocessing scripts using standard ML frameworks (Scikit-learn, Spark, etc.) on managed, scalable compute clusters.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="ss">
+      <div class="ssh"><span class="ssn">C3</span><span class="sst">Feature Store</span></div>
+      <div class="ssb">
+        <p>The <span class="bo">SageMaker Feature Store</span> is a centralized repository for storing, managing, and serving features — the input variables used in ML models. It solves a major consistency problem: without a Feature Store, different teams may engineer the same feature differently, causing training-serving skew and inconsistent model behavior across projects. <span class="ep">[+]</span></p>
+        <div class="g3">
+          <div class="gc"><div class="gct" style="color:var(--or)">Store</div><ul class="gcu"><li>Save computed features centrally</li><li>Versioned and timestamped</li></ul></div>
+          <div class="gc"><div class="gct" style="color:var(--cy)">Retrieve</div><ul class="gcu"><li>Reuse features across models</li><li>Avoids redundant computation</li></ul></div>
+          <div class="gc"><div class="gct" style="color:var(--gn)">Serve</div><ul class="gcu"><li>Feed features into training and inference</li><li>Online (low-latency) + offline (batch)</li></ul></div>
+        </div>
+      </div>
+    </div>
+    <div class="ss">
+      <div class="ssh"><span class="ssn">C4</span><span class="sst">Training, Evaluation, and Monitoring</span></div>
+      <div class="ssb">
+        <div class="tm">
+          <div class="tmr"><div class="tmn">Training Jobs</div><div class="tmd">Run built-in or custom algorithms on managed compute. Artifacts stored in Amazon S3.</div></div>
+          <div class="tmr"><div class="tmn">SageMaker Canvas</div><div class="tmd">No-code ML — build and deploy predictions without writing any code. AutoML underneath.</div></div>
+          <div class="tmr"><div class="tmn">SageMaker JumpStart</div><div class="tmd">Pretrained model hub — deploy, fine-tune, evaluate, and access solution templates.</div></div>
+          <div class="tmr"><div class="tmn">SageMaker Experiments</div><div class="tmd">Track and compare model training runs, hyperparameters, and metrics across iterations.</div></div>
+          <div class="tmr"><div class="tmn">Hyperparameter Tuning</div><div class="tmd">Automated search for optimal hyperparameter configurations — Bayesian, grid, or random search.</div></div>
+          <div class="tmr"><div class="tmn">Model Monitor</div><div class="tmd">Detects data drift and model quality degradation in production — sends alerts for anomalies.</div></div>
+        </div>
+        <div class="kp" style="margin-top:8px"><div class="kpl">Key Points</div><ul class="kpu">
+          <li>SageMaker = full ML lifecycle platform. Studio = the unified IDE environment.</li>
+          <li>Feature Store enables consistency — same feature, same computation, across all models.</li>
+          <li>Canvas = no-code. JumpStart = pretrained models. Experiments = tracking. Tuning = hyperparameter optimization.</li>
+          <li>Model artifacts are stored in Amazon S3 — not inside SageMaker itself.</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+</div><!-- /C -->
+
+
+<!-- ══ D: MODEL SOURCES & ALGORITHMS ══ -->
+<div class="sec">
+  <div class="sec-h">
+    <div class="sl2" style="color:var(--pu);background:var(--pd);border:1px solid rgba(192,132,252,.2)">D</div>
+    <div class="st2">Model Sources and Built-in Algorithms</div><div class="gg">D</div>
+  </div>
+  <div class="sec-b">
+    <div class="ss">
+      <div class="ssh"><span class="ssn">D1</span><span class="sst">The Four Model Source Options</span></div>
+      <div class="ssb">
+        <p>Every ML project involves a choice of where to start from. The options form a spectrum from <span class="bg">least effort</span> (pretrained) to <span class="bs">maximum control</span> (custom Docker), with corresponding trade-offs in flexibility and required expertise.</p>
+        <div class="g2">
+          <div class="gc"><div class="gct" style="color:var(--gn)">Pretrained Models</div><ul class="gcu"><li>Ready to deploy or fine-tune</li><li>Least effort — fastest time to value</li><li>Available via JumpStart or Bedrock</li><li>Limited customization without fine-tuning</li></ul></div>
+          <div class="gc"><div class="gct" style="color:var(--cy)">Built-in Algorithms</div><ul class="gcu"><li>Provided by SageMaker natively</li><li>Moderate effort — configure, don't code</li><li>Optimized for SageMaker compute</li><li>Cover common supervised + unsupervised tasks</li></ul></div>
+          <div class="gc"><div class="gct" style="color:var(--am)">Custom Frameworks</div><ul class="gcu"><li>TensorFlow, PyTorch, Scikit-learn, etc.</li><li>High flexibility — write your own model code</li><li>Full algorithm control</li><li>Runs in SageMaker-managed containers</li></ul></div>
+          <div class="gc"><div class="gct" style="color:var(--sa)">Custom Docker</div><ul class="gcu"><li>Fully customized environments</li><li>Maximum control — any language, any library</li><li>Highest effort — build and maintain container</li><li>Required when standard containers won't work</li></ul></div>
+        </div>
+        <div class="wb"><div class="wbl">Trade-off Principle</div><p>Model source = trade-off between <span class="bo">effort</span> and <span class="bc">flexibility</span>. Pretrained models save the most time but offer the least customization. Custom Docker containers offer complete control but require the most engineering investment. Choose based on the problem's uniqueness and the team's capacity.</p></div>
+      </div>
+    </div>
+    <div class="ss">
+      <div class="ssh"><span class="ssn">D2</span><span class="sst">SageMaker Built-in Algorithm Categories</span></div>
+      <div class="ssb">
+        <p>SageMaker provides optimized built-in algorithms across four task categories. Algorithm selection depends on two factors: the nature of the <span class="bo">data</span> (structured, image, text) and the <span class="bc">task type</span> (predict a label, group items, detect anomalies).</p>
+        <div class="g2">
+          <div class="gc"><div class="gct" style="color:var(--or)">Supervised Learning</div><ul class="gcu"><li>Classification — predict categorical labels</li><li>Regression — predict continuous values</li><li>Examples: XGBoost, Linear Learner, KNN</li></ul></div>
+          <div class="gc"><div class="gct" style="color:var(--cy)">Unsupervised Learning</div><ul class="gcu"><li>Clustering — group similar items</li><li>Dimensionality reduction — compress features</li><li>Anomaly detection — flag outliers</li></ul></div>
+          <div class="gc"><div class="gct" style="color:var(--pu)">Image Processing</div><ul class="gcu"><li>Image classification</li><li>Object detection</li><li>Computer vision tasks</li></ul></div>
+          <div class="gc"><div class="gct" style="color:var(--sk)">Text Analysis</div><ul class="gcu"><li>NLP tasks</li><li>Document classification</li><li>Machine translation</li></ul></div>
+        </div>
+        <div class="kp" style="margin-top:6px"><div class="kpl">Key Points</div><ul class="kpu">
+          <li>Four source options: Pretrained (least effort) → Built-in → Custom Framework → Custom Docker (most control).</li>
+          <li>Four algorithm categories: Supervised · Unsupervised · Image Processing · Text Analysis.</li>
+          <li>JumpStart = primary access point for pretrained models within SageMaker. Faster development, reduced effort, ready infrastructure.</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+</div><!-- /D -->
+
+
+<!-- ══ E: EVALUATION DATASETS & MODEL FIT ══ -->
+<div class="sec">
+  <div class="sec-h">
+    <div class="sl2" style="color:var(--gn);background:var(--gd);border:1px solid rgba(74,222,128,.2)">E</div>
+    <div class="st2">Evaluation Datasets and Model Fit</div><div class="gg">E</div>
+  </div>
+  <div class="sec-b">
+    <div class="ss">
+      <div class="ssh"><span class="ssn">E1</span><span class="sst">The Three Dataset Roles</span></div>
+      <div class="ssb">
+        <p>A model's reported accuracy is only meaningful if it was measured on data the model has never seen. This is why the full dataset is split into three non-overlapping subsets, each serving a distinct purpose at a different stage of development.</p>
+        <div class="tr">
+          <div class="ti"><div class="tl">Training Set</div><div class="td">What the model learns from — the labeled examples used to fit model parameters. Typically 70–80% of available data.</div></div>
+          <div class="ti"><div class="tl">Validation Set</div><div class="td">Used iteratively during development — evaluates model performance after each training run, guides hyperparameter tuning, and helps choose between model architectures. The model can "see" this data indirectly through the tuning decisions it influences.</div></div>
+          <div class="ti"><div class="tl">Test Set</div><div class="td">The final, once-only evaluation. Held out completely until all development decisions are made. Provides an unbiased estimate of how the model will perform in production. <span class="bo">Must remain untouched until final evaluation.</span></div></div>
+        </div>
+        <div class="ib"><div class="ibl">Why the Test Set Must Stay Sealed</div><p>If you peek at test set performance during development — even once — and use it to make a decision (select a model, adjust a feature), the test set is contaminated. It is no longer an unbiased estimate of production performance. This is called <span class="bc">data leakage</span> and is one of the most common mistakes in ML. <span class="ep">[+]</span></p></div>
+      </div>
+    </div>
+    <div class="ss">
+      <div class="ssh"><span class="ssn">E2</span><span class="sst">Underfitting, Overfitting, and the Balanced Model</span></div>
+      <div class="ssb">
+        <p>Model fit describes how well a trained model's predictions match reality — both on training data and, critically, on new unseen data. Three possible states:</p>
+        <div class="g3">
+          <div class="gc"><div class="gct" style="color:var(--sa)">Underfitting</div><ul class="gcu"><li>Poor on training data</li><li>Poor on test data</li><li>Model too simple</li><li>High Bias, Low Variance</li><li>Fix: more complexity, better features</li></ul></div>
+          <div class="gc"><div class="gct" style="color:var(--pu)">Overfitting</div><ul class="gcu"><li>Great on training data</li><li>Poor on test data</li><li>Memorized noise</li><li>Low Bias, High Variance</li><li>Fix: regularization, more data, early stopping</li></ul></div>
+          <div class="gc"><div class="gct" style="color:var(--gn)">Balanced ✓</div><ul class="gcu"><li>Good on both</li><li>Generalizes to new data</li><li>Low Bias, Low Variance</li><li>Target state</li></ul></div>
+        </div>
+        <div class="ib" style="margin-top:7px"><div class="ibl">Bias-Variance Analogy — Bullseye</div><p><span class="bo">Bias</span> = how far the model's predictions are from the true center (wrong assumptions). <span class="bo">Variance</span> = how spread out predictions are across different samples (sensitivity to noise). High bias = consistently off-target (underfitting). High variance = scattered results that vary wildly (overfitting). Ideal = low bias AND low variance — tight cluster at the bullseye. <span class="ep">[+]</span></p></div>
+        <div class="kp"><div class="kpl">Key Points</div><ul class="kpu">
+          <li>Training → learn · Validation → tune · Test → final unbiased evaluation (sealed until the end).</li>
+          <li>Underfitting: high bias, low variance — too simple. Overfitting: low bias, high variance — memorized noise.</li>
+          <li>Target: balanced model — low bias + low variance — generalizes well to unseen data.</li>
+          <li>Data leakage: using test set during development invalidates it as a fair performance estimate.</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+</div><!-- /E -->
+
+
+<!-- ══ F: CLASSIFICATION METRICS ══ -->
+<div class="sec">
+  <div class="sec-h">
+    <div class="sl2" style="color:var(--am);background:rgba(244,185,66,.08);border:1px solid rgba(244,185,66,.2)">F</div>
+    <div class="st2">Classification Metrics</div><div class="gg">F</div>
+  </div>
+  <div class="sec-b">
+    <div class="ss">
+      <div class="ssh"><span class="ssn">F1</span><span class="sst">The Confusion Matrix</span></div>
+      <div class="ssb">
+        <p>All classification metrics derive from four fundamental outcomes captured in the <span class="bo">confusion matrix</span>. The matrix compares what the model predicted against what actually happened, producing four categories that every metric is built from.</p>
+        <div class="cm-wrap">
+          <table class="cm">
+            <tr><th></th><th>Predicted Positive</th><th>Predicted Negative</th></tr>
+            <tr><td style="background:var(--el);color:var(--t2);font-size:10px;text-transform:uppercase;letter-spacing:.05em">Actual Positive</td><td class="cm-tp">True Positive (TP)<br><span style="font-size:10px;font-weight:400;color:var(--t2)">Correctly predicted positive</span></td><td class="cm-fn">False Negative (FN)<br><span style="font-size:10px;font-weight:400;color:var(--t2)">Missed positive — predicted negative</span></td></tr>
+            <tr><td style="background:var(--el);color:var(--t2);font-size:10px;text-transform:uppercase;letter-spacing:.05em">Actual Negative</td><td class="cm-fp">False Positive (FP)<br><span style="font-size:10px;font-weight:400;color:var(--t2)">Wrong alarm — predicted positive</span></td><td class="cm-tn">True Negative (TN)<br><span style="font-size:10px;font-weight:400;color:var(--t2)">Correctly predicted negative</span></td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="ss">
+      <div class="ssh"><span class="ssn">F2</span><span class="sst">The Five Key Metrics</span></div>
+      <div class="ssb">
+        <p>Each metric answers a different question about the model's behavior. The choice of which metric to optimize depends entirely on the <span class="bo">business cost of each error type</span>.</p>
+        <div class="mp">
+          <div class="mpr"><div class="mpn">Accuracy</div><div class="mpf">(TP+TN)/(TP+TN+FP+FN)</div><div class="mpd">Proportion of correct predictions. Misleading with imbalanced data — a model predicting "not fraud" always is 99.9% accurate if fraud is 0.1% of cases.</div></div>
+          <div class="mpr"><div class="mpn">Precision</div><div class="mpf">TP / (TP + FP)</div><div class="mpd">Of all predicted positives, how many were correct? Use when <span class="bs">false positives are costly</span> — e.g., spam filtering (flagging legitimate emails).</div></div>
+          <div class="mpr"><div class="mpn">Recall</div><div class="mpf">TP / (TP + FN)</div><div class="mpd">Of all actual positives, how many did the model catch? Use when <span class="bs">false negatives are critical</span> — e.g., disease detection (missing a diagnosis).</div></div>
+          <div class="mpr"><div class="mpn">F1 Score</div><div class="mpf">Harmonic mean of P &amp; R</div><div class="mpd">Balances Precision and Recall. Use when both FP and FN matter and the data is imbalanced.</div></div>
+          <div class="mpr"><div class="mpn">AUC-ROC</div><div class="mpf">Area under ROC curve</div><div class="mpd">Measures separability across all decision thresholds. AUC ≈ 0.5 = random guessing; AUC = 1.0 = perfect. Threshold-independent — useful for comparing models before choosing a decision cutoff.</div></div>
+        </div>
+        <div class="wb" style="margin-top:7px"><div class="wbl">Precision vs. Recall — The Core Trade-off</div><p>Increasing one typically decreases the other. <span class="bo">Spam filter</span> → optimize Precision (avoid blocking legitimate email). <span class="bc">Cancer screening</span> → optimize Recall (catch every positive case, even at cost of false alarms). The correct choice depends on which error type carries the higher business cost.</p></div>
+        <div class="kp"><div class="kpl">Key Points</div><ul class="kpu">
+          <li>Confusion matrix: TP (correct positive) · TN (correct negative) · FP (wrong alarm) · FN (missed positive).</li>
+          <li>Accuracy is misleading with imbalanced classes — don't rely on it alone.</li>
+          <li>Precision = minimize false positives. Recall = minimize false negatives.</li>
+          <li>F1 = balance both. AUC-ROC = threshold-independent comparison metric.</li>
+          <li>Metric choice = business cost of each error type.</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+</div><!-- /F -->
+
+
+<!-- ══ G: REGRESSION METRICS ══ -->
+<div class="sec">
+  <div class="sec-h">
+    <div class="sl2" style="color:var(--sk);background:var(--skd);border:1px solid rgba(93,184,242,.2)">G</div>
+    <div class="st2">Regression Metrics</div><div class="gg">G</div>
+  </div>
+  <div class="sec-b">
+    <div class="ss">
+      <div class="ssh"><span class="ssn">G1</span><span class="sst">MSE and R²</span></div>
+      <div class="ssb">
+        <p>Regression models predict continuous numeric values (e.g., price, temperature, sales volume) rather than discrete categories. Two metrics dominate regression evaluation, each capturing a different dimension of model quality.</p>
+        <div class="g2">
+          <div class="gc"><div class="gct" style="color:var(--or)">MSE — Mean Squared Error</div><ul class="gcu"><li>Concept: average of (prediction − actual)² across all samples</li><li>Squaring penalizes large errors more than small ones</li><li>Lower MSE = better model — minimize toward zero</li><li>Has the same units as the target variable squared <span style="color:var(--t3)">[+]</span></li><li>Sensitive to outliers — one large error inflates MSE significantly</li></ul></div>
+          <div class="gc"><div class="gct" style="color:var(--cy)">R² — Coefficient of Determination</div><ul class="gcu"><li>Concept: proportion of target variance explained by the model</li><li>Range: 0 to 1 (can be negative for very poor models) <span style="color:var(--t3)">[+]</span></li><li>R² = 1.0 → model explains all variance (perfect fit)</li><li>R² = 0.0 → model performs no better than predicting the mean</li><li>Unitless — interpretable across different scales</li></ul></div>
+        </div>
+        <div class="ib" style="margin-top:7px"><div class="ibl">How They Complement Each Other</div><p>MSE tells you <span class="bo">how large the errors are</span>. R² tells you <span class="bc">how much of the variance the model explains</span>. A model can have low MSE (small errors) but low R² (if the target barely varies). Use both together for a complete picture of regression model quality.</p></div>
+        <div class="kp"><div class="kpl">Key Points</div><ul class="kpu">
+          <li>MSE = average squared error — minimize toward zero. Penalizes outliers more heavily.</li>
+          <li>R² = explained variance — maximize toward 1. Unitless, interpretable across scales.</li>
+          <li>Use both together: MSE for error magnitude, R² for goodness of fit.</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+</div><!-- /G -->
+
+
+<!-- ══ H: BUSINESS METRICS & DEPLOYMENT ══ -->
+<div class="sec">
+  <div class="sec-h">
+    <div class="sl2" style="color:var(--or);background:var(--od);border:1px solid rgba(244,118,42,.2)">H</div>
+    <div class="st2">Business Metrics, Deployment, and Inference</div><div class="gg">H</div>
+  </div>
+  <div class="sec-b">
+    <div class="ss">
+      <div class="ssh"><span class="ssn">H1</span><span class="sst">Aligning ML Metrics with Business KPIs</span></div>
+      <div class="ssb">
+        <p>A model with excellent technical metrics can still be a business failure if it optimizes the wrong thing. <span class="bo">Business metrics measure real-world impact</span> — sales increase, cost reduction, retention improvement — while ML metrics (accuracy, F1, MSE) measure model behavior in isolation.</p>
+        <p>The alignment challenge: a 1% improvement in model precision may translate to $2M in saved costs in fraud detection, while a 5% improvement in recall has no business value if the catch rate was already sufficient. <span class="ep">[+]</span> The connection between ML metrics and business outcomes must be explicitly modeled.</p>
+        <div class="g2">
+          <div class="gc"><div class="gct" style="color:var(--sa)">Error Cost Asymmetry</div><ul class="gcu"><li>False positives → increased operational costs (manual reviews, customer friction)</li><li>False negatives → missed opportunities, safety risks, revenue loss</li><li>Cost function: assign dollar values to each error type</li><li>Optimize model threshold for business impact, not just metric score</li></ul></div>
+          <div class="gc"><div class="gct" style="color:var(--gn)">Experimentation Methods</div><ul class="gcu"><li>A/B Testing — two model versions deployed simultaneously; compare business metric outcomes</li><li>Canary Deployment — new model receives small % of traffic; monitor before full rollout</li><li>Both validate that technical gains translate to business gains</li></ul></div>
+        </div>
+      </div>
+    </div>
+    <div class="ss">
+      <div class="ssh"><span class="ssn">H2</span><span class="sst">Deployment Types and Inference Options</span></div>
+      <div class="ssb">
+        <p>Deploying a model means making it accessible for predictions in production. The fundamental choice is between <span class="bc">self-hosted</span> (you manage the infrastructure) and <span class="bo">managed</span> (AWS manages the infrastructure) deployments.</p>
+        <div class="g2">
+          <div class="gc"><div class="gct" style="color:var(--cy)">Self-Hosted API</div><ul class="gcu"><li>Deploy on own infra: on-premise, cloud VMs, containers</li><li>Full control over environment and configuration</li><li>Potential cost savings at very high scale</li><li>High operational overhead — you manage scaling, patching, availability</li></ul></div>
+          <div class="gc"><div class="gct" style="color:var(--or)">Managed API (SageMaker)</div><ul class="gcu"><li>One-click or API deployment to managed endpoints</li><li>Automatic scaling, secure HTTPS, multi-model hosting</li><li>No infrastructure management required</li><li>Less control vs self-hosted — AWS manages the infra layer</li></ul></div>
+        </div>
+        <p style="margin-top:8px">SageMaker supports four distinct <span class="bo">inference types</span>, each suited to different workload characteristics:</p>
+        <div class="tr">
+          <div class="ti"><div class="tl">Real-time</div><div class="td">Low-latency predictions via persistent endpoint. For interactive applications where users or systems expect near-instant responses. Always-on cost.</div></div>
+          <div class="ti"><div class="tl">Batch Transform</div><div class="td">Process entire large datasets at once — no persistent endpoint. Best for offline scoring jobs (e.g., overnight fraud scoring of all transactions). Lower cost, higher latency.</div></div>
+          <div class="ti"><div class="tl">Asynchronous</div><div class="td">Handles large payloads and long-running requests via a queue. Requests are submitted and results retrieved later. For video analysis, long document processing. <span class="ep">[+]</span></div></div>
+          <div class="ti"><div class="tl">Serverless</div><div class="td">No infrastructure management, automatic scaling, cost-efficient for intermittent traffic. Cold start latency trade-off. Best when predictions are infrequent and unpredictable in volume.</div></div>
+        </div>
+        <div class="kp" style="margin-top:7px"><div class="kpl">Key Points</div><ul class="kpu">
+          <li>Best model = one that optimizes business KPIs, not just ML metrics. Align error costs to business impact.</li>
+          <li>A/B testing: compare models in production. Canary deployment: gradual rollout before full switch.</li>
+          <li>Self-hosted = more control, more overhead. Managed (SageMaker) = less control, faster deployment.</li>
+          <li>Four inference types: Real-time (low latency, persistent) · Batch (offline, no endpoint) · Async (large payloads, queued) · Serverless (intermittent, auto-scale).</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+</div><!-- /H -->
+
+
+<!-- ══ I: MLOPS ══ -->
+<div class="sec">
+  <div class="sec-h">
+    <div class="sl2" style="color:var(--pu);background:var(--pd);border:1px solid rgba(192,132,252,.2)">I</div>
+    <div class="st2">MLOps — Principles, Pipelines, and AWS Services</div><div class="gg">I</div>
+  </div>
+  <div class="sec-b">
+    <div class="ss">
+      <div class="ssh"><span class="ssn">I1</span><span class="sst">What MLOps Is and Why It Exists</span></div>
+      <div class="ssb">
+        <p><span class="bo">MLOps (Machine Learning Operations)</span> is the discipline of operationalizing ML systems — combining people, processes, and technology to manage the full lifecycle from development through production monitoring. It is often described as <span class="bc">DevOps for ML</span>, but ML introduces challenges that traditional DevOps doesn't face: models degrade as real-world data changes, training is computationally expensive, and the "code" (model weights) cannot be reviewed like source code. <span class="ep">[+]</span></p>
+        <div class="g2">
+          <div class="gc"><div class="gct" style="color:var(--gn)">Why Models Degrade</div><ul class="gcu"><li>Real-world data distributions shift over time</li><li>Model trained on last year's data may not reflect this year's patterns</li><li>Data drift → feature distribution changes</li><li>Concept drift → the relationship between features and labels changes</li></ul></div>
+          <div class="gc"><div class="gct" style="color:var(--or)">MLOps Goals</div><ul class="gcu"><li>Faster ML lifecycle delivery</li><li>Improved model quality and consistency</li><li>Strong collaboration between data scientists and engineers</li><li>Transparency, governance, and auditability</li></ul></div>
+        </div>
+      </div>
+    </div>
+    <div class="ss">
+      <div class="ssh"><span class="ssn">I2</span><span class="sst">MLOps Benefits and Core Principles</span></div>
+      <div class="ssb">
+        <div class="g2">
+          <div class="gc"><div class="gct" style="color:var(--cy)">Five Benefits</div><ul class="gcu"><li>Productivity — faster experimentation, curated datasets</li><li>Reliability — CI/CD improves consistency and reduces human error</li><li>Repeatability — automated pipelines produce reproducible results</li><li>Auditability — track data, models, and experiments for compliance</li><li>Data &amp; Model Quality — continuous bias and drift monitoring</li></ul></div>
+          <div class="gc"><div class="gct" style="color:var(--or)">Four Core Principles</div><ul class="gcu"><li>Version Control — track code, data, and model versions for rollback</li><li>Automation — automate ingestion, training, testing, deployment</li><li>CI/CD for ML — continuous integration, delivery, training, monitoring</li><li>Model Governance — fairness, compliance, security, documentation</li></ul></div>
+        </div>
+        <div class="ib" style="margin-top:7px"><div class="ibl">CI/CD in ML Has Two Extra Components</div><p>Traditional DevOps CI/CD: Continuous Integration (test code) + Continuous Delivery (deploy automatically). MLOps adds: <span class="bo">Continuous Training</span> (retrain models with new data automatically) and <span class="bc">Continuous Monitoring</span> (track model and business metrics in production). All four run together in a healthy MLOps system.</p></div>
+      </div>
+    </div>
+    <div class="ss">
+      <div class="ssh"><span class="ssn">I3</span><span class="sst">MLOps Pipelines and AWS Services</span></div>
+      <div class="ssb">
+        <p>MLOps separates the ML workflow into two coordinated pipelines. The <span class="bc">training pipeline</span> produces validated model artifacts; the <span class="bo">deployment pipeline</span> takes approved artifacts and moves them through to production.</p>
+        <div class="g2">
+          <div class="gc"><div class="gct" style="color:var(--cy)">Training Pipeline</div><ul class="gcu"><li>Data preparation → feature engineering</li><li>Model building → training run</li><li>Model evaluation → check performance criteria</li><li>Model registration → version and store if approved</li><li>Model approval → human or automated gate</li></ul></div>
+          <div class="gc"><div class="gct" style="color:var(--or)">Deployment Pipeline</div><ul class="gcu"><li>Source → Build → Deploy → Test → Promote</li><li>Production monitoring — infrastructure, data quality, model performance</li><li>Drift detected → triggers retraining → loops back to training pipeline</li></ul></div>
+        </div>
+        <p style="margin-top:8px">AWS provides a full MLOps stack through SageMaker services:</p>
+        <div class="tm">
+          <div class="tmr"><div class="tmn">SageMaker Pipelines</div><div class="tmd">Automate end-to-end ML workflows — training, evaluation, registration, deployment</div></div>
+          <div class="tmr"><div class="tmn">Model Registry</div><div class="tmd">Version and manage model artifacts — approve or reject model versions before deployment</div></div>
+          <div class="tmr"><div class="tmn">SageMaker Experiments</div><div class="tmd">Track runs, hyperparameters, and metrics across training iterations for reproducibility</div></div>
+          <div class="tmr"><div class="tmn">Model Monitor</div><div class="tmd">Detect data drift and quality degradation in production — trigger retraining alerts</div></div>
+          <div class="tmr"><div class="tmn">Feature Store</div><div class="tmd">Centralized, versioned feature management for training and inference consistency</div></div>
+          <div class="tmr"><div class="tmn">Data Wrangler</div><div class="tmd">Low-code data prep that integrates directly into SageMaker Pipelines</div></div>
+        </div>
+        <div class="kp" style="margin-top:8px"><div class="kpl">Key Points</div><ul class="kpu">
+          <li>MLOps = DevOps for ML — people + processes + technology to operationalize the ML lifecycle.</li>
+          <li>Five benefits: Productivity · Reliability · Repeatability · Auditability · Data &amp; Model Quality.</li>
+          <li>Four principles: Version Control · Automation · CI/CD · Governance.</li>
+          <li>CI/CD in ML = 4 components: Continuous Integration + Delivery + Training + Monitoring.</li>
+          <li>Two pipelines: Training (build → evaluate → register) · Deployment (build → deploy → test → promote → monitor).</li>
+          <li>AWS MLOps stack: Pipelines · Model Registry · Experiments · Model Monitor · Feature Store · Data Wrangler.</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+</div><!-- /I -->
+
+
+<!-- SUMMARY -->
+<div class="sum">
+  <div class="suml">Module Summary</div>
+  <ul class="sumu">
+    <li>ML lifecycle = 7-phase iterative loop: Business Goal → Problem Framing → Data Processing → Model Development → Deployment → Monitoring → Retraining. Monitoring triggers retraining — the loop never ends.</li>
+    <li>Business problems translate into ML tasks (call center routing = multiclass classification + supervised learning). Data split: 70–80% train, 10–15% validation, 10–15% test. Never evaluate on training data. Test set sealed until final evaluation.</li>
+    <li>SageMaker = full ML lifecycle platform. Key tools: Data Wrangler (low-code prep) · Feature Store (centralized features) · Canvas (no-code) · JumpStart (pretrained) · Experiments (tracking) · Hyperparameter Tuning · Model Monitor (drift). Model artifacts stored in S3.</li>
+    <li>Model sources: Pretrained (least effort) → Built-in → Custom Framework → Custom Docker (most control). Algorithm categories: Supervised · Unsupervised · Image Processing · Text Analysis. Selection = data type + task type.</li>
+    <li>Model fit: Underfitting (high bias, low variance) · Overfitting (low bias, high variance) · Balanced (both low). Classification metrics: Accuracy (imbalanced data limitation) · Precision (minimize FP) · Recall (minimize FN) · F1 (balance) · AUC-ROC (threshold-independent). Regression: MSE (error magnitude) + R² (explained variance). Business success = ML metrics + KPI alignment. Four inference types: Real-time · Batch · Async · Serverless.</li>
+    <li>MLOps = DevOps for ML — 5 benefits (Productivity, Reliability, Repeatability, Auditability, Quality) · 4 principles (Versioning, Automation, CI/CD, Governance) · 4 CI/CD components (Integration, Delivery, Training, Monitoring) · 2 pipelines (Training + Deployment). AWS stack: SageMaker Pipelines, Registry, Experiments, Model Monitor, Feature Store.</li>
+  </ul>
+</div>
+
+</div><!-- /body -->
+
+<!-- FOOTER -->
+<div class="ftr">
+  <div class="fl">Synaptix v2.2 · AWS-AI MasterClass · Module 4 · Comprehensive · High</div>
+  <div class="fbs">
+    <button class="fb fq" onclick="sp('/quiz mc(10) hard')"><div class="fd" style="background:var(--or)"></div>Quiz</button>
+    <button class="fb fr" onclick="sp('/recall term(10) hard')"><div class="fd" style="background:var(--cy)"></div>Recall</button>
+    <button class="fb fe" onclick="sp('/export -md')"><div class="fd" style="background:var(--sa)"></div>Export</button>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+<script>function sp(t){if(window.parent&&window.parent.postMessage)window.parent.postMessage({type:'user_message',message:t},'*');}</script>
+</body>
+</html>

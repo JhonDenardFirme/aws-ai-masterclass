@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Quiz C — Responsible AI Practices</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0e0e11;--surf:#16161a;--elev:#1c1c21;--sec:#1a1a1f;
+  --bdr:rgba(255,255,255,0.07);--bdr-hi:rgba(255,255,255,0.12);
+  --orange:#f4762a;--salmon:#f08080;--cyan:#4ecdc4;--green:#4ade80;
+  --yellow:#f4d03f;--purple:#c084fc;--sky:#5db8f2;--amber:#f4b942;--red:#f87171;
+  --od:rgba(244,118,42,0.10);--cd:rgba(78,205,196,0.10);
+  --sd:rgba(240,128,128,0.10);--gd:rgba(74,222,128,0.10);
+  --pd:rgba(192,132,252,0.10);--skd:rgba(93,184,242,0.10);
+  --txt:#e8e8ee;--txt2:#8b8b9a;--txt3:#4a4a5a;
+  --mono:'JetBrains Mono',monospace;--sans:'Inter',sans-serif;
+}
+body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:13px;line-height:1.8;}
+.wrap{max-width:820px;margin:0 auto;}
+
+/* Header */
+.hdr{padding:18px 22px 14px;border-bottom:1px solid var(--bdr);background:var(--surf);}
+.badges{display:flex;gap:7px;margin-bottom:9px;flex-wrap:wrap}
+.bdg{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;padding:3px 8px;border-radius:4px;border:1px solid;}
+.bdg-q{color:var(--orange);background:var(--od);border-color:rgba(244,118,42,.25)}
+.bdg-m{color:var(--sky);background:var(--skd);border-color:rgba(93,184,242,.25)}
+.bdg-h{color:var(--salmon);background:var(--sd);border-color:rgba(240,128,128,.25)}
+.ttl{font-size:18px;font-weight:600;letter-spacing:-.01em}
+.sub{font-size:11px;font-family:var(--mono);color:var(--txt3);margin-top:3px}
+.stats{display:flex;gap:18px;flex-wrap:wrap;margin-top:11px;padding-top:11px;border-top:1px solid var(--bdr);}
+.sv{font-family:var(--mono);font-size:14px;font-weight:600}
+.sl{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--txt3);margin-top:1px}
+
+/* Progress */
+.prog-wrap{padding:9px 22px;background:var(--surf);border-bottom:1px solid var(--bdr);}
+.prog-top{display:flex;justify-content:space-between;margin-bottom:4px;}
+.prog-lbl{font-family:var(--mono);font-size:11px;color:var(--txt3)}
+.prog-bar{height:3px;background:var(--bdr);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:var(--orange);border-radius:2px;transition:width .3s;width:0%}
+
+/* Body */
+.body{padding:18px 22px;display:flex;flex-direction:column;gap:10px;}
+
+.sec-hdr{display:flex;align-items:center;gap:10px;padding:9px 13px;background:var(--surf);border:1px solid var(--bdr);border-radius:7px;}
+.sh-num{font-family:var(--mono);font-size:11px;font-weight:600;width:22px;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sh-title{font-size:13px;font-weight:500;flex:1}
+.sh-count{font-family:var(--mono);font-size:10px;color:var(--txt3)}
+
+/* Question card */
+.qc{background:var(--sec);border:1px solid var(--bdr);border-radius:8px;overflow:hidden;margin-bottom:7px;}
+.qc.ok{border-color:rgba(74,222,128,.35)}
+.qc.ng{border-color:rgba(240,128,128,.35)}
+.qc-hdr{padding:8px 13px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:8px;}
+.qn{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--txt3);background:var(--elev);border:1px solid var(--bdr);border-radius:3px;padding:2px 6px;}
+.qt{font-family:var(--mono);font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;padding:2px 6px;border-radius:3px;}
+.qt-mc{color:var(--orange);background:var(--od);border:1px solid rgba(244,118,42,.2)}
+.qt-tf{color:var(--purple);background:var(--pd);border:1px solid rgba(192,132,252,.2)}
+.qt-cn{color:var(--cyan);background:var(--cd);border:1px solid rgba(78,205,196,.2)}
+.qref{font-family:var(--mono);font-size:9px;color:var(--txt3);margin-left:auto}
+.qb{padding:11px 13px}
+.stem{font-size:13px;color:var(--txt);line-height:1.75;margin-bottom:10px;font-weight:500}
+
+/* MC options */
+.opts{display:flex;flex-direction:column;gap:5px}
+.opt{display:flex;align-items:flex-start;gap:9px;padding:8px 11px;border-radius:6px;background:rgba(255,255,255,.02);border:1px solid var(--bdr);cursor:pointer;transition:all .12s;font-size:12.5px;color:var(--txt2);}
+.opt:hover{background:rgba(255,255,255,.05);border-color:var(--bdr-hi);color:var(--txt)}
+.opt.sel{background:var(--cd);border-color:rgba(78,205,196,.35);color:var(--cyan)}
+.opt.cr{background:var(--gd);border-color:rgba(74,222,128,.35);color:var(--green)}
+.opt.wr{background:var(--sd);border-color:rgba(240,128,128,.35);color:var(--salmon)}
+.ol{font-family:var(--mono);font-size:10px;font-weight:700;flex-shrink:0;padding-top:1px;width:13px;}
+
+/* TOF */
+.tf-row{display:flex;gap:8px;margin-top:4px}
+.tf-btn{flex:1;height:38px;border-radius:6px;font-family:var(--mono);font-size:12px;font-weight:600;border:1px solid var(--bdr);background:rgba(255,255,255,.02);color:var(--txt2);cursor:pointer;transition:all .12s;}
+.tf-btn:hover{background:rgba(255,255,255,.05);color:var(--txt)}
+.tf-btn.st{background:var(--cd);border-color:rgba(78,205,196,.35);color:var(--cyan)}
+.tf-btn.sf{background:var(--pd);border-color:rgba(192,132,252,.35);color:var(--purple)}
+.tf-btn.rc{background:var(--gd)!important;border-color:rgba(74,222,128,.35)!important;color:var(--green)!important}
+.tf-btn.rw{background:var(--sd)!important;border-color:rgba(240,128,128,.35)!important;color:var(--salmon)!important}
+
+/* Connect */
+.cn-grid{display:flex;gap:16px;margin-top:8px}
+.cn-col{flex:1}
+.cn-col-lbl{font-family:var(--mono);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--txt3);margin-bottom:6px}
+.cn-item{padding:7px 10px;border-radius:5px;border:1px solid var(--bdr);background:var(--elev);font-size:12px;color:var(--txt2);margin-bottom:4px;}
+.cn-a{border-left:2px solid var(--orange)}
+.cn-b{border-left:2px solid var(--cyan)}
+.cn-pairs{margin-top:10px;display:flex;flex-direction:column;gap:5px}
+.cn-pair{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--elev);border:1px solid var(--bdr);border-radius:5px;}
+.cn-term{font-size:12px;color:var(--orange);font-weight:500;width:175px;flex-shrink:0}
+.cn-sel{flex:1;background:var(--bg);border:1px solid var(--bdr);border-radius:4px;color:var(--txt);font-family:var(--sans);font-size:12px;padding:5px 8px;cursor:pointer;outline:none;}
+.cn-sel:focus{border-color:var(--bdr-hi)}
+.cn-sel.cr{border-color:rgba(74,222,128,.4);color:var(--green)}
+.cn-sel.wr{border-color:rgba(240,128,128,.4);color:var(--salmon)}
+
+/* Nav */
+.nav{display:flex;justify-content:center;gap:10px;padding:14px 22px;flex-wrap:wrap}
+.nav-btn{padding:8px 18px;border-radius:7px;font-family:var(--mono);font-size:11px;background:rgba(255,255,255,.04);border:1px solid var(--bdr);color:var(--txt2);cursor:pointer;}
+.nav-btn:hover{background:rgba(255,255,255,.08);color:var(--txt)}
+.sub-btn{padding:8px 24px;border-radius:7px;font-family:var(--mono);font-size:11px;font-weight:600;background:var(--od);border:1px solid rgba(244,118,42,.3);color:var(--orange);cursor:pointer;}
+.sub-btn:hover{background:rgba(244,118,42,.18)}
+.sub-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* Results */
+.results{display:none;flex-direction:column;gap:10px;padding:18px 22px;}
+.score-card{background:var(--surf);border:1px solid var(--bdr);border-radius:9px;padding:18px;text-align:center;}
+.sc-pct{font-family:var(--mono);font-size:40px;font-weight:700;letter-spacing:-.03em;margin-bottom:4px}
+.sc-band{font-family:var(--mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;padding:3px 10px;border-radius:4px;display:inline-block;margin-bottom:8px}
+.bt{color:var(--green);background:var(--gd);border:1px solid rgba(74,222,128,.25)}
+.be{color:var(--amber);background:rgba(244,185,66,.08);border:1px solid rgba(244,185,66,.2)}
+.bf{color:var(--red);background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2)}
+.sc-det{font-size:12px;color:var(--txt3)}
+.sec-sc{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.ssc{background:var(--elev);border:1px solid var(--bdr);border-radius:6px;padding:9px;text-align:center;}
+.ssl{font-family:var(--mono);font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.ssv{font-family:var(--mono);font-size:15px;font-weight:600}
+
+/* Imperial */
+.imp{background:var(--surf);border:1px solid var(--bdr);border-top:2px solid var(--amber);border-radius:0 0 9px 9px;padding:16px 18px;}
+.imp-s{margin-bottom:14px}.imp-s:last-child{margin-bottom:0}
+.imp-s h2{font-size:13px;font-weight:600;margin-bottom:7px}
+.imp-s p{font-size:12.5px;color:var(--txt2);line-height:1.75;margin-bottom:5px}
+.imp-s ul{list-style:none;display:flex;flex-direction:column;gap:4px;padding-left:4px}
+.imp-s ul li{font-size:12px;color:var(--txt2);display:flex;gap:7px;line-height:1.6}
+.imp-s ul li::before{content:'›';color:var(--amber);font-weight:700;flex-shrink:0}
+.decree{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--amber);background:rgba(244,185,66,.06);border:1px solid rgba(244,185,66,.15);border-radius:5px;padding:9px 12px;margin-top:5px}
+
+/* Key */
+.key{display:none;flex-direction:column;gap:8px;padding:18px 22px;}
+.kh{display:flex;align-items:center;gap:10px;padding:9px 13px;background:var(--surf);border:1px solid var(--bdr);border-left:3px solid var(--orange);border-radius:0 7px 7px 0;}
+.khl{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--orange);text-transform:uppercase;letter-spacing:.08em}
+.kg{display:flex;flex-direction:column;gap:4px}
+.kr{display:flex;align-items:baseline;gap:10px;padding:5px 9px;background:var(--elev);border:1px solid var(--bdr);border-radius:5px;font-size:12px;}
+.kn{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--txt3);width:30px;flex-shrink:0}
+.ka{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cyan);flex-shrink:0;min-width:40px}
+.kt{font-size:12px;color:var(--txt2)}
+
+/* Footer */
+.ftr{padding:11px 22px;border-top:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center;background:var(--surf);flex-wrap:wrap;gap:10px;}
+.fl{font-size:11px;color:var(--txt3);font-family:var(--mono)}
+.fbtns{display:flex;gap:9px}
+.fb{display:flex;align-items:center;justify-content:center;gap:6px;font-family:var(--mono);font-size:11px;font-weight:500;width:120px;height:58px;border-radius:18px;border:1px solid;background:transparent;cursor:pointer;transition:all .15s;}
+.fd{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.fb-r{color:var(--cyan);border-color:rgba(78,205,196,.35);background:var(--cd)}
+.fb-r:hover{background:rgba(78,205,196,.15)}
+.fb-e{color:var(--salmon);border-color:rgba(240,128,128,.35);background:var(--sd)}
+.fb-e:hover{background:rgba(240,128,128,.15)}
+
+@media(max-width:580px){
+  .hdr,.body,.key,.results,.nav{padding-left:14px;padding-right:14px}
+  .cn-grid{flex-direction:column}
+  .sec-sc{grid-template-columns:1fr 1fr}
+  .fb{width:100px;height:50px;font-size:10px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="badges">
+    <span class="bdg bdg-q">Quiz C</span>
+    <span class="bdg bdg-m">Module 3</span>
+    <span class="bdg bdg-h">Hard</span>
+  </div>
+  <div class="ttl">Quiz C — Responsible AI Practices</div>
+  <div class="sub">50 items · MC ×20 · TOF ×20 · Connect ×10 · Hard · Explain: Off</div>
+  <div class="stats">
+    <div><div class="sv">50</div><div class="sl">Items</div></div>
+    <div><div class="sv">20</div><div class="sl">MC</div></div>
+    <div><div class="sv">20</div><div class="sl">TOF</div></div>
+    <div><div class="sv">10</div><div class="sl">Connect</div></div>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="prog-wrap">
+  <div class="prog-top">
+    <span class="prog-lbl" id="prog-lbl">0 / 50 answered</span>
+    <span class="prog-lbl" id="prog-pct">0%</span>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
+</div>
+
+<!-- BODY -->
+<div class="body">
+
+<!-- ══ PART I: MULTIPLE CHOICE ══ -->
+<div class="sec-hdr">
+  <div class="sh-num" style="color:var(--orange);background:var(--od);border:1px solid rgba(244,118,42,.2)">I</div>
+  <div class="sh-title">Multiple Choice</div>
+  <div class="sh-count">20 items · one best answer</div>
+</div>
+
+<div class="qc" id="C-mc1">
+  <div class="qc-hdr"><span class="qn">MC 1</span><span class="qt qt-mc">MC</span><span class="qref">A2</span></div>
+  <div class="qb">
+    <div class="stem">A product team argues Responsible AI only matters at deployment — "we ship it responsibly, the rest is fine." What is the correct response?</div>
+    <div class="opts">
+      <div class="opt" onclick="pick('mc1','A',this)"><span class="ol">A</span>Correct — deployment is when the model interacts with real users, making it the only phase with measurable impact.</div>
+      <div class="opt" onclick="pick('mc1','B',this)"><span class="ol">B</span>Responsible AI applies at all five stages: Design, Development, Deployment, Monitoring, and Evaluation. Bias introduced at data collection cannot be fixed at deployment alone.</div>
+      <div class="opt" onclick="pick('mc1','C',this)"><span class="ol">C</span>Responsible AI applies only at Design and Deployment — the two stages where ethical decisions and outputs occur.</div>
+      <div class="opt" onclick="pick('mc1','D',this)"><span class="ol">D</span>Responsible AI applies only post-deployment during Monitoring, when real-world harms first become detectable.</div>
+    </div>
+  </div>
+</div>
+
+<div class="qc" id="C-mc2">
+  <div class="qc-hdr"><span class="qn">MC 2</span><span class="qt qt-mc">MC</span><span class="qref">B1</span></div>
+  <div class="qb">
+    <div class="stem">Model A: 97% training accuracy, 58% test accuracy. Model B: 74% training, 72% test. Which diagnosis and recommendation is correct?</div>
+    <div class="opts">
+      <div class="opt" onclick="pick('mc2','A',this)"><span class="ol">A</span>Model A is better — higher training accuracy signals stronger pattern learning. Discard Model B.</div>
+      <div class="opt" onclick="pick('mc2','B',this)"><span class="ol">B</span>Model A is overfitting (low bias, high variance) — memorized noise. Model B is balanced (consistent train/test) — better generalization. Prefer Model B for production.</div>
+      <div class="opt" onclick="pick('mc2','C',this)"><span class="ol">C</span>Both models are underfitting — neither achieves acceptable training accuracy.</div>
+      <div class="opt" onclick="pick('mc2','D',this)"><span class="ol">D</span>Model A is underfitting (high bias) — the train/test gap is the signature of an overly simple model.</div>
+    </div>
+  </div>
+</div>
+
+<div class="qc" id="C-mc3">
+  <div class="qc-hdr"><span class="qn">MC 3</span><span class="qt qt-mc">MC</span><span class="qref">B2</span></div>
+  <div class="qb">
+    <div class="stem">A deep learning model overfits on a medical dataset. No additional data can be collected. Which two mitigations are most applicable without requiring more data?</div>
+    <div class="opts">
+      <div class="opt" onclick="pick('mc3','A',this)"><span class="ol">A</span>Increase Data and Cross-Validation — more samples and fold rotation directly address memorization.</div>
+      <div class="opt" onclick="pick('mc3','B',this)"><span class="ol">B</span>Regularization and Early Stopping — Regularization penalizes complexity; Early Stopping halts before memorization deepens. Neither requires additional data.</div>
+      <div class="opt" onclick="pick('mc3','C',this)"><span class="ol">C</span>Dimensionality Reduction and Increase Data — reduce features and collect more samples.</div>
+      <div class="opt" onclick="pick('mc3','D',this)"><span class="ol">D</span>Cross-Validation and Increase Data — rotating splits and collecting more scans will solve overfitting.</div>
+    </div>
+  </div>
+</div>
+
+<div class="qc" id="C-mc4">
+  <div class="qc-hdr"><span class="qn">MC 4</span><span class="qt qt-mc">MC</span><span class="qref">B3</span></div>
+  <div class="qb">
+    <div class="stem">A legal AI confidently cites a 2021 Supreme Court ruling — case name, judge, ruling language all internally consistent — that does not exist. Which Generative AI challenge is this?</div>
+    <div class="opts">
+      <div class="opt" onclick="pick('mc4','A',this)"><span class="ol">A</span>Toxicity — the fabricated ruling could damage the user's legal standing.</div>
+      <div class="opt" onclick="pick('mc4','B',this)"><span class="ol">B</span>Intellectual Property — the model reproduced copyrighted content from a real ruling in its training data.</div>
+      <div class="opt" onclick="pick('mc4','C',this)"><span class="ol">C</span>Hallucination — plausible but entirely fabricated information presented with confidence.</div>
+      <div class="opt" onclick="pick('mc4','D',this)"><span class="ol">D</span>Nondeterminism — the model produces different citations each time the same question is asked.</div>
+    </div>
+  </div>
+</div>
+
+<div class="qc" id="C-mc5">
+  <div class="qc-hdr"><span class="qn">MC 5</span><span class="qt qt-mc">MC</span><span class="qref">C1–C2</span></div>
+  <div class="qb">
+    <div class="stem">A bank's credit model has documentation: trained on 10 years of data using gradient boosting with listed hyperparameters. But when a customer asks why their loan was denied, no reason can be provided. Which dimension is satisfied and which is missing?</div>
+    <div class="opts">
+      <div class="opt" onclick="pick('mc5','A',this)"><span class="ol">A</span>Fairness satisfied (documented process); Safety missing (no human oversight on denials).</div>
+      <div class="opt" onclick="pick('mc5','B',this)"><span class="ol">B</span>Transparency satisfied (HOW the model works is documented); Explainability missing (WHY this specific decision was made cannot be provided).</div>
+      <div class="opt" onclick="pick('mc5','C',this)"><span class="ol">C</span>Explainability satisfied (algorithm documented); Transparency missing (process not visible to regulators).</div>
+      <div class="opt" onclick="pick('mc5','D',this)"><span class="ol">D</span>Governance satisfied (documentation exists); Explainability missing (customers cannot understand outcomes).</div>
+    </div>
+  </div>
+</div>
+
+<div class="qc" id="C-mc6">
+  <div class="qc-hdr"><span class="qn">MC 6</span><span class="qt qt-mc">MC</span><span class="qref">C1</span></div>
+  <div class="qb">
+    <div class="stem">An AI hiring system consistently recommends male over equally qualified female candidates. A facial recognition system misidentifies certain ethnic groups at higher rates. Which Responsible AI dimension is primarily violated in both cases?</div>
+    <div class="opts">
+      <div class="opt" onclick="pick('mc6','A',this)"><span class="ol">A</span>Transparency — the models' internal processes are not visible to affected individuals.</div>
+      <div class="opt" onclick="pick('mc6','B',this)"><span class="ol">B</span>Fairness — both systems produce biased, discriminatory outcomes across demographic groups.</div>
+      <div class="opt" onclick="pick('mc6','C',this)"><span class="ol">C</span>Governance — the organizations failed to enforce policies preventing biased deployment.</div>
+      <div class="opt" onclick="pick('mc6','D',this)"><span class="ol">D</span>Controllability — neither system can be steered to produce unbiased outputs in production.</div>
+    </div>
+  </div>
+</div>
+
+<div class="qc" id="C-mc7">
+  <div class="qc-hdr"><span class="qn">MC 7</span><span class="qt qt-mc">MC</span><span class="qref">D1</span></div>
+  <div class="qb">
+    <div class="stem">A team needs bias detection, production monitoring, and governance documentation for a custom-built fraud detection ML model. Which AWS platform owns these capabilities?</div>
+    <div class="opts">
+      <div class="opt" onclick="pick('mc7','A',this)"><span class="ol">A</span>Amazon Bedrock — provides FM guardrails that apply to all deployed models including custom ones.</div>
+      <div class="opt" onclick="pick('mc7','B',this)"><span class="ol">B</span>Amazon SageMaker — the ML lifecycle platform owning Clarify (bias), Model Monitor (production), and Model Cards/Dashboard (governance).</div>
+      <div class="opt" onclick="pick('mc7','C',this)"><span class="ol">C</span>Amazon Bedrock — provides the evaluation framework for all ML models via its automatic evaluation pipeline.</div>
+      <div class="opt" onclick="pick('mc7','D',this)"><span class="ol">D</span>Both equally — SageMaker trains, Bedrock deploys and monitors.</div>
+    </div>
+  </div>
+</div>
+
+<div class="qc" id="C-mc8">
+  <div class="qc-hdr"><span class="qn">MC 8</span><span class="qt qt-mc">MC</span><span class="qref">D3</span></div>
+  <div class="qb">
+    <div class="stem">A Bedrock-powered chatbot must never discuss competitors, never output customer PII, and never generate violent content — across all Foundation Models. Which AWS feature addresses all three?</div>
+    <div class="opts">
+      <div class="opt" onclick="pick('mc8','A',this)"><span class="ol">A</span>SageMaker Model Monitor — tracks outputs and flags policy violations in production.</div>
+      <div class="opt" onclick="pick('mc8','B',this)"><span class="ol">B</span>Guardrails for Amazon Bedrock — blocks topics (competitors), redacts PII, and filters harmful content (violence) across all Bedrock Foundation Models.</div>
+      <div class="opt" onclick="pick('mc8','C',this)"><span class="ol">C</span>SageMaker Clarify — detects and removes policy-violating content using feature-level analysis on chatbot outputs.</div>
+      <div class="opt" onclick="pick('mc8','D',this)"><span class="ol">D</span>Fine-tuning the FM — training on compliant examples eliminates the need for runtime content controls.</div>
+    </div>
+  </div>
+</div>
+
+<div class="qc" id="C-mc9">
+  <div class="qc-hdr"><span class="qn">MC 9</span><span class="qt qt-mc">MC</span><span class="qref">D4</span></div>
+  <div class="qb">
+    <div class="stem">A credit dataset has 95,000 approved records and 5,000 denied records. A data scientist wants to balance it without simply duplicating the 5,000 denied records. Which Data Wrangler technique applies?</div>
+    <div class="opts">
+      <div class="opt" onclick="pick('mc9','A',this)"><span class="ol">A</span>Random Oversampling — duplicate the 5,000 denied records until classes are balanced.</div>
+      <div class="opt" onclick="pick('mc9','B',this)"><span class="ol">B</span>Random Undersampling — remove approved records until the dataset is balanced.</div>
+      <div class="opt" onclick="pick('mc9','C',this)"><span class="ol">C</span>SMOTE — create synthetic denied records by interpolating between existing minority samples, producing diverse new examples without duplication.</div>
+      <div class="opt" onclick="pick('mc9','D',this)"><span class="ol">D</span>SageMaker Clarify — detect the imbalance and auto-generate balanced training splits.</div>
+    </div>
+  </div>
+</div>
+
+<div class="qc" id="C-mc10">
+  <div class="qc-hdr"><span class="qn">MC 10</span><span class="qt qt-mc">MC</span><span class="qref">D5</span></div>
+  <div class="qb">
+    <div class="stem">Three months post-deployment, a loan model starts producing systematically different outputs for the same customer profiles. Investigation finds the training data distribution no longer matches incoming requests. Which AWS service detects and alerts on this?</div>
+    <div class="opts">
+      <div class="opt" onclick="pick('mc10','A',this)"><span class="ol">A</span>Amazon A2I — routes flagged predictions to human reviewers when data patterns shift.</div>
+      <div class="opt" onclick="pick('mc10','B',this)"><span class="ol">B</span>SageMaker Clarify — re-runs bias detection on incoming requests to flag demographic shifts.</div>
+      <div class="opt" onclick="pick('mc10','C',this)"><span class="ol">C</span>SageMaker Model Monitor — tracks production performance, detects data drift when input distribution shifts from training data, and sends anomaly alerts.</div>
+      <div class="opt" onclick="pick('mc10','D',this)"><span class="ol">D</span>SageMaker Model Dashboard — provides centralized risk ratings and surfaces data quality issues.</div>
+    </div>
+  </div>
+</div>
+
+<div class="qc" id="C-mc11">
+  <div class="qc-hdr"><span class="qn">MC 11</span><span class="qt qt-mc">MC</span><span class="qref">E1</span></div>
+  <div class="qb">
+    <div class="stem">A selected Foundation Model requires 1.2 million GPU-hours per year to run. The sustainability officer flags carbon impact concerns. Which responsible model selection factor covers this?</div>
+    <div class="opts">
+      <div class="opt" onclick="pick('mc11','A',this)"><span class="ol">A</span>Performance — GPU-hour requirements are a latency and throughput concern under performance factors.</div>
+      <div class="opt" onclick="pick('mc11','B',this)"><span class="ol">B</span>Sustainability — energy consumption, carbon impact, and hardware demand are sustainability factors in responsible model selection.</div>
+      <div class="opt" onclick="pick('mc11','C',this)"><span class="ol">C</span>Constraints — infrastructure demand falls under deployment constraints.</div>
+      <div class="opt" onclick="pick('mc11','D',this)"><span class="ol">D</span>Economic Considerations — GPU costs are a financial concern under the economics dimension.</div>
+    </div>
+  </div>
+</div>
+
+<div class="qc" id="C-mc12">
+  <div class="qc-hdr"><span class="qn">MC 12</span><span class="qt qt-mc">MC</span><span class="qref">F1</span></div>
+  <div class="qb">
+    <div class="stem">A facial recognition system trained exclusively on adult images consistently misidentifies children. The team proposes improving the algorithm. What is the root cause and correct intervention?</div>
+    <div class="opts">
+      <div class="opt" onclick="pick('mc12','A',this)"><span class="ol">A</span>Insufficient model complexity — use a deeper network to capture child facial features.</div>
+      <div class="opt" onclick="pick('mc12','B',this)"><span class="ol">B</span>Dataset bias — children were absent from training data so the model never learned their features. Intervention: inclusive data collection including children, then retrain.</div>
+      <div class="opt" onclick="pick('mc12','C',this)"><span class="ol">C</span>Overfitting to adult features — apply regularization to prevent over-specialization on adult patterns.</div>
+      <div class="opt" onclick="pick('mc12','D',this)"><span class="ol">D</span>High variance — apply early stopping to prevent memorization of adult-specific noise.</div>
+    </div>
+  </div>
+</div>
+
+<div class="qc" id="C-mc13">
+  <div class="qc-hdr"><span class="qn">MC 13</span><span class="qt qt-mc">MC</span><span class="qref">G3</span></div>
+  <div class="qb">
+    <div class="stem">A denied mortgage applicant is told: "Your income contributed 0.58 to the denial score, employment duration 0.31, and debt-to-income ratio 0.24." Which explainability technique produced this?</div>
+    <div class="opts">
+      <div class="opt" onclick="pick('mc13','A',this)"><span class="ol">A</span>Counterfactual — identifies what the applicant would need to change for approval.</div>
+      <div class="opt" onclick="pick('mc13','B',this)"><span class="ol">B</span>LIME — a local model was built around this specific application to approximate the black box's decision.</div>
+      <div class="opt" onclick="pick('mc13','C',this)"><span class="ol">C</span>SHAP — feature contribution scores assigned to each input for this specific prediction using game theory.</div>
+      <div class="opt" onclick="pick('mc13','D',this)"><span class="ol">D</span>Dimensionality Reduction — the model reduced the application to its three most influential features.</div>
+    </div>
+  </div>
+</div>
+
+<div class="qc" id="C-mc14">
+  <div class="qc-hdr"><span class="qn">MC 14</span><span class="qt qt-mc">MC</span><span class="qref">G3</span></div>
+  <div class="qb">
+    <div class="stem">A denied applicant is told: "If your annual income were $12,000 higher and outstanding debt reduced by $8,000, your application would have been approved." Which explainability technique is this?</div>
+    <div class="opts">
+      <div class="opt" onclick="pick('mc14','A',this)"><span class="ol">A</span>SHAP — contribution scores show income and debt as the top-weighted factors.</div>
+      <div class="opt" onclick="pick('mc14','B',this)"><span class="ol">B</span>LIME — a local approximation identified income and debt as the most influential features in this region.</div>
+      <div class="opt" onclick="pick('mc14','C',this)"><span class="ol">C</span>Counterfactual — answers "what would need to change for a different outcome?" with specific, actionable changes.</div>
+      <div class="opt" onclick="pick('mc14','D',this)"><span class="ol">D</span>Cross-Validation — fold analysis identified which input configurations lead to approval vs. denial.</div>
+    </div>
+  </div>
+</div>
+
+<div class="qc" id="C-mc15">
+  <div class="qc-hdr"><span class="qn">MC 15</span><span class="qt qt-mc">MC</span><span class="qref">G4</span></div>
+  <div class="qb">
+    <div class="stem">An organization publishes full SHAP scores for their fraud detection model. Adversaries later use these scores to craft transactions that consistently evade detection. Which explainability risk materialized?</div>
+    <div class="opts">
+      <div class="opt" onclick="pick('mc15','A',this)"><span class="ol">A</span>False Transparency — SHAP scores approximated but didn't accurately represent the model's actual process.</div>
+      <div class="opt" onclick="pick('mc15','B',this)"><span class="ol">B</span>Higher Cost — SHAP overhead degraded performance, creating exploitable latency windows.</div>
+      <div class="opt" onclick="pick('mc15','C',this)"><span class="ol">C</span>Security Risk — feature importance scores revealed model internals enabling adversaries to craft targeted evasion attacks.</div>
+      <div class="opt" onclick="pick('mc15','D',this)"><span class="ol">D</span>Privacy Exposure — SHAP scores inadvertently revealed personal information about training data individuals.</div>
+    </div>
+  </div>
+</div>
+
+<div class="qc" id="C-mc16">
+  <div class="qc-hdr"><span class="qn">MC 16</span><span class="qt qt-mc">MC</span><span class="qref">H1</span></div>
+  <div class="qb">
+    <div class="stem">For a parole recommendation system: Model A (decision tree, 79% accuracy, fully explainable). Model B (deep neural network, 91% accuracy, unexplainable). Legal requirements mandate all recommendations must be explainable to judges. Which is selected and why?</div>
+    <div class="opts">
+      <div class="opt" onclick="pick('mc16','A',this)"><span class="ol">A</span>Model B — 12% accuracy advantage outweighs the explainability requirement; judges can trust the recommendation.</div>
+      <div class="opt" onclick="pick('mc16','B',this)"><span class="ol">B</span>Model A — the legal explainability mandate is a hard constraint. Compliance cannot be traded for performance. This is the interpretability-performance trade-off resolved by regulation.</div>
+      <div class="opt" onclick="pick('mc16','C',this)"><span class="ol">C</span>Model B with LIME post-hoc explanations — approximation techniques satisfy the legal requirement while preserving accuracy.</div>
+      <div class="opt" onclick="pick('mc16','D',this)"><span class="ol">D</span>Neither — train a new model achieving both 91% accuracy and full explainability before deployment.</div>
+    </div>
+  </div>
+</div>
+
+<div class="qc" id="C-mc17">
+  <div class="qc-hdr"><span class="qn">MC 17</span><span class="qt qt-mc">MC</span><span class="qref">H1</span></div>
+  <div class="qb">
+    <div class="stem">A content moderation system filters so aggressively it blocks 40% of legitimate customer service responses. Which model trade-off does this represent?</div>
+    <div class="opts">
+      <div class="opt" onclick="pick('mc17','A',this)"><span class="ol">A</span>Interpretability vs. Performance — the explainable filter logic is too simple to distinguish harmful from helpful content accurately.</div>
+      <div class="opt" onclick="pick('mc17','B',this)"><span class="ol">B</span>Filtering vs. Usefulness — aggressive safety filtering reduced harm but over-blocked legitimate outputs, degrading model utility. The filter threshold needs recalibration.</div>
+      <div class="opt" onclick="pick('mc17','C',this)"><span class="ol">C</span>Privacy vs. Transparency — filter audit logs expose customer interaction data.</div>
+      <div class="opt" onclick="pick('mc17','D',this)"><span class="ol">D</span>Security vs. Auditability — moderation logs create security risk while being required for compliance audits.</div>
+    </div>
+  </div>
+</div>
+
+<div class="qc" id="C-mc18">
+  <div class="qc-hdr"><span class="qn">MC 18</span><span class="qt qt-mc">MC</span><span class="qref">I1</span></div>
+  <div class="qb">
+    <div class="stem">An AI medical triage system outputs diagnoses in a 47-field technical format that emergency nurses find incomprehensible. The team insists the output is accurate. What is the primary Human-Centered Design failure?</div>
+    <div class="opts">
+      <div class="opt" onclick="pick('mc18','A',this)"><span class="ol">A</span>Fairness violation — incomprehensible outputs disadvantage non-technical medical staff.</div>
+      <div class="opt" onclick="pick('mc18','B',this)"><span class="ol">B</span>Clarity and Usability failure — a technically accurate system that cannot be understood or used by its intended users in their actual context has failed its design goal.</div>
+      <div class="opt" onclick="pick('mc18','C',this)"><span class="ol">C</span>Explainability problem — medical staff need to know WHY the AI made its diagnosis.</div>
+      <div class="opt" onclick="pick('mc18','D',this)"><span class="ol">D</span>Governance failure — a policy requiring plain-language outputs should be enforced before deployment.</div>
+    </div>
+  </div>
+</div>
+
+<div class="qc" id="C-mc19">
+  <div class="qc-hdr"><span class="qn">MC 19</span><span class="qt qt-mc">MC</span><span class="qref">I3</span></div>
+  <div class="qb">
+    <div class="stem">A team wants to align an FM's outputs with their communication standards using 500 employee-rated examples of good vs. poor responses. Which technique and AWS tool applies?</div>
+    <div class="opts">
+      <div class="opt" onclick="pick('mc19','A',this)"><span class="ol">A</span>Guardrails for Amazon Bedrock — configure custom content policies matching the organization's tone requirements.</div>
+      <div class="opt" onclick="pick('mc19','B',this)"><span class="ol">B</span>RLHF via SageMaker Ground Truth — human ratings train a reward model; the FM is fine-tuned to maximize that reward, aligning outputs with organizational standards.</div>
+      <div class="opt" onclick="pick('mc19','C',this)"><span class="ol">C</span>SageMaker Clarify — analyze feature importance to identify which inputs produce appropriate vs. inappropriate tone.</div>
+      <div class="opt" onclick="pick('mc19','D',this)"><span class="ol">D</span>Amazon A2I — route all FM outputs to human reviewers who manually approve responses before delivery.</div>
+    </div>
+  </div>
+</div>
+
+<div class="qc" id="C-mc20">
+  <div class="qc-hdr"><span class="qn">MC 20</span><span class="qt qt-mc">MC</span><span class="qref">D2–D5</span></div>
+  <div class="qb">
+    <div class="stem">Match the AWS tool to its function: (1) Detect feature-level bias before training, (2) Generate synthetic minority samples, (3) Enable human review of uncertain predictions, (4) Document model intended use and risk ratings.</div>
+    <div class="opts">
+      <div class="opt" onclick="pick('mc20','A',this)"><span class="ol">A</span>(1) Data Wrangler · (2) Clarify · (3) Model Monitor · (4) Model Cards</div>
+      <div class="opt" onclick="pick('mc20','B',this)"><span class="ol">B</span>(1) Clarify · (2) Data Wrangler · (3) A2I · (4) Model Cards</div>
+      <div class="opt" onclick="pick('mc20','C',this)"><span class="ol">C</span>(1) Clarify · (2) Data Wrangler · (3) Model Monitor · (4) Model Dashboard</div>
+      <div class="opt" onclick="pick('mc20','D',this)"><span class="ol">D</span>(1) Model Monitor · (2) Clarify · (3) A2I · (4) Model Cards</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ PART II: TRUE OR FALSE ══ -->
+<div class="sec-hdr" id="tof-section">
+  <div class="sh-num" style="color:var(--purple);background:var(--pd);border:1px solid rgba(192,132,252,.2)">II</div>
+  <div class="sh-title">True or False</div>
+  <div class="sh-count">20 items · mark True or False</div>
+</div>
+
+<!-- TOF 1–20 pre-rendered -->
+<div class="qc" id="C-tof1"><div class="qc-hdr"><span class="qn">TOF 1</span><span class="qt qt-tf">T/F</span><span class="qref">A2</span></div><div class="qb"><div class="stem">Responsible AI applies primarily during the Deployment stage, since that is when the model interacts with real users and causes real-world impact.</div><div class="tf-row"><button class="tf-btn" id="tof1-T" onclick="pickTF('tof1',true,this)">True</button><button class="tf-btn" id="tof1-F" onclick="pickTF('tof1',false,this)">False</button></div></div></div>
+
+<div class="qc" id="C-tof2"><div class="qc-hdr"><span class="qn">TOF 2</span><span class="qt qt-tf">T/F</span><span class="qref">B1</span></div><div class="qb"><div class="stem">A model with high bias and low variance is underfitting — it is too simple to capture the true pattern in the data.</div><div class="tf-row"><button class="tf-btn" id="tof2-T" onclick="pickTF('tof2',true,this)">True</button><button class="tf-btn" id="tof2-F" onclick="pickTF('tof2',false,this)">False</button></div></div></div>
+
+<div class="qc" id="C-tof3"><div class="qc-hdr"><span class="qn">TOF 3</span><span class="qt qt-tf">T/F</span><span class="qref">B1</span></div><div class="qb"><div class="stem">Overfitting occurs when a model achieves excellent performance on both training and test data simultaneously.</div><div class="tf-row"><button class="tf-btn" id="tof3-T" onclick="pickTF('tof3',true,this)">True</button><button class="tf-btn" id="tof3-F" onclick="pickTF('tof3',false,this)">False</button></div></div></div>
+
+<div class="qc" id="C-tof4"><div class="qc-hdr"><span class="qn">TOF 4</span><span class="qt qt-tf">T/F</span><span class="qref">B2</span></div><div class="qb"><div class="stem">Early Stopping prevents overfitting by halting training when validation performance begins to deteriorate, before the model memorizes training-specific noise.</div><div class="tf-row"><button class="tf-btn" id="tof4-T" onclick="pickTF('tof4',true,this)">True</button><button class="tf-btn" id="tof4-F" onclick="pickTF('tof4',false,this)">False</button></div></div></div>
+
+<div class="qc" id="C-tof5"><div class="qc-hdr"><span class="qn">TOF 5</span><span class="qt qt-tf">T/F</span><span class="qref">B2</span></div><div class="qb"><div class="stem">Regularization addresses overfitting by adding more training data to expose the model to greater variety.</div><div class="tf-row"><button class="tf-btn" id="tof5-T" onclick="pickTF('tof5',true,this)">True</button><button class="tf-btn" id="tof5-F" onclick="pickTF('tof5',false,this)">False</button></div></div></div>
+
+<div class="qc" id="C-tof6"><div class="qc-hdr"><span class="qn">TOF 6</span><span class="qt qt-tf">T/F</span><span class="qref">B3</span></div><div class="qb"><div class="stem">Hallucination in Generative AI means the model produces outputs that are plausible-sounding but factually false — because it predicts likely text, not correct text.</div><div class="tf-row"><button class="tf-btn" id="tof6-T" onclick="pickTF('tof6',true,this)">True</button><button class="tf-btn" id="tof6-F" onclick="pickTF('tof6',false,this)">False</button></div></div></div>
+
+<div class="qc" id="C-tof7"><div class="qc-hdr"><span class="qn">TOF 7</span><span class="qt qt-tf">T/F</span><span class="qref">C1–C2</span></div><div class="qb"><div class="stem">Transparency and Explainability are interchangeable terms in Responsible AI — both refer to understanding why a model made a specific decision.</div><div class="tf-row"><button class="tf-btn" id="tof7-T" onclick="pickTF('tof7',true,this)">True</button><button class="tf-btn" id="tof7-F" onclick="pickTF('tof7',false,this)">False</button></div></div></div>
+
+<div class="qc" id="C-tof8"><div class="qc-hdr"><span class="qn">TOF 8</span><span class="qt qt-tf">T/F</span><span class="qref">C1</span></div><div class="qb"><div class="stem">No single Responsible AI dimension is sufficient on its own — all eight must be addressed for fully responsible AI.</div><div class="tf-row"><button class="tf-btn" id="tof8-T" onclick="pickTF('tof8',true,this)">True</button><button class="tf-btn" id="tof8-F" onclick="pickTF('tof8',false,this)">False</button></div></div></div>
+
+<div class="qc" id="C-tof9"><div class="qc-hdr"><span class="qn">TOF 9</span><span class="qt qt-tf">T/F</span><span class="qref">D1</span></div><div class="qb"><div class="stem">Amazon Bedrock is the correct AWS platform for detecting bias in a custom-built ML model using feature-level analysis.</div><div class="tf-row"><button class="tf-btn" id="tof9-T" onclick="pickTF('tof9',true,this)">True</button><button class="tf-btn" id="tof9-F" onclick="pickTF('tof9',false,this)">False</button></div></div></div>
+
+<div class="qc" id="C-tof10"><div class="qc-hdr"><span class="qn">TOF 10</span><span class="qt qt-tf">T/F</span><span class="qref">D3</span></div><div class="qb"><div class="stem">Guardrails for Amazon Bedrock apply across all Foundation Models accessed through Bedrock — they are not specific to any individual model.</div><div class="tf-row"><button class="tf-btn" id="tof10-T" onclick="pickTF('tof10',true,this)">True</button><button class="tf-btn" id="tof10-F" onclick="pickTF('tof10',false,this)">False</button></div></div></div>
+
+<div class="qc" id="C-tof11"><div class="qc-hdr"><span class="qn">TOF 11</span><span class="qt qt-tf">T/F</span><span class="qref">D4</span></div><div class="qb"><div class="stem">SMOTE balances datasets by duplicating existing minority class samples until the classes are equal.</div><div class="tf-row"><button class="tf-btn" id="tof11-T" onclick="pickTF('tof11',true,this)">True</button><button class="tf-btn" id="tof11-F" onclick="pickTF('tof11',false,this)">False</button></div></div></div>
+
+<div class="qc" id="C-tof12"><div class="qc-hdr"><span class="qn">TOF 12</span><span class="qt qt-tf">T/F</span><span class="qref">D5</span></div><div class="qb"><div class="stem">SageMaker Model Monitor detects data drift and sends anomaly alerts when a production model's input distribution shifts from its training distribution.</div><div class="tf-row"><button class="tf-btn" id="tof12-T" onclick="pickTF('tof12',true,this)">True</button><button class="tf-btn" id="tof12-F" onclick="pickTF('tof12',false,this)">False</button></div></div></div>
+
+<div class="qc" id="C-tof13"><div class="qc-hdr"><span class="qn">TOF 13</span><span class="qt qt-tf">T/F</span><span class="qref">E1</span></div><div class="qb"><div class="stem">Model performance is absolute — a model achieving 95% accuracy on a benchmark will achieve approximately the same on any real-world dataset in the same domain.</div><div class="tf-row"><button class="tf-btn" id="tof13-T" onclick="pickTF('tof13',true,this)">True</button><button class="tf-btn" id="tof13-F" onclick="pickTF('tof13',false,this)">False</button></div></div></div>
+
+<div class="qc" id="C-tof14"><div class="qc-hdr"><span class="qn">TOF 14</span><span class="qt qt-tf">T/F</span><span class="qref">F1</span></div><div class="qb"><div class="stem">Data bias directly causes model bias — no algorithm, regardless of sophistication, can fully compensate for a fundamentally biased training dataset.</div><div class="tf-row"><button class="tf-btn" id="tof14-T" onclick="pickTF('tof14',true,this)">True</button><button class="tf-btn" id="tof14-F" onclick="pickTF('tof14',false,this)">False</button></div></div></div>
+
+<div class="qc" id="C-tof15"><div class="qc-hdr"><span class="qn">TOF 15</span><span class="qt qt-tf">T/F</span><span class="qref">G3</span></div><div class="qb"><div class="stem">LIME produces globally accurate explanations by analyzing feature contributions across the entire model using game theory to assign credit to each input variable.</div><div class="tf-row"><button class="tf-btn" id="tof15-T" onclick="pickTF('tof15',true,this)">True</button><button class="tf-btn" id="tof15-F" onclick="pickTF('tof15',false,this)">False</button></div></div></div>
+
+<div class="qc" id="C-tof16"><div class="qc-hdr"><span class="qn">TOF 16</span><span class="qt qt-tf">T/F</span><span class="qref">G4</span></div><div class="qb"><div class="stem">Publishing detailed SHAP feature importance scores publicly can create a security risk by revealing model internals that adversaries can use to craft evasion attacks.</div><div class="tf-row"><button class="tf-btn" id="tof16-T" onclick="pickTF('tof16',true,this)">True</button><button class="tf-btn" id="tof16-F" onclick="pickTF('tof16',false,this)">False</button></div></div></div>
+
+<div class="qc" id="C-tof17"><div class="qc-hdr"><span class="qn">TOF 17</span><span class="qt qt-tf">T/F</span><span class="qref">H1</span></div><div class="qb"><div class="stem">Choosing a more interpretable model generally requires some sacrifice in accuracy on complex tasks — the interpretability-performance trade-off is a real design tension.</div><div class="tf-row"><button class="tf-btn" id="tof17-T" onclick="pickTF('tof17',true,this)">True</button><button class="tf-btn" id="tof17-F" onclick="pickTF('tof17',false,this)">False</button></div></div></div>
+
+<div class="qc" id="C-tof18"><div class="qc-hdr"><span class="qn">TOF 18</span><span class="qt qt-tf">T/F</span><span class="qref">I3</span></div><div class="qb"><div class="stem">RLHF aligns AI behavior with human values by using human preference ratings to train a reward model, which then guides FM fine-tuning.</div><div class="tf-row"><button class="tf-btn" id="tof18-T" onclick="pickTF('tof18',true,this)">True</button><button class="tf-btn" id="tof18-F" onclick="pickTF('tof18',false,this)">False</button></div></div></div>
+
+<div class="qc" id="C-tof19"><div class="qc-hdr"><span class="qn">TOF 19</span><span class="qt qt-tf">T/F</span><span class="qref">I1</span></div><div class="qb"><div class="stem">The Reflexivity principle of Human-Centered AI Design means the system should automatically revise its own outputs before presenting them to users.</div><div class="tf-row"><button class="tf-btn" id="tof19-T" onclick="pickTF('tof19',true,this)">True</button><button class="tf-btn" id="tof19-F" onclick="pickTF('tof19',false,this)">False</button></div></div></div>
+
+<div class="qc" id="C-tof20"><div class="qc-hdr"><span class="qn">TOF 20</span><span class="qt qt-tf">T/F</span><span class="qref">I3</span></div><div class="qb"><div class="stem">SageMaker Ground Truth is the AWS tool used to collect and manage human feedback for RLHF workflows.</div><div class="tf-row"><button class="tf-btn" id="tof20-T" onclick="pickTF('tof20',true,this)">True</button><button class="tf-btn" id="tof20-F" onclick="pickTF('tof20',false,this)">False</button></div></div></div>
+
+
+<!-- ══ PART III: CONNECT ══ -->
+<div class="sec-hdr" id="conn-section">
+  <div class="sh-num" style="color:var(--cyan);background:var(--cd);border:1px solid rgba(78,205,196,.2)">III</div>
+  <div class="sh-title">Connect</div>
+  <div class="sh-count">10 pairs · match Column A to Column B</div>
+</div>
+
+<div class="qc" id="C-conn">
+  <div class="qc-hdr"><span class="qn">Connect</span><span class="qt qt-cn">MATCH</span><span class="qref">A–I</span></div>
+  <div class="qb">
+    <div class="stem">Match each term in Column A to its correct description in Column B.</div>
+
+    <!-- Reference columns -->
+    <div class="cn-grid">
+      <div class="cn-col">
+        <div class="cn-col-lbl">Column A — Terms</div>
+        <div class="cn-item cn-a">1. Overfitting</div>
+        <div class="cn-item cn-a">2. SageMaker Clarify</div>
+        <div class="cn-item cn-a">3. Amazon A2I</div>
+        <div class="cn-item cn-a">4. Counterfactuals</div>
+        <div class="cn-item cn-a">5. Controllability</div>
+        <div class="cn-item cn-a">6. SMOTE</div>
+        <div class="cn-item cn-a">7. SageMaker Ground Truth</div>
+        <div class="cn-item cn-a">8. Regularization</div>
+        <div class="cn-item cn-a">9. AWS AI Service Cards</div>
+        <div class="cn-item cn-a">10. Underfitting</div>
+      </div>
+      <div class="cn-col">
+        <div class="cn-col-lbl">Column B — Descriptions</div>
+        <div class="cn-item cn-b">A. High bias, low variance — model too simple, poor on train and test</div>
+        <div class="cn-item cn-b">B. Penalizes model complexity during training — L1 and L2 variants</div>
+        <div class="cn-item cn-b">C. Low bias, high variance — memorizes noise, fails on deployment</div>
+        <div class="cn-item cn-b">D. Routes low-confidence predictions to human reviewers</div>
+        <div class="cn-item cn-b">E. Transparency docs for AWS-managed AI services — use cases, limitations, best practices</div>
+        <div class="cn-item cn-b">F. Creates synthetic minority samples via interpolation, not duplication</div>
+        <div class="cn-item cn-b">G. Responsible AI dimension: ability to steer, correct, or override outputs</div>
+        <div class="cn-item cn-b">H. Manages human labeling and feedback collection for RLHF workflows</div>
+        <div class="cn-item cn-b">I. Explains decisions via "what would need to change for a different outcome?"</div>
+        <div class="cn-item cn-b">J. Detects feature-level bias and provides feature importance explainability scores</div>
+      </div>
+    </div>
+
+    <!-- Input selectors -->
+    <div class="cn-pairs" style="margin-top:14px">
+      <div style="font-family:var(--mono);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--txt3);margin-bottom:6px">Your Matches</div>
+
+      <div class="cn-pair"><div class="cn-term">1. Overfitting</div>
+        <select class="cn-sel" id="cs0" onchange="pickConn(0,this)"><option value="">— Select —</option><option value="A">A. High bias, low variance — too simple</option><option value="B">B. Penalizes complexity — L1/L2</option><option value="C">C. Low bias, high variance — memorizes noise</option><option value="D">D. Routes predictions to human reviewers</option><option value="E">E. Transparency docs for AWS AI services</option><option value="F">F. Synthetic minority samples via interpolation</option><option value="G">G. Ability to steer, correct, or override outputs</option><option value="H">H. Manages human labeling for RLHF</option><option value="I">I. "What would need to change?" explanations</option><option value="J">J. Detects feature-level bias + explainability</option></select></div>
+
+      <div class="cn-pair"><div class="cn-term">2. SageMaker Clarify</div>
+        <select class="cn-sel" id="cs1" onchange="pickConn(1,this)"><option value="">— Select —</option><option value="A">A. High bias, low variance — too simple</option><option value="B">B. Penalizes complexity — L1/L2</option><option value="C">C. Low bias, high variance — memorizes noise</option><option value="D">D. Routes predictions to human reviewers</option><option value="E">E. Transparency docs for AWS AI services</option><option value="F">F. Synthetic minority samples via interpolation</option><option value="G">G. Ability to steer, correct, or override outputs</option><option value="H">H. Manages human labeling for RLHF</option><option value="I">I. "What would need to change?" explanations</option><option value="J">J. Detects feature-level bias + explainability</option></select></div>
+
+      <div class="cn-pair"><div class="cn-term">3. Amazon A2I</div>
+        <select class="cn-sel" id="cs2" onchange="pickConn(2,this)"><option value="">— Select —</option><option value="A">A. High bias, low variance — too simple</option><option value="B">B. Penalizes complexity — L1/L2</option><option value="C">C. Low bias, high variance — memorizes noise</option><option value="D">D. Routes predictions to human reviewers</option><option value="E">E. Transparency docs for AWS AI services</option><option value="F">F. Synthetic minority samples via interpolation</option><option value="G">G. Ability to steer, correct, or override outputs</option><option value="H">H. Manages human labeling for RLHF</option><option value="I">I. "What would need to change?" explanations</option><option value="J">J. Detects feature-level bias + explainability</option></select></div>
+
+      <div class="cn-pair"><div class="cn-term">4. Counterfactuals</div>
+        <select class="cn-sel" id="cs3" onchange="pickConn(3,this)"><option value="">— Select —</option><option value="A">A. High bias, low variance — too simple</option><option value="B">B. Penalizes complexity — L1/L2</option><option value="C">C. Low bias, high variance — memorizes noise</option><option value="D">D. Routes predictions to human reviewers</option><option value="E">E. Transparency docs for AWS AI services</option><option value="F">F. Synthetic minority samples via interpolation</option><option value="G">G. Ability to steer, correct, or override outputs</option><option value="H">H. Manages human labeling for RLHF</option><option value="I">I. "What would need to change?" explanations</option><option value="J">J. Detects feature-level bias + explainability</option></select></div>
+
+      <div class="cn-pair"><div class="cn-term">5. Controllability</div>
+        <select class="cn-sel" id="cs4" onchange="pickConn(4,this)"><option value="">— Select —</option><option value="A">A. High bias, low variance — too simple</option><option value="B">B. Penalizes complexity — L1/L2</option><option value="C">C. Low bias, high variance — memorizes noise</option><option value="D">D. Routes predictions to human reviewers</option><option value="E">E. Transparency docs for AWS AI services</option><option value="F">F. Synthetic minority samples via interpolation</option><option value="G">G. Ability to steer, correct, or override outputs</option><option value="H">H. Manages human labeling for RLHF</option><option value="I">I. "What would need to change?" explanations</option><option value="J">J. Detects feature-level bias + explainability</option></select></div>
+
+      <div class="cn-pair"><div class="cn-term">6. SMOTE</div>
+        <select class="cn-sel" id="cs5" onchange="pickConn(5,this)"><option value="">— Select —</option><option value="A">A. High bias, low variance — too simple</option><option value="B">B. Penalizes complexity — L1/L2</option><option value="C">C. Low bias, high variance — memorizes noise</option><option value="D">D. Routes predictions to human reviewers</option><option value="E">E. Transparency docs for AWS AI services</option><option value="F">F. Synthetic minority samples via interpolation</option><option value="G">G. Ability to steer, correct, or override outputs</option><option value="H">H. Manages human labeling for RLHF</option><option value="I">I. "What would need to change?" explanations</option><option value="J">J. Detects feature-level bias + explainability</option></select></div>
+
+      <div class="cn-pair"><div class="cn-term">7. SageMaker Ground Truth</div>
+        <select class="cn-sel" id="cs6" onchange="pickConn(6,this)"><option value="">— Select —</option><option value="A">A. High bias, low variance — too simple</option><option value="B">B. Penalizes complexity — L1/L2</option><option value="C">C. Low bias, high variance — memorizes noise</option><option value="D">D. Routes predictions to human reviewers</option><option value="E">E. Transparency docs for AWS AI services</option><option value="F">F. Synthetic minority samples via interpolation</option><option value="G">G. Ability to steer, correct, or override outputs</option><option value="H">H. Manages human labeling for RLHF</option><option value="I">I. "What would need to change?" explanations</option><option value="J">J. Detects feature-level bias + explainability</option></select></div>
+
+      <div class="cn-pair"><div class="cn-term">8. Regularization</div>
+        <select class="cn-sel" id="cs7" onchange="pickConn(7,this)"><option value="">— Select —</option><option value="A">A. High bias, low variance — too simple</option><option value="B">B. Penalizes complexity — L1/L2</option><option value="C">C. Low bias, high variance — memorizes noise</option><option value="D">D. Routes predictions to human reviewers</option><option value="E">E. Transparency docs for AWS AI services</option><option value="F">F. Synthetic minority samples via interpolation</option><option value="G">G. Ability to steer, correct, or override outputs</option><option value="H">H. Manages human labeling for RLHF</option><option value="I">I. "What would need to change?" explanations</option><option value="J">J. Detects feature-level bias + explainability</option></select></div>
+
+      <div class="cn-pair"><div class="cn-term">9. AWS AI Service Cards</div>
+        <select class="cn-sel" id="cs8" onchange="pickConn(8,this)"><option value="">— Select —</option><option value="A">A. High bias, low variance — too simple</option><option value="B">B. Penalizes complexity — L1/L2</option><option value="C">C. Low bias, high variance — memorizes noise</option><option value="D">D. Routes predictions to human reviewers</option><option value="E">E. Transparency docs for AWS AI services</option><option value="F">F. Synthetic minority samples via interpolation</option><option value="G">G. Ability to steer, correct, or override outputs</option><option value="H">H. Manages human labeling for RLHF</option><option value="I">I. "What would need to change?" explanations</option><option value="J">J. Detects feature-level bias + explainability</option></select></div>
+
+      <div class="cn-pair"><div class="cn-term">10. Underfitting</div>
+        <select class="cn-sel" id="cs9" onchange="pickConn(9,this)"><option value="">— Select —</option><option value="A">A. High bias, low variance — too simple</option><option value="B">B. Penalizes complexity — L1/L2</option><option value="C">C. Low bias, high variance — memorizes noise</option><option value="D">D. Routes predictions to human reviewers</option><option value="E">E. Transparency docs for AWS AI services</option><option value="F">F. Synthetic minority samples via interpolation</option><option value="G">G. Ability to steer, correct, or override outputs</option><option value="H">H. Manages human labeling for RLHF</option><option value="I">I. "What would need to change?" explanations</option><option value="J">J. Detects feature-level bias + explainability</option></select></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /body -->
+
+<!-- NAV -->
+<div class="nav">
+  <button class="nav-btn" onclick="document.getElementById('C-mc1').scrollIntoView({behavior:'smooth',block:'start'})">↑ MC</button>
+  <button class="nav-btn" onclick="document.getElementById('tof-section').scrollIntoView({behavior:'smooth',block:'start'})">TOF</button>
+  <button class="nav-btn" onclick="document.getElementById('conn-section').scrollIntoView({behavior:'smooth',block:'start'})">Connect</button>
+  <button class="sub-btn" id="sub-btn" onclick="submit()">Submit Quiz →</button>
+</div>
+
+<!-- RESULTS -->
+<div class="results" id="results">
+  <div class="score-card">
+    <div class="sc-pct" id="r-pct">—</div>
+    <div class="sc-band" id="r-band">—</div>
+    <div class="sc-det" id="r-det">—</div>
+  </div>
+  <div class="sec-sc" id="r-sec"></div>
+  <div class="imp" id="r-imp"></div>
+</div>
+
+<!-- ANSWER KEY -->
+<div class="key" id="key">
+  <div class="kh"><span class="khl">Answer Key — Part I: Multiple Choice</span></div>
+  <div class="kg" id="key-mc"></div>
+  <div class="kh" style="margin-top:10px"><span class="khl">Answer Key — Part II: True or False</span></div>
+  <div class="kg" id="key-tof"></div>
+  <div class="kh" style="margin-top:10px"><span class="khl">Answer Key — Part III: Connect</span></div>
+  <div class="kg" id="key-conn"></div>
+</div>
+
+<!-- FOOTER -->
+<div class="ftr">
+  <div class="fl">Quiz C · Module 3 · Hard · Synaptix v2.2</div>
+  <div class="fbtns">
+    <button class="fb fb-r" onclick="sp('/recall mixed(15) hard')"><div class="fd" style="background:var(--cyan)"></div>Recall</button>
+    <button class="fb fb-e" onclick="sp('/export -md')"><div class="fd" style="background:var(--salmon)"></div>Export</button>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+<script>
+function sp(t){if(window.parent&&window.parent.postMessage)window.parent.postMessage({type:'user_message',message:t},'*');}
+
+/* ── State ── */
+var MC={}, TF={}, CN={};
+var answered=0;
+
+function upd(){
+  var n=Object.keys(MC).length+Object.keys(TF).length+Object.keys(CN).length;
+  var pct=Math.round(n/50*100);
+  document.getElementById('prog-lbl').textContent=n+' / 50 answered';
+  document.getElementById('prog-pct').textContent=pct+'%';
+  document.getElementById('prog-fill').style.width=pct+'%';
+}
+
+/* ── MC ── */
+function pick(id,val,el){
+  var opts=el.parentElement.querySelectorAll('.opt');
+  opts.forEach(function(o){o.classList.remove('sel');});
+  el.classList.add('sel');
+  MC[id]=val; upd();
+}
+
+/* ── TF ── */
+function pickTF(id,val,el){
+  var t=document.getElementById(id+'-T');
+  var f=document.getElementById(id+'-F');
+  t.classList.remove('st','sf'); f.classList.remove('st','sf');
+  el.classList.add(val?'st':'sf');
+  TF[id]=val; upd();
+}
+
+/* ── Connect ── */
+function pickConn(idx,sel){
+  if(sel.value!==''){CN[idx]=sel.value; upd();}
+}
+
+/* ── Correct answers ── */
+var MC_ANS={mc1:'B',mc2:'B',mc3:'B',mc4:'C',mc5:'B',mc6:'B',mc7:'B',mc8:'B',mc9:'C',mc10:'C',mc11:'B',mc12:'B',mc13:'C',mc14:'C',mc15:'C',mc16:'B',mc17:'B',mc18:'B',mc19:'B',mc20:'B'};
+
+var TF_ANS={tof1:false,tof2:true,tof3:false,tof4:true,tof5:false,tof6:true,tof7:false,tof8:true,tof9:false,tof10:true,tof11:false,tof12:true,tof13:false,tof14:true,tof15:false,tof16:true,tof17:true,tof18:true,tof19:false,tof20:true};
+
+/* Connect: term index → correct letter
+   0=Overfitting→C, 1=Clarify→J, 2=A2I→D, 3=Counterfactuals→I,
+   4=Controllability→G, 5=SMOTE→F, 6=GroundTruth→H, 7=Regularization→B,
+   8=AIServiceCards→E, 9=Underfitting→A */
+var CN_ANS=['C','J','D','I','G','F','H','B','E','A'];
+
+/* ── Submit ── */
+function submit(){
+  var btn=document.getElementById('sub-btn');
+  btn.disabled=true; btn.textContent='Grading…';
+
+  /* Score MC */
+  var mcC=0;
+  Object.keys(MC_ANS).forEach(function(id){
+    var correct=MC_ANS[id], given=MC[id], ok=given===correct;
+    if(ok)mcC++;
+    var card=document.getElementById('C-'+id);
+    if(card){
+      card.querySelectorAll('.opt').forEach(function(o,i){
+        var letter=['A','B','C','D'][i];
+        o.classList.remove('sel');
+        if(letter===correct)o.classList.add('cr');
+        else if(letter===given&&!ok)o.classList.add('wr');
+      });
+      card.classList.add(ok?'ok':'ng');
+    }
+  });
+
+  /* Score TF */
+  var tfC=0;
+  Object.keys(TF_ANS).forEach(function(id){
+    var correct=TF_ANS[id], given=TF[id], ok=given===correct;
+    if(ok)tfC++;
+    var tb=document.getElementById(id+'-T');
+    var fb=document.getElementById(id+'-F');
+    if(tb&&fb){
+      tb.classList.remove('st','sf'); fb.classList.remove('st','sf');
+      (correct?tb:fb).classList.add('rc');
+      if(given!==undefined&&!ok)(given?tb:fb).classList.add('rw');
+    }
+    var card=document.getElementById('C-'+id);
+    if(card)card.classList.add(ok?'ok':'ng');
+  });
+
+  /* Score Connect */
+  var cnC=0;
+  CN_ANS.forEach(function(correct,i){
+    var given=CN[i], ok=given===correct;
+    if(ok)cnC++;
+    var sel=document.getElementById('cs'+i);
+    if(sel){
+      sel.classList.remove('cr','wr');
+      sel.classList.add(ok?'cr':'wr');
+    }
+  });
+
+  var total=mcC+tfC+cnC;
+  var pct=Math.round(total/50*100);
+
+  /* Display score */
+  var pe=document.getElementById('r-pct');
+  pe.textContent=pct+'%';
+  pe.style.color=pct>=90?'var(--green)':pct>=75?'var(--amber)':'var(--red)';
+
+  var band,bc,imp;
+  if(pct>=90){band='IMPERIAL TRIUMPH';bc='bt';imp=impText('triumph',pct,total,mcC,tfC,cnC);}
+  else if(pct>=75){band='FAILURE OF EXPECTATION';bc='be';imp=impText('exp',pct,total,mcC,tfC,cnC);}
+  else{band='CATASTROPHIC FAILURE';bc='bf';imp=impText('fail',pct,total,mcC,tfC,cnC);}
+
+  document.getElementById('r-band').textContent=band;
+  document.getElementById('r-band').className='sc-band '+bc;
+  document.getElementById('r-det').textContent=total+' / 50 correct · MC: '+mcC+'/20 · TOF: '+tfC+'/20 · Connect: '+cnC+'/10';
+
+  function col(c,t){return(c/t)>=.9?'var(--green)':(c/t)>=.75?'var(--amber)':'var(--red)';}
+  document.getElementById('r-sec').innerHTML=
+    '<div class="ssc"><div class="ssl">MC</div><div class="ssv" style="color:'+col(mcC,20)+'">'+Math.round(mcC/20*100)+'%</div></div>'+
+    '<div class="ssc"><div class="ssl">TOF</div><div class="ssv" style="color:'+col(tfC,20)+'">'+Math.round(tfC/20*100)+'%</div></div>'+
+    '<div class="ssc"><div class="ssl">Connect</div><div class="ssv" style="color:'+col(cnC,10)+'">'+Math.round(cnC/10*100)+'%</div></div>';
+
+  document.getElementById('r-imp').innerHTML=imp;
+  document.getElementById('results').style.display='flex';
+
+  /* Build key */
+  buildKey(mcC,tfC,cnC);
+  document.getElementById('key').style.display='flex';
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+  btn.textContent='Submitted';
+}
+
+function impText(band,pct,total,mc,tf,cn){
+  if(band==='triumph')return'<div class="imp-s"><h2>🏆 Campaign Chronicle</h2><p>The Ethics Frontier has fallen without resistance. Lord High Commander Denard has demonstrated command over every dimension of responsible AI — from bias-variance diagnosis through the eight ethical dimensions, the AWS tool ecosystem, explainability trade-offs, and human-centered design principles. A score of <strong>'+pct+'%</strong> on this theater is the Imperial standard. The full MasterClass foundation is now secured.</p></div><div class="imp-s"><h2>⚔️ Recommended Operations</h2><ul><li>Modules 1, 2, and 3 complete — advance to the next module with full Imperial authority.</li><li>Review any incorrect items as a formality.</li></ul></div><div class="imp-s"><h2>📜 War Council Decree</h2><div class="decree">Modules 1–3 Campaign Chronicle: <strong>VICTORIOUS</strong>. Supreme Allied Headquarters extends formal commendation. The Empire expands.</div></div>';
+  if(band==='exp')return'<div class="imp-s"><h2>🏆 Campaign Chronicle</h2><p>Module 3 is technically secured. The Ethics Frontier has been crossed. The manner of crossing it — a score of <strong>'+pct+'%</strong> — has been noted as adequate where distinguished was expected.</p></div><div class="imp-s"><h2>⚔️ Recommended Operations</h2><ul><li>Review all incorrect items before advancing.</li><li>Focus: explainability technique distinctions (SHAP vs LIME vs Counterfactuals) and the full AWS tool map.</li><li>Run <strong>/recall mixed(20) hard</strong> targeting missed sections.</li></ul></div><div class="imp-s"><h2>📜 War Council Decree</h2><div class="decree">File annotation: <strong>Capable — Improvement Required Before Full Certification Readiness.</strong> The Empire awaits better.</div></div>';
+  return'<div class="imp-s"><h2>🏆 Campaign Chronicle</h2><p>The Court-Martial Board has convened. A score of <strong>'+pct+'%</strong> on Responsible AI Practices at hard difficulty is a result the Board is documenting as an illustrative example of what not to do. The Ethics Frontier has not been secured — it has been surrendered.</p></div><div class="imp-s"><h2>⚔️ Recommended Operations</h2><ul><li>Return to the Comprehensive reviewer. Read it in full.</li><li>Complete the 30-card recall deck before any re-assessment.</li><li>Focus: bias vs. variance definitions, all 8 dimensions, Clarify/Data Wrangler/Model Monitor/A2I distinctions.</li><li>Do not advance. This module must be secured first.</li></ul></div><div class="imp-s"><h2>📜 War Council Decree</h2><div class="decree">Verdict: <strong>CATASTROPHIC FAILURE — ETHICS FRONTIER NOT SECURED.</strong> Remediation required. The Empire is not optimistic.</div></div>';
+}
+
+function buildKey(mcC,tfC,cnC){
+  var mcData=[
+    {n:1,a:'B',t:'Responsible AI applies at ALL five stages. (A2)'},
+    {n:2,a:'B',t:'97/58 = overfitting. 74/72 = balanced. Prefer balanced for production. (B1)'},
+    {n:3,a:'B',t:'Regularization + Early Stopping address overfitting without additional data. (B2)'},
+    {n:4,a:'C',t:'Plausible, fabricated, confident citation = Hallucination. (B3)'},
+    {n:5,a:'B',t:'HOW documented = Transparency ✓. WHY per decision missing = Explainability ✗. (C1–C2)'},
+    {n:6,a:'B',t:'Discriminatory outcomes across demographic groups = Fairness violation. (C1)'},
+    {n:7,a:'B',t:'SageMaker = ML lifecycle platform owning Clarify, Model Monitor, Model Cards. (D1)'},
+    {n:8,a:'B',t:'Guardrails for Bedrock: block topics, redact PII, filter harm — cross-model. (D3)'},
+    {n:9,a:'C',t:'SMOTE creates synthetic samples via interpolation, not duplication. (D4)'},
+    {n:10,a:'C',t:'SageMaker Model Monitor detects data drift and sends production alerts. (D5)'},
+    {n:11,a:'B',t:'Energy consumption + carbon impact + hardware demand = Sustainability. (E1)'},
+    {n:12,a:'B',t:'Missing children in training data = dataset bias. Fix: inclusive collection. (F1)'},
+    {n:13,a:'C',t:'Numeric contribution scores per feature per prediction = SHAP. (G3)'},
+    {n:14,a:'C',t:'"What would need to change?" with actionable specifics = Counterfactual. (G3)'},
+    {n:15,a:'C',t:'SHAP scores revealed internals → adversarial evasion attacks = Security Risk. (G4)'},
+    {n:16,a:'B',t:'Legal mandate = hard constraint. Model A required. Compliance over performance. (H1)'},
+    {n:17,a:'B',t:'Over-blocking legitimate outputs = Filtering vs. Usefulness trade-off. (H1)'},
+    {n:18,a:'B',t:'Incomprehensible output in real context = Clarity + Usability HCD failure. (I1)'},
+    {n:19,a:'B',t:'Human ratings → reward model → FM fine-tuning = RLHF via SageMaker Ground Truth. (I3)'},
+    {n:20,a:'B',t:'(1) Clarify · (2) Data Wrangler · (3) A2I · (4) Model Cards. (D2–D5)'}
+  ];
+  var mcEl=document.getElementById('key-mc');
+  mcData.forEach(function(k){
+    var r=document.createElement('div');r.className='kr';
+    r.innerHTML='<span class="kn">MC '+k.n+'</span><span class="ka">'+k.a+'</span><span class="kt">'+k.t+'</span>';
+    mcEl.appendChild(r);
+  });
+
+  var tfData=[
+    {n:1,a:'FALSE',t:'Applies at ALL five stages, not only deployment. (A2)'},
+    {n:2,a:'TRUE',t:'High bias, low variance = underfitting = too simple. (B1)'},
+    {n:3,a:'FALSE',t:'Overfitting = great training, poor test. Not great on both. (B1)'},
+    {n:4,a:'TRUE',t:'Early Stopping halts before memorization deepens. (B2)'},
+    {n:5,a:'FALSE',t:'Regularization penalizes complexity — it does not add data. (B2)'},
+    {n:6,a:'TRUE',t:'Hallucination = plausible but factually false — predicts likely, not correct. (B3)'},
+    {n:7,a:'FALSE',t:'Transparency = HOW (system). Explainability = WHY (prediction). Different. (C1–C2)'},
+    {n:8,a:'TRUE',t:'No single dimension sufficient — all eight required. (C1)'},
+    {n:9,a:'FALSE',t:'SageMaker (not Bedrock) owns bias detection for custom ML models via Clarify. (D1)'},
+    {n:10,a:'TRUE',t:'Guardrails apply cross-model across all Bedrock FMs. (D3)'},
+    {n:11,a:'FALSE',t:'SMOTE creates synthetic samples via interpolation — not simple duplication. (D4)'},
+    {n:12,a:'TRUE',t:'Model Monitor = production drift detection + anomaly alerts. (D5)'},
+    {n:13,a:'FALSE',t:'Model performance is dataset-relative — benchmarks do not guarantee real-world accuracy. (E1)'},
+    {n:14,a:'TRUE',t:'Data bias → model bias. No algorithm compensates for fundamentally biased data. (F1)'},
+    {n:15,a:'FALSE',t:'LIME is local only. SHAP (not LIME) uses game theory for global accuracy. (G3)'},
+    {n:16,a:'TRUE',t:'SHAP scores can enable adversarial evasion = Security Risk of explainability. (G4)'},
+    {n:17,a:'TRUE',t:'Interpretability-performance trade-off is a real design tension. (H1)'},
+    {n:18,a:'TRUE',t:'RLHF: human ratings → reward model → FM fine-tuning → aligned behavior. (I3)'},
+    {n:19,a:'FALSE',t:'Reflexivity = supporting users in questioning AI outputs, not auto-revision. (I1)'},
+    {n:20,a:'TRUE',t:'SageMaker Ground Truth manages human labeling for RLHF. (I3)'}
+  ];
+  var tfEl=document.getElementById('key-tof');
+  tfData.forEach(function(k){
+    var r=document.createElement('div');r.className='kr';
+    r.innerHTML='<span class="kn">TOF '+k.n+'</span><span class="ka">'+k.a+'</span><span class="kt">'+k.t+'</span>';
+    tfEl.appendChild(r);
+  });
+
+  var cnData=[
+    {n:1,term:'Overfitting',desc:'C — Low bias, high variance — memorizes noise, fails on deployment'},
+    {n:2,term:'SageMaker Clarify',desc:'J — Detects feature-level bias + provides explainability scores'},
+    {n:3,term:'Amazon A2I',desc:'D — Routes low-confidence predictions to human reviewers'},
+    {n:4,term:'Counterfactuals',desc:'I — "What would need to change for a different outcome?"'},
+    {n:5,term:'Controllability',desc:'G — Ability to steer, correct, or override model outputs'},
+    {n:6,term:'SMOTE',desc:'F — Creates synthetic minority samples via interpolation'},
+    {n:7,term:'SageMaker Ground Truth',desc:'H — Manages human labeling and feedback for RLHF'},
+    {n:8,term:'Regularization',desc:'B — Penalizes model complexity during training — L1/L2'},
+    {n:9,term:'AWS AI Service Cards',desc:'E — Transparency docs for AWS-managed AI services'},
+    {n:10,term:'Underfitting',desc:'A — High bias, low variance — too simple, poor on train and test'}
+  ];
+  var cnEl=document.getElementById('key-conn');
+  cnData.forEach(function(k){
+    var r=document.createElement('div');r.className='kr';
+    r.innerHTML='<span class="kn">'+k.n+'</span><span class="ka">✓</span><span class="kt">'+k.term+' → '+k.desc+'</span>';
+    cnEl.appendChild(r);
+  });
+}
+</script>
+</body>
+</html>
