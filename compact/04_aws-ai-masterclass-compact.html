@@ -128,16 +128,6 @@ body{background:var(--bg);color:var(--t1);font-family:var(--sans);font-size:13px
 .sumu li{font-size:13px;color:var(--t2);line-height:1.7;display:flex;gap:6px}
 .sumu li::before{content:'›';color:var(--or);font-weight:700;font-size:13px;flex-shrink:0}
 
-/* Footer */
-.ftr{padding:11px 24px;border-top:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;background:var(--sf);flex-wrap:wrap;gap:9px;}
-.fl{font-size:11px;color:var(--t3);font-family:var(--mono)}
-.fbs{display:flex;gap:9px}
-.fb{display:flex;align-items:center;justify-content:center;gap:6px;font-family:var(--mono);font-size:11px;font-weight:500;width:120px;height:58px;border-radius:18px;border:1px solid;background:transparent;cursor:pointer;transition:all .15s;}
-.fd{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.fq{color:var(--or);border-color:rgba(244,118,42,.35);background:var(--od)}.fq:hover{background:rgba(244,118,42,.18)}
-.fr{color:var(--cy);border-color:rgba(78,205,196,.35);background:var(--cd)}.fr:hover{background:rgba(78,205,196,.15)}
-.fe{color:var(--sa);border-color:rgba(240,128,128,.35);background:var(--sd)}.fe:hover{background:rgba(240,128,128,.15)}
-
 @media(max-width:580px){
   .hdr,.body{padding-left:14px;padding-right:14px}
   .ftr{padding:11px 14px}
@@ -146,6 +136,131 @@ body{background:var(--bg);color:var(--t1);font-family:var(--sans);font-size:13px
   .dri,.mri,.tgi{flex-direction:column;gap:2px}
   .drk,.mrn,.mrf,.tgn{width:auto}
 }
+
+
+/* ========================================
+   FOOTER NAVIGATION CSS
+   Synaptix Runtime — shared component
+   Copy into any artifact <style> block
+======================================== */
+
+.snx-footer{
+  background:var(--bg-surface);
+  border-top:1px solid var(--border);
+  padding:16px 26px 18px;
+}
+
+/* ── Meta bar ── */
+.snx-footer-meta{
+  display:flex;align-items:baseline;gap:10px;
+  padding-bottom:13px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:13px;
+}
+.snx-footer-course{
+  font-family:var(--mono);font-size:10px;font-weight:600;
+  letter-spacing:0.14em;text-transform:uppercase;color:var(--text-muted);
+}
+.snx-footer-divider{
+  font-family:var(--mono);font-size:10px;color:var(--text-muted);opacity:0.4;
+}
+.snx-footer-module{
+  font-family:var(--mono);font-size:11px;font-weight:500;
+  color:var(--text-secondary);letter-spacing:0.04em;
+}
+
+/* ── Nav row ── */
+.snx-footer-nav{
+  display:flex;align-items:center;
+  gap:10px;
+}
+
+/* prev / next */
+.snx-nav-prev,
+.snx-nav-next{
+  font-family:var(--mono);font-size:11px;font-weight:500;
+  color:var(--text-secondary);
+  background:transparent;
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:6px 13px;
+  display:flex;align-items:center;gap:6px;
+  white-space:nowrap;
+  transition:border-color 0.13s,color 0.13s;
+  flex-shrink:0;
+  text-decoration:none;
+}
+.snx-nav-prev:hover,
+.snx-nav-next:hover{
+  border-color:var(--border-hi);
+  color:var(--text-primary);
+}
+.snx-nav-chevron{
+  font-size:13px;line-height:1;
+  color:var(--text-muted);
+  transition:color 0.13s;
+}
+.snx-nav-prev:hover .snx-nav-chevron,
+.snx-nav-next:hover .snx-nav-chevron{color:var(--text-secondary)}
+
+/* center hub */
+.snx-nav-hub{
+  flex:1;display:flex;align-items:center;
+  justify-content:center;gap:6px;flex-wrap:wrap;
+}
+
+/* hub buttons */
+.snx-hub-btn{
+  font-family:var(--mono);font-size:10px;font-weight:500;
+  letter-spacing:0.04em;
+  padding:6px 13px;border-radius:6px;border:1px solid;
+  display:inline-flex;align-items:center;gap:5px;
+  transition:background 0.13s;
+  text-decoration:none;white-space:nowrap;
+}
+.snx-hub-btn-recall{
+  color:var(--cyan);background:var(--cyan-dim);
+  border-color:rgba(78,205,196,0.22);
+}
+.snx-hub-btn-recall:hover{background:rgba(78,205,196,0.18)}
+
+.snx-hub-btn-tree{
+  color:var(--green);background:var(--green-dim);
+  border-color:rgba(74,222,128,0.22);
+}
+.snx-hub-btn-tree:hover{background:rgba(74,222,128,0.18)}
+
+.snx-hub-btn-compact{
+  color:var(--yellow);background:var(--yellow-dim);
+  border-color:rgba(244,208,63,0.22);
+}
+.snx-hub-btn-compact:hover{background:rgba(244,208,63,0.18)}
+
+.snx-hub-btn-quiz{
+  color:var(--orange);background:var(--orange-dim);
+  border-color:rgba(244,118,42,0.22);
+}
+.snx-hub-btn-quiz:hover{background:rgba(244,118,42,0.18)}
+
+.snx-hub-btn-module{
+  color:var(--purple);background:var(--purple-dim);
+  border-color:rgba(192,132,252,0.22);
+}
+.snx-hub-btn-module:hover{background:rgba(192,132,252,0.18)}
+
+/* active state — current artifact type */
+.snx-hub-btn[aria-current="page"]{
+  opacity:1;cursor:default;
+  box-shadow:0 0 0 1px currentColor;
+}
+
+/* mobile */
+@media(max-width:640px){
+  .snx-footer{padding:14px 16px 16px}
+  .snx-footer-nav{flex-wrap:wrap}
+  .snx-nav-hub{order:3;flex-basis:100%;justify-content:flex-start}
+}
+
 </style>
 </head>
 <body>
@@ -475,17 +590,45 @@ body{background:var(--bg);color:var(--t1);font-family:var(--sans);font-size:13px
 
 </div><!-- /body -->
 
-<!-- FOOTER -->
-<div class="ftr">
-  <div class="fl">Synaptix v2.2 · AWS-AI MasterClass · Module 4 · Compact · Mid</div>
-  <div class="fbs">
-    <button class="fb fq" onclick="sp('/quiz mc(10) hard')"><div class="fd" style="background:var(--or)"></div>Quiz</button>
-    <button class="fb fr" onclick="sp('/recall term(10) hard')"><div class="fd" style="background:var(--cy)"></div>Recall</button>
-    <button class="fb fe" onclick="sp('/export -md')"><div class="fd" style="background:var(--sa)"></div>Export</button>
-  </div>
-</div>
-
 </div><!-- /wrap -->
+
+<footer class="snx-footer">
+
+  <!-- Meta bar -->
+  <div class="snx-footer-meta">
+    <span class="snx-footer-course">AWS-AI MasterClass</span>
+    <span class="snx-footer-divider">·</span>
+    <span class="snx-footer-module">Module 04 · Developing Machine Learning Solutions</span>
+  </div>
+
+  <!-- Nav row -->
+  <nav class="snx-footer-nav" aria-label="Artifact navigation">
+
+    <!-- Left: Previous -->
+    <a class="snx-nav-prev" href="#">
+      <span class="snx-nav-chevron">‹</span>
+      Previous
+    </a>
+
+    <!-- Center: Hub -->
+    <div class="snx-nav-hub">
+      <a class="snx-hub-btn snx-hub-btn-recall"  href="../recalls/04_aws-ai-masterclass-recall.html">Recall</a>
+      <a class="snx-hub-btn snx-hub-btn-tree"    href="../trees/04_aws-ai-masterclass-tree.html">Tree</a>
+      <a class="snx-hub-btn snx-hub-btn-compact" href="#" aria-current="page">Compact</a>
+      <a class="snx-hub-btn snx-hub-btn-quiz"    href="../quizzes/04_aws-ai-masterclass-quiz.html">Quiz</a>
+      <a class="snx-hub-btn snx-hub-btn-module"  href="../compact/04_aws-ai-masterclass-compact.html">Module</a>
+    </div>
+
+    <!-- Right: Next -->
+    <a class="snx-nav-next" href="./02_claude-masterclass-reviewer.html">
+      Next
+      <span class="snx-nav-chevron">›</span>
+    </a>
+
+  </nav>
+
+</footer>
+
 <script>function sp(t){if(window.parent&&window.parent.postMessage)window.parent.postMessage({type:'user_message',message:t},'*');}</script>
 </body>
 </html>
